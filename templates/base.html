@@ -1,0 +1,47 @@
+{%extends 'navbar.html'%}
+{%block navbar_starts%}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>{% block title %} {% endblock %} | Horarium</title>
+	{# title block for printing the name of the page  #}
+	<!-- css here -->
+    
+	<link href="{{static ('Bundles/css/bootstrap.min.css')}}" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="{{static ('Bundles/css/aos.css')}}" />
+	<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/dataTables.bootstrap5.min.css')}}"/>
+	<link type="text/css" rel="preconnect" href="https://fonts.gstatic.com">
+	<link type="text/css" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap')}}" rel="stylesheet"/>
+	<link type="text/css" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{static ('admin/navbar/navbar.css') }}">
+
+	{% block css %} 
+	{% endblock %} 
+</head>
+<body>
+{%endblock%}
+
+{%block navbar_ends%}
+{% block content %}
+
+{% endblock %}
+{# content block for the main contents of the body #}
+</body>
+<!-- scripts here -->
+
+<script type="application/javascript" src="{{static ('Bundles/js/jquery.js')}}"></script>
+<script type="application/javascript" src="{{static ('Bundles/js/bootstrap.min.js')}}"></script>
+<script type="application/javascript" src="{{static ('Bundles/js/aos.js')}}"></script>	
+<script type="application/javascript" src="{{static ('Bundles/js/sweetalert2.all.min.js')}}"></script>	
+<script type="application/javascript" src="{{static ('Bundles/js/select2.js')}}"></script>	
+<script type="application/javascript" src="{{static ('Bundles/js/dataTables.bootstrap5.min.js')}}"></script>
+
+<script type="application/javascript" src="{{static ('student/navbar/navbar.js')}}"></script>
+{% block scripts %}
+{% endblock %}
+{# script block for all the scripts of the page #}
+</html>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% import "macros.jinja" as macros %}
+{% block title%} Indent
+{% endblock %}
+
+{% block css%}
+
+<style>
+    td,th {
+        font-size: .9rem !important;
+    }
+</style>
+{% endblock %}
+
+{%block scripts%}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            //console.log("department")
+            {% if update %}
+                $('#flush-collapseOne').collapse("show");
+            {% endif %}
+            let table = $('#example').DataTable({
+                "columnDefs" : [{
+                    "targets" : [3,4],
+                    "orderable" : false,
+                    },
+                    {responsivePriority: 1, targets: 2},
+                    {responsivePriority: 2, targets: 1},
+                    {
+                        targets : [3,4],
+                        className : "all",
+                    }
+                ],
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                responsive: true,
+                "dom": "<'row'<'col-sm-12 col-md-8'l><'col-sm-12 col-md-4 p-1 bg-light rounded rounded-pill shadow-sm mb-4 search_div'>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            });
+            $('.search_div').html(`<div id="example_filter" class="dataTables_filter">
+                    <div class="input-group">
+                        <input type="search" placeholder="What're you searching for?"
+                            aria-describedby="button-addon1" class="form-control border-0 bg-light" id="search_box" style="box-shadow:none;outline:none">
+                            <div class="input-group-append">
+                                <button id="button-addon1" type="submit" class="btn btn-link text-primary" style="box-shadow:none;outline:none;padding:0;z-index:20"><i class="fa fa-search" style="transform:translateX(-10px)"></i></button>
+                            </div>
+                    </div>
+                </div>`);
+            $('#search_box').keyup(function(){
+                table.search($(this).val()).draw() ;
+          })
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="main_content">
+        <div class="row p-2 ">
+            <div class="col-12 mb-4" style="width:80%;margin: 0 auto;">
+                <div class="card shadow-sm components-section" style="border-radius: 1rem;">
+                    <div class="card-body" style="border-radius: 1rem;">
+                        <div class="accordion accordion-flush" id="accordionFlushExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingOne">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseOne" aria-expanded="false"
+                                        aria-controls="flush-collapseOne">
+                                        <h5>{% if update %}Update{% else %}Add{% endif %} Indent</h5>
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseOne" class="accordion-collapse collapse"
+                                    aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body">
+                                        <form class="myform" method = "POST">
+                                            {{csrf_input}}
+                                            <!-- <img class="form_hider" src="{{static ('admin/details/img/close.png')}}" alt="hide"> -->
+                                            <div class="row mb-3 mx-lg-5 mx-sm-0">
+                                                <!--////////////////Form Goes here///////////-->
+                                                <div class="col-lg-6 col-md-12 col-sm-12">
+                                                    <div class="form-floating mb-3">
+                                                        {{macros.text_input("Department Name","name",update.name)}}
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-12 col-sm-12">
+                                                    <div class="form-floating mb-3">
+                                                        {{macros.text_input("Short Name","short",update.short)}}
+                                                    </div>
+                                                </div>
+                                                <div class="container mt-4" style="width:80%;">
+                                                    <button type="submit" class="btn btn-outline-success"
+                                                        style="width:100%">Submit</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        {% if integrityErrors %}
+                                            <div class="errors_container">
+                                                <p>
+                                                {{integrityErrors}}
+                                                </p>
+                                            </div>
+                                        {% endif %}
+                                        {% if errors %}
+                                            <div class="errors_container">
+                                                <p>
+                                                {{errors}}
+                                                </p>
+                                            </div>
+                                            <script>
+                                                show_error("{{errors}}")
+                                            </script>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="form_visibility_img_container container text-center">
+                            <button class="btn btn-outline-primary" onclick="form_visibility()" style="height:42px">
+                            <p id="myp">Show Form</p>
+                        </button>
+                        </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

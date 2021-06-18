@@ -1,0 +1,5 @@
+{% macro text_input(Name,name, value='') %}
+	<input type="text" class="form-control myinputs" id="{{name}}"
+		placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} class ="form_input" maxlength="50" >
+	<label for="{{name}}" >{{Name}}</label>
+{% endmacro %}

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'main'
 ]
 
 MIDDLEWARE = [
@@ -53,8 +54,16 @@ ROOT_URLCONF = 'dad.urls'
 
 TEMPLATES = [
     {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [os.path.join(BASE_DIR,"templates")],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'dad.jinja2.environment'
+        },
+    },
+    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,"templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -113,8 +122,18 @@ USE_L10N = True
 
 USE_TZ = True
 
+DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'abc')
+
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
