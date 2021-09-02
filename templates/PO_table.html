@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% import "macros.jinja" as macros %}
+{% block title%} PO List
+{% endblock %}
+
+{% block css%}
+<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
+<style>
+    td,th {
+        font-size: .9rem !important;
+    }
+</style>
+{% endblock %}
+
+{%block scripts%}
+    <script type="text/javascript" src="{{ static ('datatables/utils.js') }}"></script>
+	<script type="text/javascript" src="{{ static ('Bundles/js/datepicker.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+			clear_form($(".myform"))
+            console.log("department")
+            {% if success %}
+				Swal.fire(
+					'Indent Saved!',
+					'Your indent object has been saved.',
+					'success'
+				)
+            {% endif %}
+			console.log("2",$("#vendor_name"));
+			$("#vendor_name").select2();
+			$("#work_order_id").select2();
+			$("#material_shape").select2();
+			$("#item_description").select2();
+        });
+    </script>
+	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="main_content">
+		<div class="row" style="padding-top: 6rem">
+			<div class="container-fluid p-2 table_container">
+				<div class="card shadow-sm mb-4 p-2 components-section" style="border-radius: 1rem;">
+					<div class="card-body" style="border-radius: 1rem;">
+						<div class="row text-center">
+							<div class="col-lg-12 col-sm-12">
+								<div class="h3 text-center">Purchase Orders List</div>
+								<a style="display: none;" id="del" onclick="delete_entries()" >
+									<img class="input_icons" src="{{static ('admin/details/img/trash.png')}}" alt="Delete">
+								</a>
+							</div>
+							<!-- <div class="col-lg-2 col-sm-12">
+							</div> -->
+						</div>
+						<div class="table">
+							<table class="table nowrap responsive compact mb-0 rounded text-center" id="example">
+								<thead class="thead-light">
+									<tr>
+										<th class="border-0"><i class="fas fa-hashtag"></i></th>
+										<th class="border-0">PO Number</th>
+										<th class="border-0 fw-bold">PO Vendor</th>
+										<th class="border-0 fw-bold">Date</th>
+										<th class="border-0 fw-bold">Completed</th>
+										<th class="border-0 fw-bold">Indent List</th>
+										<th class="border-0">Edit</th>
+										<th class="border-0 text-center">
+											<div class="form-check" onclick="checkAll();">
+												<input class="form-check-input" type="checkbox" value="parent"
+													id="parent" name="parent">
+											</div>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for po in all_PO %}
+										<tr>
+											<td class="border-0 fw-bold">{{loop.index}}</td>
+											<td class="border-0 fw-bold">{{po.po_number}}</td>
+											<td class="border-0 fw-bold">{{po.vendor_id}}</td>
+											<td class="border-0 fw-bold">{%if po.date%}{{po.date}}{%else%} -- {%endif%}</td>
+											<td class="border-0 fw-bold">{{po.is_complete}}</td>
+											<td class="border-0 fw-bold">
+												<a href="{{url ('show_indent_table' ,args=[po.pk])}}" target="_blank">
+														<img src="../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
+												</a>
+											</td>
+											<td class="border-0 fw-bold">
+												<a href="{{url ('update_po' ,args=[po.id])}}" target="_blank">
+														<img src="../../static/Images/editing.png" style="width:19px;height:19px" alt="edit">
+												</a>
+											</td>
+											<td class="border-0 text-center">
+												<div class="form-check" onclick="checkSelected()">
+													<input class="form-check-input del_input" type="checkbox"
+													id="{{loop.index}}" name="del" value="{{po.id}}" input_name="{{po}}">
+												</div>
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+        </div>
+    </div>
+{% endblock %}

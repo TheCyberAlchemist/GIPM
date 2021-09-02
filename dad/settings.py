@@ -27,6 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# for graph
+GRAPH_MODELS = {
+    # 'all_applications': True,
+    'group_models': True,
+    'app_labels': ["main"],
+}
+
 
 # Application definition
 
@@ -37,7 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main'
+    'main',
+    'ajax_datatable',
+    # 'django_extensions'
 ]
 
 MIDDLEWARE = [

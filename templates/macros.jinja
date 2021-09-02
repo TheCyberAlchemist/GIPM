@@ -1,5 +1,56 @@
-{% macro text_input(Name,name, value='') %}
-	<input type="text" class="form-control myinputs" id="{{name}}"
-		placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} class ="form_input" maxlength="50" >
-	<label for="{{name}}" >{{Name}}</label>
+{#{{macros.text_area("Order Description","description",update.description)}}#}
+{#{{macros.input_text("Unit","unit",update.unit)}}#}
+{#{{macros.input_number("Discount","discount",update.discount)}}#}
+{#{{macros.select2("Vendor Name","vendor_name",all_vendors,update.vendor_name)}}#}
+
+{% macro input_text(Name,name, value='',max_len=50) %}
+	<div class="form-floating mb-3">
+		<input type="text" class="form_input form-control myinputs" id="{{name}}"
+			placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} maxlength="{{max_len}}" >
+		<label for="{{name}}" class="form-label">{{Name}}</label>
+	</div>	
+{% endmacro %}
+
+{% macro input_number(Name,name, value='') %}
+	<div class="form-floating mb-3">
+		<input type="number" class="form_input form-control myinputs" id="{{name}}"
+			placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} >
+		<label for="{{name}}" class="form-label">{{Name}}</label>
+	</div>	
+{% endmacro %}
+
+{% macro text_area(Name,name, value='') %}
+	<div class="form-floating mb-3">
+		<textarea class="form-control form_input" name="{{name}}" id="{{name}}" rows="4">{% if value %}{{value}}{% endif %}</textarea>
+		<label for="{{name}}" class="form-label">{{Name}}</label>
+	</div>		
+{% endmacro %}
+
+{% macro date_input(Name,name, value='') %}
+	<div class="form-floating mb-3">
+		<input 	type="date" class="form-control myinputs" id="{{name}}" name="{{name}}" autocomplete="off" 
+			{% if value %}value = "{{value}}" {% endif %}
+		/>
+		<label for="{{name}}">{{Name}}</label>
+	</div>		
+{% endmacro %}
+
+{% macro select2(Name,name,all_obj,value='') %}
+	<div class="form-floating mb-3">
+		<div class="select2_container double_select2">
+			<select name="{{name}}" id="{{name}}" class="js-example-basic-single js-states form-control">
+				<option disabled selected value="-1">
+					{{Name}}</option>
+				{% for obj in all_obj %}
+					<option value="{% if obj.id %}{{obj.id}}{% else %}{{obj}}{% endif %}" 
+						{% if value and value == obj %}
+							selected
+						{% endif %}
+					>
+						{{obj}}
+					</option>
+				{%endfor%}
+			</select>
+		</div>
+	</div>
 {% endmacro %}

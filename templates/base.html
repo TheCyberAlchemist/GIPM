@@ -8,15 +8,17 @@
 	<title>{% block title %} {% endblock %} | Horarium</title>
 	{# title block for printing the name of the page  #}
 	<!-- css here -->
-    
+    <link href="{{static ('navbar/css/navbar.css')}}" rel="stylesheet">
 	<link href="{{static ('Bundles/css/bootstrap.min.css')}}" rel="stylesheet">
 	<link type="text/css" rel="stylesheet" href="{{static ('Bundles/css/aos.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{static ('Bundles/css/select2.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{static ('Bundles/css/my_select2.css')}}" />
 	<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/dataTables.bootstrap5.min.css')}}"/>
 	<link type="text/css" rel="preconnect" href="https://fonts.gstatic.com">
 	<link type="text/css" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap')}}" rel="stylesheet"/>
 	<link type="text/css" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{static ('admin/navbar/navbar.css') }}">
+    
 
 	{% block css %} 
 	{% endblock %} 
@@ -36,10 +38,14 @@
 <script type="application/javascript" src="{{static ('Bundles/js/bootstrap.min.js')}}"></script>
 <script type="application/javascript" src="{{static ('Bundles/js/aos.js')}}"></script>	
 <script type="application/javascript" src="{{static ('Bundles/js/sweetalert2.all.min.js')}}"></script>	
-<script type="application/javascript" src="{{static ('Bundles/js/select2.js')}}"></script>	
-<script type="application/javascript" src="{{static ('Bundles/js/dataTables.bootstrap5.min.js')}}"></script>
+<script type="application/javascript" src="{{static ('Bundles/js/select2.js')}}" defer></script>
 
-<script type="application/javascript" src="{{static ('student/navbar/navbar.js')}}"></script>
+<script type="application/javascript" src="{{static ('datatables/datatables.min.js')}}"></script>
+<script type="application/javascript" src="{{static ('navbar/js/navbar.js')}}"></script>
+<script type="text/javascript" src="{{ static ('datatables/utils.js') }}"></script>
+	<script type="text/javascript" src="{{ static ('Bundles/js/datepicker.js') }}"></script>
+    
+
 {% block scripts %}
 {% endblock %}
 {# script block for all the scripts of the page #}
