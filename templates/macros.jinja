@@ -3,18 +3,22 @@
 {#{{macros.input_number("Discount","discount",update.discount)}}#}
 {#{{macros.select2("Vendor Name","vendor_name",all_vendors,update.vendor_name)}}#}
 
-{% macro input_text(Name,name, value='',max_len=50) %}
+{% macro input_text(Name,name, value='',max_len=50,disabled=False) %}
 	<div class="form-floating mb-3">
 		<input type="text" class="form_input form-control myinputs" id="{{name}}"
-			placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} maxlength="{{max_len}}" >
+			placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} maxlength="{{max_len}}" 
+			{% if disabled %}disabled{% endif %}
+			>
 		<label for="{{name}}" class="form-label">{{Name}}</label>
 	</div>	
 {% endmacro %}
 
-{% macro input_number(Name,name, value='') %}
+{% macro input_number(Name,name, value='',disabled=False) %}
 	<div class="form-floating mb-3">
 		<input type="number" class="form_input form-control myinputs" id="{{name}}"
-			placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} >
+			placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} 
+			{% if disabled %}disabled{% endif %}
+			>
 		<label for="{{name}}" class="form-label">{{Name}}</label>
 	</div>	
 {% endmacro %}
@@ -35,7 +39,7 @@
 	</div>		
 {% endmacro %}
 
-{% macro select2(Name,name,all_obj,value='') %}
+{% macro select2(Name,name,all_obj,value='',disabled=False) %}
 	<div class="form-floating mb-3">
 		<div class="select2_container double_select2">
 			<select name="{{name}}" id="{{name}}" class="js-example-basic-single js-states form-control">

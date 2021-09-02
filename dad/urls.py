@@ -20,11 +20,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'indent/table/(?P<po_id>\d+)/',indent_table_page.as_view(),name="show_indent_table"),
     re_path(r'indent/table/get_indent_details/',indent_table.as_view(),name="get_indent_details"),
-    re_path(r'^indent/form/$',indent_form.as_view(),name="show_indent_form"),
+    re_path(r'^indent/(?P<po_id>\d+)/form/$',indent_form.as_view(),name="show_indent_form"),
     re_path(r'^indent/form/(?P<indent_id>\d+)/$',indent_form.as_view(),name="update_indent_form"),
     
     re_path(r'^po/table/$',PO_table.as_view(),name="show_po"),
-    re_path(r'^po/form/(?P<po_id>\d+)/$',PO_table.as_view(),name="update_po"),
+    re_path(r'^po/form/$',PO_form.as_view(),name="add_po"),
+    re_path(r'^po/form/(?P<po_id>\d+)/$',PO_form.as_view(),name="update_po"),
 
 
 ]

@@ -26,8 +26,12 @@ class purchase_order(models.Model):
 	po_date = models.DateField(null=True, blank=True)
 	vendor_id = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
 	is_complete = models.BooleanField(default=False)
+	
 	def __str__(self):
-		return f"{self.po_number} [{self.vendor_id.vendor_name}]"
+		if self.vendor_id:
+			return f"{self.po_number} [{self.vendor_id.vendor_name}]"
+		else:
+			return f"{self.po_number}"
 	
 	def save(self,*args, **kwargs):
 		super(purchase_order, self).save(*args, **kwargs)

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% import "macros.jinja" as macros %}
-{% block title%} Indent
+{% block title%}{% if update %}Update{% else %}Add{% endif %} Indent
 {% endblock %}
 
 {% block css%}
@@ -51,15 +51,6 @@
 											<!-- <img class="form_hider" src="{{static ('admin/details/img/close.png')}}" alt="hide"> -->
 											<div id="first_page" style="display: block;">
 												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<!--////////////////Form Goes here///////////-->
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_text("PO Number","po_number",max_len=200,value=update.po_number)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.date_input("PO Date","po_date",update.po_date)}}
-													</div>
-												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
 													<div class="col-lg-12 col-md-12 col-sm-12">
 														{{macros.text_area("Order Description","description",update.description)}}
 													</div>
@@ -91,10 +82,7 @@
 											</div>
 											<div id="second_page" style="display: block;">
 												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.select2("Vendor Name","vendor_name",all_vendors,update.vendor_name)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
+													<div class="col-lg-12 col-md-12 col-sm-12">
 														{{macros.select2("Work Order","work_order_id",all_work_order,update.work_order_id)}}
 													</div>
 												</div>

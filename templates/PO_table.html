@@ -17,20 +17,9 @@
 	<script type="text/javascript" src="{{ static ('Bundles/js/datepicker.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-			clear_form($(".myform"))
-            console.log("department")
-            {% if success %}
-				Swal.fire(
-					'Indent Saved!',
-					'Your indent object has been saved.',
-					'success'
-				)
-            {% endif %}
-			console.log("2",$("#vendor_name"));
-			$("#vendor_name").select2();
-			$("#work_order_id").select2();
-			$("#material_shape").select2();
-			$("#item_description").select2();
+			$("#example").DataTable({
+			})
+
         });
     </script>
 	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
@@ -39,6 +28,11 @@
 {% block content %}
 	<div class="main_content">
 		<div class="row" style="padding-top: 6rem">
+			<a href="{{url ('add_po')}}" target="_blank">
+				<button class="btn btn-success w-100">
+					Add PO
+				</button>
+			</a>
 			<div class="container-fluid p-2 table_container">
 				<div class="card shadow-sm mb-4 p-2 components-section" style="border-radius: 1rem;">
 					<div class="card-body" style="border-radius: 1rem;">
@@ -53,8 +47,8 @@
 							</div> -->
 						</div>
 						<div class="table">
-							<table class="table nowrap responsive compact mb-0 rounded text-center" id="example">
-								<thead class="thead-light">
+							<table class="table row-border nowrap responsive compact mb-0 rounded text-center" id="example">
+								<thead class="thead">
 									<tr>
 										<th class="border-0"><i class="fas fa-hashtag"></i></th>
 										<th class="border-0">PO Number</th>
@@ -77,8 +71,8 @@
 											<td class="border-0 fw-bold">{{loop.index}}</td>
 											<td class="border-0 fw-bold">{{po.po_number}}</td>
 											<td class="border-0 fw-bold">{{po.vendor_id}}</td>
-											<td class="border-0 fw-bold">{%if po.date%}{{po.date}}{%else%} -- {%endif%}</td>
-											<td class="border-0 fw-bold">{{po.is_complete}}</td>
+											<td class="border-0 fw-bold">{%if po.po_date %}{{po.po_date.strftime('%d-%m-%Y')}}{%else%} -- {%endif%}</td>
+											<td class="border-0 fw-bold">{% if po.is_complete %}✅{% else %}❌{% endif %}</td>
 											<td class="border-0 fw-bold">
 												<a href="{{url ('show_indent_table' ,args=[po.pk])}}" target="_blank">
 														<img src="../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">

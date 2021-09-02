@@ -102,7 +102,7 @@ class indent_form(View):
 		'all_work_order':work_order.objects.all(),
 		"all_item_description":item_description.objects.all(),
 	}
-	def get(self, request,indent_id=None):
+	def get(self, request,po_id=None,indent_id=None):
 		if indent_id: 
 			instance = indent.objects.get(pk=indent_id)
 			print(indent_id)
@@ -110,10 +110,38 @@ class indent_form(View):
 			self.context['success'] = False
 		return render(request,self.template_name,self.context)
 
-	def post(self, request,indent_id=None):
+	def post(self, request,po_id=None,indent_id=None):
 		if indent_id:
 			instance = indent.objects.get(pk=indent_id)
 			form = add_indent(request.POST,instance=instance)
+		else:
+			form = add_indent(request.POST)
+		if form.is_valid():
+			form.save()
+			self.context['update'] = form.instance
+			self.context['success'] = True
+		else:
+			self.context['errors'] =  form.errors.as_ul()
+		# self.context['update'] = form.instance
+		return render(request,self.template_name,self.context)
+
+class PO_form(View):
+	template_name = "PO_form.html"
+	context= {
+		"update":[],
+		'all_vendors':vendor_details.objects.all(),
+	}
+	def get(self, request,po_id=None):
+		if po_id: 
+			instance = purchase_order.objects.get(pk=po_id)
+			self.context['update'] = instance
+			self.context['success'] = False
+		return render(request,self.template_name,self.context)
+
+	def post(self, request,po_id=None):
+		if po_id:
+			instance = purchase_order.objects.get(pk=po_id)
+			form = update_PO(request.POST,instance=instance)
 		else:
 			form = add_indent(request.POST)
 		if form.is_valid():

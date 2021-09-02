@@ -44,6 +44,11 @@
 {% block content %}
     <div class="main_content h-100">
         <div class="container-fluid table_container" style="padding-top: 6rem">
+            <a href="{{url ('show_indent_form',args=[po_id])}}" target="_blank">
+				<button class="btn btn-success w-100">
+					Add PO
+				</button>
+			</a>
             <div class="card shadow-sm mb-4 p-2 components-section" style="border-radius: 1rem;">
                 <div class="card-body" style="border-radius: 1rem;">
                     <div class="row text-center">
