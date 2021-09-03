@@ -15,10 +15,19 @@
 	<link type="text/css" rel="stylesheet" href="{{static ('Bundles/css/my_select2.css')}}" />
 	<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/dataTables.bootstrap5.min.css')}}"/>
 	<link rel="stylesheet" type="text/css" href="{{static ('datatables\DataTables-1.11.0\css\dataTables.dataTables.css')}}"/>
+	<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
 	<link type="text/css" rel="preconnect" href="https://fonts.gstatic.com">
 	<link type="text/css" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap')}}" rel="stylesheet"/>
 	<link type="text/css" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
-
+	<style>
+		.input_icons {
+			position: absolute;
+			top: 5px;
+			left: 70%;
+			height: 30px;
+			width: 30px;
+		}
+	</style>
     
 
 	{% block css %} 
@@ -38,15 +47,18 @@
 <script type="application/javascript" src="{{static ('Bundles/js/jquery.js')}}"></script>
 <script type="application/javascript" src="{{static ('Bundles/js/bootstrap.min.js')}}"></script>
 <script type="application/javascript" src="{{static ('Bundles/js/aos.js')}}"></script>	
+<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
 <script type="application/javascript" src="{{static ('Bundles/js/sweetalert2.all.min.js')}}"></script>	
 <script type="application/javascript" src="{{static ('Bundles/js/select2.js')}}" defer></script>
-
+<script type="application/javascript" src="{{static ('Bundles/js/cookie.min.js')}}"></script>
 <script type="application/javascript" src="{{static ('datatables/datatables.min.js')}}"></script>
 <script type="application/javascript" src="{{static ('navbar/js/navbar.js')}}"></script>
 <script type="text/javascript" src="{{ static ('datatables/utils.js') }}"></script>
-	<script type="text/javascript" src="{{ static ('Bundles/js/datepicker.js') }}"></script>
-    
-
+<script type="text/javascript" src="{{ static ('datatables/delete.js') }}"></script>
+<script type="text/javascript" src="{{ static ('Bundles/js/datepicker.js') }}"></script>
+<script type="text/javascript" src="{{ static ('datatables/utils.js') }}"></script>
+<script type="text/javascript" src="{{ static ('Bundles/js/datepicker.js') }}"></script>
+<script type="application/javascript" src="{{static ('datatables/ajax_setup.js')}}"></script>
 {% block scripts %}
 {% endblock %}
 {# script block for all the scripts of the page #}

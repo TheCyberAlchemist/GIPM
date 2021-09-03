@@ -19,13 +19,14 @@
             console.log("department")
             {% if success %}
 				Swal.fire(
-					'Indent Saved!',
-					'Your indent object has been saved.',
+					'PO Saved!',
+					'Your PO object has been saved.',
 					'success'
 				)
             {% endif %}
 			{% if not update %}
 				$("#vendor_id").select2();
+				$("#work_order_id").select2();
 			{% endif %}
         });
     </script>
@@ -48,7 +49,14 @@
 											{{csrf_input}}
 											<!-- <img class="form_hider" src="{{static ('admin/details/img/close.png')}}" alt="hide"> -->
 											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-12 col-md-12 col-sm-12">
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{% if update %}
+														{{macros.input_text("Work Order","work_order_id",max_len=200,value=update.work_order_id,disabled=True)}}
+													{% else %}
+														{{macros.select2("Work Order","work_order_id",all_work_order,update.work_order_id)}}
+													{% endif %}
+												</div>
+												<div class="col-lg-6 col-md-12 col-sm-12">
 													{% if update %}
 														{{macros.input_text("Vendor Name","vendor_id",max_len=200,value=update.vendor_id,disabled=True)}}
 													{% else %}
@@ -57,14 +65,6 @@
 												</div>
 											</div>
 											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<!--////////////////Form Goes here///////////-->
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{% if update %}
-														{{macros.input_text("PO Number","po_number",max_len=200,value=update.po_number,disabled=True)}}
-													{% else %}
-														{{macros.input_text("PO Number","po_number",max_len=200,value=update.po_number)}}
-													{% endif %}
-												</div>
 												<div class="col-lg-6 col-md-12 col-sm-12">
 													{{macros.date_input("PO Date","po_date",update.po_date)}}
 												</div>
@@ -74,7 +74,7 @@
 													<input type="checkbox" id="is_complete" name="is_complete" {% if update and update.is_complete %}checked{% endif %}>
 													<label for="is_complete">Is Complete</label>
 												</div>
-											</div
+											</div>
 											<div class="row mb-3 mx-lg-5 mx-sm-0">
 												<div class="container mt-4" style="width:80%;">
 													<button type="submit" class="btn btn-outline-success"

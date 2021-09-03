@@ -31,7 +31,6 @@
 			$("#item_description").select2();
         });
     </script>
-	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -50,42 +49,6 @@
 											{{csrf_input}}
 											<!-- <img class="form_hider" src="{{static ('admin/details/img/close.png')}}" alt="hide"> -->
 											<div id="first_page" style="display: block;">
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-12 col-md-12 col-sm-12">
-														{{macros.text_area("Order Description","description",update.description)}}
-													</div>
-												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Quantity","quantity",update.quantity)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_text("Unit","unit",update.unit)}}
-													</div>
-												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Value","value",update.value)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Tax","tax",update.tax)}}
-													</div>
-												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Discount","discount",update.discount)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Other Expanses","other_expanses",update.other_expanses)}}
-													</div>
-												</div>
-											</div>
-											<div id="second_page" style="display: block;">
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-12 col-md-12 col-sm-12">
-														{{macros.select2("Work Order","work_order_id",all_work_order,update.work_order_id)}}
-													</div>
-												</div>
 												<div class="row mb-3 mx-lg-5 mx-sm-0">
 													<div class="col-lg-6 col-md-12 col-sm-12">
 														{{macros.text_area("Comment","comment",update.comment)}}
@@ -116,6 +79,37 @@
 													</div>
 													<div class="col-lg-6 col-md-12 col-sm-12">
 														{{macros.input_number("Internal Diameter","internal_diameter",update.internal_diameter)}}
+													</div>
+												</div>
+											</div>
+											<div id="second_page" style="display: block;">
+												<div class="row mb-3 mx-lg-5 mx-sm-0">
+													<div class="col-lg-12 col-md-12 col-sm-12">
+														{{macros.text_area("Order Description","description",update.description)}}
+													</div>
+												</div>
+												<div class="row mb-3 mx-lg-5 mx-sm-0">
+													<div class="col-lg-6 col-md-12 col-sm-12">
+														{{macros.input_number("Quantity","quantity",update.quantity)}}
+													</div>
+													<div class="col-lg-6 col-md-12 col-sm-12">
+														{{macros.input_text("Unit","unit",update.unit)}}
+													</div>
+												</div>
+												<div class="row mb-3 mx-lg-5 mx-sm-0">
+													<div class="col-lg-6 col-md-12 col-sm-12">
+														{{macros.input_number("Value","value",update.value)}}
+													</div>
+													<div class="col-lg-6 col-md-12 col-sm-12">
+														{{macros.input_number("Tax","tax",update.tax)}}
+													</div>
+												</div>
+												<div class="row mb-3 mx-lg-5 mx-sm-0">
+													<div class="col-lg-6 col-md-12 col-sm-12">
+														{{macros.input_number("Discount","discount",update.discount)}}
+													</div>
+													<div class="col-lg-6 col-md-12 col-sm-12">
+														{{macros.input_number("Other Expanses","other_expanses",update.other_expanses)}}
 													</div>
 												</div>
 												<div class="row mb-3 mx-lg-5 mx-sm-0">

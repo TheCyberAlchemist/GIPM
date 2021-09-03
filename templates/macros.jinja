@@ -25,7 +25,7 @@
 
 {% macro text_area(Name,name, value='') %}
 	<div class="form-floating mb-3">
-		<textarea class="form-control form_input" name="{{name}}" id="{{name}}" rows="4">{% if value %}{{value}}{% endif %}</textarea>
+		<textarea class="form-control" placeholder="-" name="{{name}}" id="{{name}}" rows="4">{% if value %}{{value}}{% endif %}</textarea>
 		<label for="{{name}}" class="form-label">{{Name}}</label>
 	</div>		
 {% endmacro %}

@@ -25,7 +25,7 @@ SECRET_KEY = 'mjufzk!iw(4k#ztps7hpajek5yb$pi14bec$7o6&&yeldg8g!6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # for graph
 GRAPH_MODELS = {

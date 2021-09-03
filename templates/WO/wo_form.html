@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% import "macros.jinja" as macros %}
+{% block title%} {% if update %}Update{% else %}Add{% endif %} WO 
+{% endblock %}
+
+{% block css%}
+<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
+<style>
+    td,th {
+        font-size: .9rem !important;
+    }
+</style>
+{% endblock %}
+
+{%block scripts%}
+    <script type="text/javascript">
+        $(document).ready(function() {
+			clear_form($(".myform"))
+            console.log("department")
+            {% if success %}
+				Swal.fire(
+					'WO Saved!',
+					'Your WO object has been saved.',
+					'success'
+				).then( function() {
+					open(location, '_self').close();
+				})
+				//setTimeout(() => {  console.log("asd");window.close() }, 3000);
+            {% endif %}
+			$("#vendor_id").select2();
+        });
+    </script>
+	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="main_content">
+		<div class="row" style="padding-top: 6rem">
+			<div class="col-12 mb-4" style="width:80%;margin: 0 auto;">
+				<div class="card shadow-sm components-section" style="border-radius: 1rem;">
+					<div class="card-body" style="border-radius: 1rem;">
+						<div class="accordion accordion-flush" id="accordionFlushExample">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="flush-headingOne">
+									<h3>{% if update %}Update{% else %}Add{% endif %} Work Order {% if success %}✅{% endif %}</h3>
+								</h2>
+								<div class="accordion-body">
+									<form class="myform" method = "POST">
+										{{csrf_input}}
+										<div id="first_page" style="display: block;">
+											<div class="row mb-3 mx-lg-5 mx-sm-0">
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.input_text("WO Number","wo_number",max_len=200,value=update.wo_number)}}
+												</div>
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.text_area("Comment","comment",value=update.comment)}}
+												</div>
+											</div>
+											<div class="row mb-3 mx-lg-5 mx-sm-0">
+												<div class="col-lg-12 col-md-12 col-sm-12">
+													{{macros.select2("Vendor Name","vendor_id",all_vendors,value=update.vendor_id)}}
+												</div>
+											</div>
+											<div class="row mb-3 mx-lg-5 mx-sm-0">
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.date_input("PO Date","po_date",value=update.po_date)}}
+												</div>
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.input_text("PO Number","po_number",max_len=200,value=update.po_number)}}
+												</div>
+											</div>
+											<div class="row mb-3 mx-lg-5 mx-sm-0">
+												<div class="col-lg-12 col-md-12 col-sm-12">
+													{{macros.text_area("Description","description",value=update.description)}}
+												</div>
+											</div>
+											<div class="row mb-3 mx-lg-5 mx-sm-0">
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													<input type="checkbox" id="is_complete" name="is_complete" {% if update and update.is_complete %}checked{% endif %}>
+													<label for="is_complete">Is Complete</label>
+												</div>
+											</div>
+										</div>
+										<div id="second_page" style="display: block;">
+											<div class="row mb-3 mx-lg-5 mx-sm-0">
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.input_number("Quantity","quantity",value=update.quantity)}}
+												</div>
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.input_text("Unit","unit",value=update.unit)}}
+												</div>
+											</div>
+											<div class="row mb-3 mx-lg-5 mx-sm-0">
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.input_number("Value","value",value=update.value)}}
+												</div>
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.input_number("Tax","tax",value=update.tax)}}
+												</div>
+											</div>
+											<div class="row mb-3 mx-lg-5 mx-sm-0">
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.input_number("Discount","discount",value=update.discount)}}
+												</div>
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.input_number("Other Expanses","other_expanses",value=update.other_expanses)}}
+												</div>
+											</div>
+											<div class="row mb-3 mx-lg-5 mx-sm-0">
+												<div class="container mt-4" style="width:80%;">
+													<button type="submit" class="btn btn-outline-success"
+													style="width:100%">Submit</button>
+												</div>
+											</div>
+										</div>
+										<div class="container text-center">
+											<div class="pagination_container ">
+												<nav style="transform: translateX(45%)"> 
+													<ul class="pagination">
+														<li class="page-item" ><a class="page-link" id="first">1</a></li>
+														<li class="page-item" ><a class="page-link" id="second">2</a></li>
+													</ul>
+												</nav>
+											</div>
+										</div>
+									</form>
+									{% if integrityErrors %}
+										<div class="errors_container">
+											<p>
+											{{integrityErrors}}
+											</p>
+										</div>
+									{% endif %}
+									{% if errors %}
+										<div class="errors_container">
+											<p>
+											{{errors}}
+											</p>
+										</div>
+										<script>
+											show_error("{{errors}}")
+										</script>
+									{% endif %}
+								</div>                                
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

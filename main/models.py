@@ -21,12 +21,84 @@ class vendor_details(models.Model):
 			models.UniqueConstraint(fields=['vendor_name', 'contact_person'], name='Vendor name and contact person cannot be same.'),
 		]
 
+class item_description(models.Model):
+	'class of items which shoud be addable in for the indent'
+	description = models.TextField(null=True, blank=True)
+	def __str__(self):
+		return self.description
+
+
+
+class order(models.Model):
+	'''base class for other models having orders.\n
+	`order_no,date,quantity,tax,etc.`
+	'''
+	# po_number = models.CharField(max_length=200,null=True, blank=True)
+	# po_date = models.DateField(null=True, blank=True)
+	description = models.TextField(null=True, blank=True)
+	quantity = models.IntegerField(default=0,null=True, blank=True)
+	unit = models.TextField(null=True, blank=True)
+	value = models.IntegerField(default=0,null=True, blank=True)
+	tax = models.IntegerField(default=0,null=True, blank=True)
+	discount = models.IntegerField(default=0,null=True, blank=True)
+	other_expanses  = models.IntegerField(default=0,null=True, blank=True)
+
+	def gross_value(self):
+		'return the gross value of the order \n ((value-discount) * quantity)'
+		temp = self.discounted_total() * self.quantity
+		return temp if temp else 0
+
+	def discounted_total(self):
+		'''return the discounted total of the order (net_val - discount)'''
+		temp = self.value - self.discount
+		return temp if temp else 0
+
+	def tax_amount(self):
+		'return the tax amount of the order (net_value * tax)'
+		temp = (self.gross_value()+ self.other_expanses) * self.tax/100
+		return temp if temp else 0
+
+	def net_value(self):
+		'return the tax amount of the order (gross_value + tax)'
+		temp = self.gross_value() + self.tax_amount()
+		temp = round(temp,2)
+		return temp if temp else 0
+
+	def save(self,*args, **kwargs):
+		self.quantity = self.quantity if self.quantity else 0
+		self.value = self.value if self.value else 0
+		self.tax = self.tax if self.tax else 0
+		self.discount = self.discount if self.discount else 0
+		self.other_expanses = self.other_expanses if self.other_expanses else 0
+		super(order, self).save(*args, **kwargs)
+
+class work_order(order):
+	''' Class for incoming work orders '''
+	# PO = models.ForeignKey(purchase_order,on_delete=models.CASCADE)
+	# party_name = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
+	wo_number = models.CharField(max_length=200,null=True, blank=True)
+	vendor_id = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
+	incoming_po_number = models.CharField(max_length=200,null=True, blank=True)
+	incoming_po_date = models.DateField(null=True, blank=True)
+
+	comment = models.TextField(null=True, blank=True)
+
+	is_complete = models.BooleanField(default=False)
+
+	def __str__(self):
+		return "%s"%(self.wo_number)
+
+
 class purchase_order(models.Model):
 	po_number = models.CharField(max_length=200,null=True, blank=True)
 	po_date = models.DateField(null=True, blank=True)
 	vendor_id = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
 	is_complete = models.BooleanField(default=False)
 	
+	work_order_id = models.ForeignKey(work_order,on_delete=models.SET_NULL,null=True, blank=True)
+	# FK to specify the work_order for which the indent is made
+	# show a dropdown of all the active work_orders
+
 	def __str__(self):
 		if self.vendor_id:
 			return f"{self.po_number} [{self.vendor_id.vendor_name}]"
@@ -40,50 +112,6 @@ class purchase_order(models.Model):
 			super(purchase_order, self).save(*args, **kwargs)
 
 
-
-class order(models.Model):
-	'''base class for other models having orders.\n
-	`order_no,date,quantity,tax,etc.`
-	'''
-	# po_number = models.CharField(max_length=200,null=True, blank=True)
-	# po_date = models.DateField(null=True, blank=True)
-	description = models.TextField(null=True, blank=True)
-	quantity = models.IntegerField(null=True, blank=True)
-	unit = models.TextField(null=True, blank=True)
-	value = models.IntegerField(null=True, blank=True)
-	tax = models.IntegerField(null=True, blank=True)
-	discount = models.IntegerField(null=True, blank=True)
-	other_expanses  = models.IntegerField(default=0)
-
-	def gross_value(self):
-		'return the gross value of the order \n ((value-discount) * quantity)'
-		return self.discounted_total() * self.quantity
-
-	def discounted_total(self):
-		'''return the discounted total of the order (net_val - discount)'''
-		return self.value - self.discount
-
-	def tax_amount(self):
-		'return the tax amount of the order (net_value * tax)'
-		return (self.gross_value()+ self.other_expanses) * self.tax/100
-
-	def net_value(self):
-		'return the tax amount of the order (gross_value + tax)'
-		return self.gross_value() + self.tax_amount()
-
-class work_order(order):
-	''' Class for incoming work orders '''
-	PO = models.ForeignKey(purchase_order,on_delete=models.CASCADE)
-	# party_name = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
-	is_active = models.BooleanField(default=True)
-	def __str__(self):
-		return "%s"%(self.PO)
-
-class item_description(models.Model):
-	'class of items which shoud be addable in for the indent'
-	description = models.TextField(null=True, blank=True)
-	def __str__(self):
-		return self.description
 
 class standard_weight(models.Model):
 	material_shape = models.TextField(null=True, blank=True)
@@ -103,14 +131,11 @@ class indent(order):
 	PO = models.ForeignKey(purchase_order,on_delete=models.CASCADE)
 	# vendor_name = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
 	# dropdown of vendor class 
-	work_order_id = models.ForeignKey(work_order,on_delete=models.SET_NULL,null=True, blank=True)
-	# FK to specify the work_order for which the indent is made
-	# show a dropdown of all the active work_orders
-
+	
 	recived = models.BooleanField(default=False)
 	comment = models.TextField(null=True, blank=True)
 	material_shape = models.TextField(null=True, blank=True)
-	# dropdown must contain
+	# dropdown must contain 
 	# Round,Plate,SQ Bar,Pipe,BF,Labour,ISMC,ISMB,ISA,Bolt,Nut ...
 
 	material_type = models.TextField(null=True, blank=True)

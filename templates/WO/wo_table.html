@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% import "macros.jinja" as macros %}
+{% block title%} WO List
+{% endblock %}
+
+{% block css%}
+{% endblock %}
+
+{%block scripts%}
+    <script type="text/javascript">
+        $(document).ready(function() {
+			AjaxDatatableViewUtils.initialize_table(
+                $("#example"),
+                "../datatable/",
+                {
+                    // extra_options (example)
+                    //    select: true,
+                    // responsive: true,
+                    processing: false,
+                    autoWidth: false,
+                    full_row_select: false,
+                    scrollX: false,
+                    dom: "<'row'<'col-sm-12 col-md-8'l><'col-sm-12 col-md-4 p-1 bg-light rounded rounded-pill shadow-sm mb-4 search_div'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                },
+                {
+                }
+            );
+
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+	<div class="main_content">
+		<div class="row" style="padding-top: 6rem">
+			<a href="{{url ('add_wo')}}">
+				<button class="btn btn-success w-100">
+					Add WO
+				</button>
+			</a>
+			<div class="container-fluid p-2 table_container">
+				<div class="card shadow-sm mb-4 p-2 components-section" style="border-radius: 1rem;">
+					<div class="card-body" style="border-radius: 1rem;">
+						<div class="row text-center">
+							<div class="col-lg-12 col-sm-12">
+								<div class="h3 text-center">Work Order List</div>
+								<a style="display: none;" id="del" onclick="delete_entries(false)" >
+									<img class="input_icons" src="{{static ('Images/trash.png')}}" alt="Delete">
+								</a>
+							</div>
+							<!-- <div class="col-lg-2 col-sm-12">
+							</div> -->
+						</div>
+						<div class="table">
+							<table class="table row-table nowrap responsive compact mb-0 rounded text-center" id="example">
+
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+        </div>
+    </div>
+{% endblock %}

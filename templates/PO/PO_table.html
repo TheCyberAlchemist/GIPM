@@ -4,25 +4,15 @@
 {% endblock %}
 
 {% block css%}
-<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
-<style>
-    td,th {
-        font-size: .9rem !important;
-    }
-</style>
 {% endblock %}
 
 {%block scripts%}
-    <script type="text/javascript" src="{{ static ('datatables/utils.js') }}"></script>
-	<script type="text/javascript" src="{{ static ('Bundles/js/datepicker.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-			$("#example").DataTable({
-			})
+			$("#example").DataTable({})
 
         });
     </script>
-	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -40,24 +30,24 @@
 							<div class="col-lg-12 col-sm-12">
 								<div class="h3 text-center">Purchase Orders List</div>
 								<a style="display: none;" id="del" onclick="delete_entries()" >
-									<img class="input_icons" src="{{static ('admin/details/img/trash.png')}}" alt="Delete">
+									<img class="input_icons" src="{{static ('Images/trash.png')}}" alt="Delete">
 								</a>
 							</div>
 							<!-- <div class="col-lg-2 col-sm-12">
 							</div> -->
 						</div>
 						<div class="table">
-							<table class="table row-border nowrap responsive compact mb-0 rounded text-center" id="example">
+							<table class="table row-table nowrap responsive compact mb-0 rounded text-center" id="example">
 								<thead class="thead">
 									<tr>
-										<th class="border-0"><i class="fas fa-hashtag"></i></th>
-										<th class="border-0">PO Number</th>
-										<th class="border-0 fw-bold">PO Vendor</th>
-										<th class="border-0 fw-bold">Date</th>
-										<th class="border-0 fw-bold">Completed</th>
-										<th class="border-0 fw-bold">Indent List</th>
-										<th class="border-0">Edit</th>
-										<th class="border-0 text-center">
+										<th class=""><i class="fas fa-hashtag"></i></th>
+										<th class="">PO Number</th>
+										<th class="">PO Vendor</th>
+										<th class="">Date</th>
+										<th class="">Completed</th>
+										<th class="">Indent List</th>
+										<th class="">Edit</th>
+										<th class=" text-center">
 											<div class="form-check" onclick="checkAll();">
 												<input class="form-check-input" type="checkbox" value="parent"
 													id="parent" name="parent">
@@ -68,22 +58,22 @@
 								<tbody>
 									{% for po in all_PO %}
 										<tr>
-											<td class="border-0 fw-bold">{{loop.index}}</td>
-											<td class="border-0 fw-bold">{{po.po_number}}</td>
-											<td class="border-0 fw-bold">{{po.vendor_id}}</td>
-											<td class="border-0 fw-bold">{%if po.po_date %}{{po.po_date.strftime('%d-%m-%Y')}}{%else%} -- {%endif%}</td>
-											<td class="border-0 fw-bold">{% if po.is_complete %}✅{% else %}❌{% endif %}</td>
-											<td class="border-0 fw-bold">
+											<td class="">{{loop.index}}</td>
+											<td class="">{{po.po_number}}</td>
+											<td class="">{{po.vendor_id}}</td>
+											<td class="">{%if po.po_date %}{{po.po_date.strftime('%d-%m-%Y')}}{%else%} -- {%endif%}</td>
+											<td class="">{% if po.is_complete %}✅{% else %}❌{% endif %}</td>
+											<td class="">
 												<a href="{{url ('show_indent_table' ,args=[po.pk])}}" target="_blank">
-														<img src="../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
+													<img src="../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
 												</a>
 											</td>
-											<td class="border-0 fw-bold">
+											<td class="">
 												<a href="{{url ('update_po' ,args=[po.id])}}" target="_blank">
 														<img src="../../static/Images/editing.png" style="width:19px;height:19px" alt="edit">
 												</a>
 											</td>
-											<td class="border-0 text-center">
+											<td class="">
 												<div class="form-check" onclick="checkSelected()">
 													<input class="form-check-input del_input" type="checkbox"
 													id="{{loop.index}}" name="del" value="{{po.id}}" input_name="{{po}}">

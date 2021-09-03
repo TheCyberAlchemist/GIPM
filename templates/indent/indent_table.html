@@ -13,7 +13,6 @@
 {% endblock %}
 
 {%block scripts%}
-    <script type="text/javascript" src="{{ static ('datatables/utils.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             console.log("department")
@@ -44,17 +43,17 @@
 {% block content %}
     <div class="main_content h-100">
         <div class="container-fluid table_container" style="padding-top: 6rem">
-            <a href="{{url ('show_indent_form',args=[po_id])}}" target="_blank">
+            <a href="{{url ('add_indent_form',args=[po_id])}}" target="_blank">
 				<button class="btn btn-success w-100">
-					Add PO
+					Add Indent
 				</button>
 			</a>
             <div class="card shadow-sm mb-4 p-2 components-section" style="border-radius: 1rem;">
                 <div class="card-body" style="border-radius: 1rem;">
                     <div class="row text-center">
                         <div class="col-lg-12 col-sm-12">
-                            <div class="h3 text-center">Indent List</div>
-                            <a style="display: none;" id="del" onclick="delete_entries()" >
+                            <div class="h3 text-center">Indent List for {{po}}</div>
+                            <a style="display: none;" id="del" onclick="delete_entries(false)" >
                                 <img class="input_icons" src="{{static ('admin/details/img/trash.png')}}" alt="Delete">
                             </a>
                         </div>
