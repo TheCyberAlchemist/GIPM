@@ -95,7 +95,7 @@ class purchase_order(models.Model):
 	vendor_id = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
 	is_complete = models.BooleanField(default=False)
 	
-	work_order_id = models.ForeignKey(work_order,on_delete=models.SET_NULL,null=True, blank=True)
+	# work_order_id = models.ForeignKey(work_order,on_delete=models.SET_NULL,null=True, blank=True)
 	# FK to specify the work_order for which the indent is made
 	# show a dropdown of all the active work_orders
 
@@ -128,8 +128,9 @@ class standard_weight(models.Model):
 class indent(order):
 	''' class for outgoing work orders '''
 
-	PO = models.ForeignKey(purchase_order,on_delete=models.CASCADE)
-	# vendor_name = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
+	PO = models.ForeignKey(purchase_order,on_delete=models.CASCADE,null=True, blank=True)
+	WO = models.ForeignKey(work_order,on_delete=models.CASCADE)
+	# vendor_id = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
 	# dropdown of vendor class 
 	
 	recived = models.BooleanField(default=False)

@@ -51,15 +51,15 @@
 											<div id="first_page" style="display: block;">
 												<div class="row mb-3 mx-lg-5 mx-sm-0">
 													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.text_area("Comment","comment",update.comment)}}
+														{{macros.select2("Material Shape","material_shape",["Round","Plate","SQ Bar","Pipe","BF","Labour","ISMC","ISMB","ISA","Bolt","Nut"],update.material_shape)}}
 													</div>
 													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.select2("Material Shape","material_shape",["Round","Plate","SQ Bar","Pipe","BF","Labour","ISMC","ISMB","ISA","Bolt","Nut"],update.material_shape)}}
+														{{macros.input_text("Material Type","material_type",update.material_type)}}
 													</div>
 												</div>
 												<div class="row mb-3 mx-lg-5 mx-sm-0">
 													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_text("Material Type","material_type",update.material_type)}}
+														{{macros.text_area("Comment","comment",update.comment)}}
 													</div>
 													<div class="col-lg-6 col-md-12 col-sm-12">
 														{{macros.select2("Item Description","item_description",all_item_description,update.item_description)}}

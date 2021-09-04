@@ -4,7 +4,7 @@ class add_indent(ModelForm):
 	class Meta:
 		model = indent
 		fields = '__all__'
-		exclude = ('PO',)
+		exclude = ('PO','WO')
 
 class add_PO(ModelForm):
 	class Meta:

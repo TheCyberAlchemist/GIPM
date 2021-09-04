@@ -14,7 +14,7 @@
 	<link type="text/css" rel="stylesheet" href="{{static ('Bundles/css/select2.css')}}" />
 	<link type="text/css" rel="stylesheet" href="{{static ('Bundles/css/my_select2.css')}}" />
 	<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/dataTables.bootstrap5.min.css')}}"/>
-	<link rel="stylesheet" type="text/css" href="{{static ('datatables\DataTables-1.11.0\css\dataTables.dataTables.css')}}"/>
+	
 	<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
 	<link type="text/css" rel="preconnect" href="https://fonts.gstatic.com">
 	<link type="text/css" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap')}}" rel="stylesheet"/>
@@ -22,11 +22,61 @@
 	<style>
 		.input_icons {
 			position: absolute;
-			top: 5px;
-			left: 70%;
+			top: 17px;
+			left: 94%;
 			height: 30px;
 			width: 30px;
 		}
+		.search_box .form-control:focus {
+  box-shadow: none !important;
+  outline: none !important;
+  border: none !important;
+}
+
+.search_box .form-control {
+  box-shadow: none !important;
+  border: 0 !important;
+  height: 30px !important;
+  margin-top: 5px !important;
+}
+
+.search_box .form-control-underlined {
+  border-width: 0;
+  border-bottom-width: 1px;
+  border-radius: 0;
+  padding-left: 0;
+}
+
+.search_box .form-control::-moz-placeholder {
+  font-size: 0.95rem;
+  color: #aaa;
+  font-style: italic;
+}
+
+.search_box .form-control:-ms-input-placeholder {
+  font-size: 0.95rem;
+  color: #aaa;
+  font-style: italic;
+}
+
+.search_box .form-control::placeholder {
+  font-size: 0.95rem;
+  color: #aaa;
+  font-style: italic;
+}
+
+.search_container {
+  width: 200px !important;
+  height: 25px !important;
+}
+
+.search_container .input-group .input-group-append .btn {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 	</style>
     
 
