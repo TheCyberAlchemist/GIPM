@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% import "macros.jinja" as macros %}
+{% block title%} {% if update %}Update{% else %}Add{% endif %} WO 
+{% endblock %}
+
+{% block css%}
+<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
+<style>
+    td,th {
+        font-size: .9rem !important;
+    }
+</style>
+{% endblock %}
+
+{%block scripts%}
+{% endblock %}
+
+{% block content %}
+	<div class="main_content">
+		<div class="row" style="padding-top: 6rem">
+			<div class="col-12 mb-4" style="width:80%;margin: 0 auto;">
+				<a href="{{url ('show_wo')}}" class="d-flex justify-content-center text-decoration-none">
+					<button class="btn btn-success w-75">
+						Work Order Table
+					</button>
+				</a>
+				<br>
+				<a href="/admin" class="d-flex justify-content-center text-decoration-none">
+					<button class="btn btn-success w-75">
+						Admin Page
+					</button>
+				</a>
+				<br>
+				<a href="/admin" class="d-flex justify-content-center text-decoration-none">
+					<button class="btn btn-success w-75">
+						Purchase Order Table
+					</button>
+				</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}

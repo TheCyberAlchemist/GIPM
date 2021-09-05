@@ -4,7 +4,7 @@
 {#{{macros.select2("Vendor Name","vendor_name",all_vendors,update.vendor_name)}}#}
 
 {% macro input_text(Name,name, value='',max_len=50,disabled=False) %}
-	<div class="form-floating mb-3">
+	<div class="form-floating mb-1">
 		<input type="text" class="form_input form-control myinputs" id="{{name}}"
 			placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} maxlength="{{max_len}}" 
 			{% if disabled %}disabled{% endif %}
@@ -14,7 +14,7 @@
 {% endmacro %}
 
 {% macro input_number(Name,name, value='',disabled=False) %}
-	<div class="form-floating mb-3">
+	<div class="form-floating mb-1">
 		<input type="number" class="form_input form-control myinputs" id="{{name}}"
 			placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} 
 			{% if disabled %}disabled{% endif %}
@@ -23,15 +23,27 @@
 	</div>	
 {% endmacro %}
 
+{% macro input_currency(Name,name, value='',disabled=False) %}
+	<div class="form-floating mb-1">
+		<input class="form_input form-control myinputs" type="text" name="{{name}}" 
+				id="{{name}}" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" 
+				{% if value %}value = "{{value}}" {% endif %}
+				data-type="currency" placeholder="$1,000,000.00"
+				{% if disabled %}disabled{% endif %}
+		>
+		<label for="{{name}}" class="form-label">{{Name}}</label>
+	</div>	
+{% endmacro %}
+
 {% macro text_area(Name,name, value='') %}
-	<div class="form-floating mb-3">
+	<div class="form-floating mb-1">
 		<textarea class="form-control" placeholder="-" name="{{name}}" id="{{name}}" rows="4">{% if value %}{{value}}{% endif %}</textarea>
 		<label for="{{name}}" class="form-label">{{Name}}</label>
 	</div>		
 {% endmacro %}
 
 {% macro date_input(Name,name, value='') %}
-	<div class="form-floating mb-3">
+	<div class="form-floating mb-1">
 		<input 	type="date" class="form-control myinputs" id="{{name}}" name="{{name}}" autocomplete="off" 
 			{% if value %}value = "{{value}}" {% endif %}
 		/>
@@ -39,14 +51,20 @@
 	</div>		
 {% endmacro %}
 
-{% macro select2(Name,name,all_obj,value='',disabled=False) %}
-	<div class="form-floating mb-3">
+{% macro select2(Name,name,all_obj,value='',disabled=False,use_pk=True) %}
+	<div class="form-floating mb-1">
 		<div class="select2_container double_select2">
 			<select name="{{name}}" id="{{name}}" class="js-example-basic-single js-states form-control">
 				<option disabled selected value="-1">
 					{{Name}}</option>
 				{% for obj in all_obj %}
-					<option value="{% if obj.id %}{{obj.id}}{% else %}{{obj}}{% endif %}" 
+					<option 
+					value="
+						{% if obj.id and use_pk%}
+							{{obj.id}}
+						{% else %}
+							{{obj}}
+						{% endif %}" 
 						{% if value and value == obj %}
 							selected
 						{% endif %}

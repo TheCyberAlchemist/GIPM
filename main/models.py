@@ -23,10 +23,12 @@ class vendor_details(models.Model):
 
 class item_description(models.Model):
 	'class of items which shoud be addable in for the indent'
-	description = models.TextField(null=True, blank=True)
+	description = models.TextField(unique=True)
 	def __str__(self):
-		return self.description
-
+		if self.description:
+			return str(self.description)
+		else:
+			return ""
 
 
 class order(models.Model):
@@ -76,7 +78,7 @@ class work_order(order):
 	''' Class for incoming work orders '''
 	# PO = models.ForeignKey(purchase_order,on_delete=models.CASCADE)
 	# party_name = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
-	wo_number = models.CharField(max_length=200,null=True, blank=True)
+	wo_number = models.CharField(max_length=200,null=True, blank=True,unique=True)
 	vendor_id = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
 	incoming_po_number = models.CharField(max_length=200,null=True, blank=True)
 	incoming_po_date = models.DateField(null=True, blank=True)
@@ -149,20 +151,25 @@ class indent(order):
 
 	def get_weight(self):
 		''' the function returning the weights respective to material_shape'''
+		round_no = lambda x: round(x,3)
 		T = self.thickness
 		S = self.size
 		W = self.width
 		ID = self.internal_diameter
 		Q = self.quantity
 		if self.material_shape == "Round":
-			return (S*S*T*0.00000616)*Q
+			return round_no((S*S*T*0.00000616)*Q)
 		elif self.material_shape == "Plate" or self.material_shape == "SQ Bar":
-			return (S*T*W*0.00000786)*Q
+			return round_no((S*T*W*0.00000786)*Q)
 		elif self.material_shape == "Pipe":
-			return ((S*S - ID*ID)*T*0.00000616)*Q
+			return round_no(((S*S - ID*ID)*T*0.00000616)*Q)
 		elif self.material_shape == "Labour" or self.material_shape == "BF":
 			return Q
 		elif self.material_shape in ["ISMC","ISMB","ISA","Bolt","Nut"]:
 			w_pmm = standard_weight.objects.filter(material_shape=shape,size=S).first().weight_pmm
-			return w_pmm * T
-
+			return round_no(w_pmm * T)
+		return None
+	def __str__(self):
+		if self.material_shape:
+			return self.material_shape
+	

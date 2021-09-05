@@ -9,17 +9,64 @@
 {%block scripts%}
     <script type="text/javascript">
         $(document).ready(function() {
-			$("#example").DataTable({})
-
+			AjaxDatatableViewUtils.initialize_table(
+                $("#example"),
+                "../datatable/",
+                {
+					"scrollX": true,
+					"columnDefs" : [
+						
+						{responsivePriority: 2, targets: 1},
+						{
+							targets : [2,7,8,9],
+							className : "all",
+						}
+					],
+                    processing: false,
+                    autoWidth: false,
+                    full_row_select: false,
+                    scrollX: false,
+                    dom: "<'row'<'col-sm-12 col-md-8'l><'col-sm-12 col-md-4 p-1 bg-light rounded rounded-pill shadow-sm mb-4 search_div'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                },
+                {
+                }
+            );
+			let faculty_last_searched = false;
+			$("#example").on("draw.dt", function () {
+				let initial_value = $(".search_div input").val();
+				$(".search_div").html(`
+					<div id="faculty_details_filter" class="dataTables_filter">
+						<div class="input-group">
+							<input type="search" placeholder="Global Search" aria-describedby="button-addon1" 
+								class="form-control form-control-sm border-0 bg-light" id="global_search_box_faculty"
+								style="box-shadow:none;outline:none" aria-controls="faculty_details">
+							<div class="input-group-append">
+								<button id="button-addon1" type="submit" class="btn btn-link text-primary" style="box-shadow:none;outline:none;padding:0;z-index:20"><i class="fa fa-search" style="transform:translateX(-10px)"></i></button>
+							</div>
+						</div>
+					</div>`
+				);
+				$(".search_div input").val(initial_value)
+				if (faculty_last_searched)
+					$(".search_div input").focus();
+				$(".datatable-column-filter-row input").on("input", function () {
+					faculty_last_searched = false;
+				});
+				$("#global_search_box_faculty").on("input", function () {
+					faculty_last_searched = true;
+					var table = $.fn.dataTable.Api($("#example"));
+					table.search($(this).val()).draw();
+				});
+			});
         });
     </script>
 {% endblock %}
 
 {% block content %}
-	<div class="main_content">
-		<div class="row" style="padding-top: 6rem">
-			<a href="{{url ('add_po')}}" target="_blank">
-				<button class="btn btn-success w-100">
+	<div class="main_content h-100">
+        <div class="container-fluid table_container" style="padding-top: 6rem">
+			<a href="{{url ('add_po')}}" class="d-flex justify-content-center">
+				<button class="btn btn-success w-75">
 					Add PO
 				</button>
 			</a>
@@ -28,62 +75,20 @@
 					<div class="card-body" style="border-radius: 1rem;">
 						<div class="row text-center">
 							<div class="col-lg-12 col-sm-12">
-								<div class="h3 text-center">Purchase Orders List</div>
-								<a style="display: none;" id="del" onclick="delete_entries()" >
+								<div class="h3 text-center">Purchase Order List</div>
+								<a style="display: none;" id="del" onclick="delete_entries(false)" >
 									<img class="input_icons" src="{{static ('Images/trash.png')}}" alt="Delete">
 								</a>
 							</div>
 							<!-- <div class="col-lg-2 col-sm-12">
 							</div> -->
 						</div>
-						<div class="table">
-							<table class="table row-table nowrap responsive compact mb-0 rounded text-center" id="example">
-								<thead class="thead">
-									<tr>
-										<th class=""><i class="fas fa-hashtag"></i></th>
-										<th class="">PO Number</th>
-										<th class="">PO Vendor</th>
-										<th class="">Date</th>
-										<th class="">Completed</th>
-										<th class="">Indent List</th>
-										<th class="">Edit</th>
-										<th class=" text-center">
-											<div class="form-check" onclick="checkAll();">
-												<input class="form-check-input" type="checkbox" value="parent"
-													id="parent" name="parent">
-											</div>
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{% for po in all_PO %}
-										<tr>
-											<td class="">{{loop.index}}</td>
-											<td class="">{{po.po_number}}</td>
-											<td class="">{{po.vendor_id}}</td>
-											<td class="">{%if po.po_date %}{{po.po_date.strftime('%d-%m-%Y')}}{%else%} -- {%endif%}</td>
-											<td class="">{% if po.is_complete %}✅{% else %}❌{% endif %}</td>
-											<td class="">
-												<a href="{{url ('show_indent_table' ,args=[po.pk])}}" target="_blank">
-													<img src="../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
-												</a>
-											</td>
-											<td class="">
-												<a href="{{url ('update_po' ,args=[po.id])}}" target="_blank">
-														<img src="../../static/Images/editing.png" style="width:19px;height:19px" alt="edit">
-												</a>
-											</td>
-											<td class="">
-												<div class="form-check" onclick="checkSelected()">
-													<input class="form-check-input del_input" type="checkbox"
-													id="{{loop.index}}" name="del" value="{{po.id}}" input_name="{{po}}">
-												</div>
-											</td>
-										</tr>
-									{% endfor %}
-								</tbody>
-							</table>
-						</div>
+						<div class="table-responsive">
+							<div class="table">
+								<table class="table datatables table-centered fw-bold text-center table-nowrap mb-0 rounded" id="example">
+								</table>
+							</div>
+						<div class="table-responsive">
 					</div>
 				</div>
 			</div>

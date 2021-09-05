@@ -20,6 +20,12 @@
 	<link type="text/css" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap')}}" rel="stylesheet"/>
 	<link type="text/css" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 	<style>
+        .text-center {
+            text-align: left !important;
+        }
+        .accordion-item h3,.h3{
+            text-align: center !important;
+        }
 		.input_icons {
 			position: absolute;
 			top: 17px;
@@ -27,59 +33,59 @@
 			height: 30px;
 			width: 30px;
 		}
+        
 		.search_box .form-control:focus {
-  box-shadow: none !important;
-  outline: none !important;
-  border: none !important;
-}
+            box-shadow: none !important;
+            outline: none !important;
+            border: none !important;
+        }
 
-.search_box .form-control {
-  box-shadow: none !important;
-  border: 0 !important;
-  height: 30px !important;
-  margin-top: 5px !important;
-}
+        .search_box .form-control {
+            box-shadow: none !important;
+            border: 0 !important;
+            height: 30px !important;
+            margin-top: 5px !important;
+        }
 
-.search_box .form-control-underlined {
-  border-width: 0;
-  border-bottom-width: 1px;
-  border-radius: 0;
-  padding-left: 0;
-}
+        .search_box .form-control-underlined {
+        border-width: 0;
+        border-bottom-width: 1px;
+        border-radius: 0;
+        padding-left: 0;
+        }
 
-.search_box .form-control::-moz-placeholder {
-  font-size: 0.95rem;
-  color: #aaa;
-  font-style: italic;
-}
+        .search_box .form-control::-moz-placeholder {
+        font-size: 0.95rem;
+        color: #aaa;
+        font-style: italic;
+        }
 
-.search_box .form-control:-ms-input-placeholder {
-  font-size: 0.95rem;
-  color: #aaa;
-  font-style: italic;
-}
+        .search_box .form-control:-ms-input-placeholder {
+        font-size: 0.95rem;
+        color: #aaa;
+        font-style: italic;
+        }
 
-.search_box .form-control::placeholder {
-  font-size: 0.95rem;
-  color: #aaa;
-  font-style: italic;
-}
+        .search_box .form-control::placeholder {
+        font-size: 0.95rem;
+        color: #aaa;
+        font-style: italic;
+        }
 
-.search_container {
-  width: 200px !important;
-  height: 25px !important;
-}
+        .search_container {
+        width: 200px !important;
+        height: 25px !important;
+        }
 
-.search_container .input-group .input-group-append .btn {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
+        .search_container .input-group .input-group-append .btn {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        outline: none !important;
+        box-shadow: none !important;
+        }
+        
 	</style>
     
-
 	{% block css %} 
 	{% endblock %} 
 </head>
@@ -109,6 +115,7 @@
 <script type="text/javascript" src="{{ static ('datatables/utils.js') }}"></script>
 <script type="text/javascript" src="{{ static ('Bundles/js/datepicker.js') }}"></script>
 <script type="application/javascript" src="{{static ('datatables/ajax_setup.js')}}"></script>
+<script type="application/javascript" src="{{static ('form.js')}}"></script>
 {% block scripts %}
 {% endblock %}
 {# script block for all the scripts of the page #}

@@ -17,19 +17,27 @@ from django.contrib import admin
 from django.urls import path,re_path
 from main.views import *
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    re_path(r'indent/table/(?P<wo_id>\d+)/',indent_table_page.as_view(),name="show_indent_table"),
-    re_path(r'indent/table/get_indent_details/',indent_table.as_view(),name="get_indent_details"),
-    re_path(r'^indent/(?P<wo_id>\d+)/form/$',indent_form.as_view(),name="add_indent_form"),
-    re_path(r'^indent/form/(?P<indent_id>\d+)/$',indent_form.as_view(),name="update_indent_form"),
-    
-    re_path(r'^po/table/$',PO_table.as_view(),name="show_po"),
-    re_path(r'^po/form/$',PO_form.as_view(),name="add_po"),
-    re_path(r'^po/form/(?P<po_id>\d+)/$',PO_form.as_view(),name="update_po"),
-
+    # re_path('',WO_table.as_view(),name="show_wo_home"),    
+    path('',home_page,name="home_page"),
     re_path(r'^wo/table/$',WO_table.as_view(),name="show_wo"),
     re_path(r'^wo/datatable/$',WO_datatable.as_view(),name="show_wo_datatable"),
     re_path(r'^wo/form/$',WO_form.as_view(),name="add_wo"),
     re_path(r'^wo/form/(?P<wo_id>\d+)/$',WO_form.as_view(),name="update_wo"),
+
+    path('admin/', admin.site.urls),
+    re_path(r'^wo/(?P<wo_id>\d+)/indent/table/',indent_table_page.as_view(),name="show_indent_table"),
+    re_path(r'^wo/(?P<wo_id>\d+)/indent/datatable/',indent_table.as_view(),name="get_indent_details"),
+    re_path(r'^wo/(?P<wo_id>\d+)/indent/form/$',indent_form.as_view(),name="add_indent_form"),
+    re_path(r'^wo/(?P<wo_id>\d+)/indent/form/(?P<indent_id>\d+)/$',indent_form.as_view(),name="update_indent_form"),
+    
+    re_path(r'^po/table/$',PO_table.as_view(),name="show_po"),
+    re_path(r'^po/datatable/$',PO_datatable.as_view(),name="show_po_datatable"),
+    re_path(r'^po/form/$',PO_form.as_view(),name="add_po"),
+    re_path(r'^po/form/(?P<po_id>\d+)/$',PO_form.as_view(),name="update_po"),
+
+    # re_path(r'^vendor/table/$',WO_table.as_view(),name="show_vendor"),
+    # re_path(r'^vendor/datatable/$',WO_datatable.as_view(),name="show_vendor_datatable"),
+    # re_path(r'^vendor/form/$',WO_form.as_view(),name="add_wo"),
+    # re_path(r'^vendor/form/(?P<wo_id>\d+)/$',WO_form.as_view(),name="update_vendor"),
 
 ]

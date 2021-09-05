@@ -28,7 +28,10 @@
 			$("#vendor_name").select2();
 			$("#work_order_id").select2();
 			$("#material_shape").select2();
-			$("#item_description").select2();
+			$("#item_description").select2({
+				tags: true,
+    			tokenSeparators: [',']
+			});
         });
     </script>
 {% endblock %}
@@ -42,91 +45,76 @@
 						<div class="accordion accordion-flush" id="accordionFlushExample">
 							<div class="accordion-item">
 								<h2 class="accordion-header" id="flush-headingOne">
-									<h3>{% if update %}Update{% else %}Add{% endif %} Indent {% if success %}✅{% endif %}</h3>
+									<h3>{% if update %}Update{% else %}Add{% endif %} Indent in {{wo}}{% if success %}✅{% endif %}</h3>
 								</h2>
 									<div class="accordion-body">
 										<form class="myform" method = "POST">
 											{{csrf_input}}
 											<!-- <img class="form_hider" src="{{static ('admin/details/img/close.png')}}" alt="hide"> -->
-											<div id="first_page" style="display: block;">
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.select2("Material Shape","material_shape",["Round","Plate","SQ Bar","Pipe","BF","Labour","ISMC","ISMB","ISA","Bolt","Nut"],update.material_shape)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_text("Material Type","material_type",update.material_type)}}
-													</div>
-												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.text_area("Comment","comment",update.comment)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.select2("Item Description","item_description",all_item_description,update.item_description)}}
-													</div>
-												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Size","size",update.size)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Thickness","thickness",update.thickness)}}
-													</div>
-												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Width","width",update.width)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Internal Diameter","internal_diameter",update.internal_diameter)}}
-													</div>
+											<div class="row mb-1 mx-lg-5 mx-sm-0">
+												<div class="col-lg-12 col-md-12 col-sm-12">
+													{{macros.select2("Item Description","item_description",all_item_description,update.item_description,use_pk=False)}}
 												</div>
 											</div>
-											<div id="second_page" style="display: block;">
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-12 col-md-12 col-sm-12">
-														{{macros.text_area("Order Description","description",update.description)}}
-													</div>
+											<div class="row mb-1 mx-lg-5 mx-sm-0">
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.select2("Material Shape","material_shape",["Round","Plate","SQ Bar","Pipe","BF","Labour","ISMC","ISMB","ISA","Bolt","Nut"],update.material_shape)}}
 												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Quantity","quantity",update.quantity)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_text("Unit","unit",update.unit)}}
-													</div>
+												<div class="col-lg-6 col-md-12 col-sm-12">
+													{{macros.input_text("Material Type","material_type",update.material_type)}}
 												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Value","value",update.value)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Tax","tax",update.tax)}}
-													</div>
+
+											</div>
+											<div class="row mb-1 mx-lg-5 mx-sm-0">
+												<div class="col-lg-3 col-md-12 col-sm-12">
+													{{macros.input_number("Diameter/Length","size",update.size)}}
 												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Discount","discount",update.discount)}}
-													</div>
-													<div class="col-lg-6 col-md-12 col-sm-12">
-														{{macros.input_number("Other Expanses","other_expanses",update.other_expanses)}}
-													</div>
+												<div class="col-lg-3 col-md-12 col-sm-12">
+													{{macros.input_number("Thickness","thickness",update.thickness)}}
 												</div>
-												<div class="row mb-3 mx-lg-5 mx-sm-0">
-													<div class="container mt-4" style="width:80%;">
-														<button type="submit" class="btn btn-outline-success"
-															style="width:100%">Submit</button>
-													</div>
+												<div class="col-lg-3 col-md-12 col-sm-12">
+													{{macros.input_number("Width","width",update.width)}}
+												</div>
+												<div class="col-lg-3 col-md-12 col-sm-12">
+													{{macros.input_number("Internal Diameter","internal_diameter",update.internal_diameter)}}
 												</div>
 											</div>
-											<div class="container text-center">
-												<div class="pagination_container ">
-													<nav style="transform: translateX(45%)"> 
-														<ul class="pagination">
-															<li class="page-item" ><a class="page-link" id="first">1</a></li>
-															<li class="page-item" ><a class="page-link" id="second">2</a></li>
-														</ul>
-													</nav>
+											<div class="row mb-1 mx-lg-5 mx-sm-0">
+												<div class="col-lg-12 col-md-12 col-sm-12">
+													{{macros.text_area("Order Description","description",update.description)}}
+												</div>
+											</div>
+											<div class="row mb-1 mx-lg-5 mx-sm-0">
+												<div class="col-lg-4 col-md-12 col-sm-12">
+													{{macros.input_number("Quantity","quantity",update.quantity)}}
+												</div>
+												<div class="col-lg-4 col-md-12 col-sm-12">
+													{{macros.input_text("Unit","unit",update.unit)}}
+												</div>
+												<div class="col-lg-4 col-md-12 col-sm-12">
+													{{macros.input_number("Value","value",update.value)}}
+												</div>
+											</div>
+											<div class="row mb-1 mx-lg-5 mx-sm-0">
+												<div class="col-lg-4 col-md-12 col-sm-12">
+													{{macros.input_number("Tax","tax",update.tax)}}
+												</div>
+												<div class="col-lg-4 col-md-12 col-sm-12">
+													{{macros.input_number("Discount","discount",update.discount)}}
+												</div>
+												<div class="col-lg-4 col-md-12 col-sm-12">
+													{{macros.input_number("Other Expanses","other_expanses",update.other_expanses)}}
+												</div>
+											</div>
+											<div class="row mb-1 mx-lg-5 mx-sm-0">
+												<div class="col-lg-12 col-md-12 col-sm-12">
+													{{macros.text_area("Comment","comment",update.comment)}}
+												</div>
+											</div>
+											<div class="row mb-1 mx-lg-5 mx-sm-0">
+												<div class="container mt-4" style="width:80%;">
+													<button type="submit" class="btn btn-outline-success"
+														style="width:100%">Submit</button>
 												</div>
 											</div>
 										</form>

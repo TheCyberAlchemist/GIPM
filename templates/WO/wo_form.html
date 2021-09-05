@@ -47,80 +47,64 @@
 								<div class="accordion-body">
 									<form class="myform" method = "POST">
 										{{csrf_input}}
-										<div id="first_page" style="display: block;">
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.input_text("WO Number","wo_number",max_len=200,value=update.wo_number)}}
-												</div>
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.text_area("Comment","comment",value=update.comment)}}
-												</div>
+										<div class="row mb-1 mx-lg-5 mx-sm-0">
+											<div class="col-lg-4 col-md-12 col-sm-12">
+												{{macros.input_text("WO Number","wo_number",max_len=200,value=update.wo_number)}}
 											</div>
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-12 col-md-12 col-sm-12">
-													{{macros.select2("Vendor Name","vendor_id",all_vendors,value=update.vendor_id)}}
-												</div>
+											<div class="col-lg-4 col-md-12 col-sm-12">
+												{{macros.input_text("PO Number","incoming_po_number",max_len=200,value=update.incoming_po_number)}}
 											</div>
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.date_input("PO Date","po_date",value=update.po_date)}}
-												</div>
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.input_text("PO Number","po_number",max_len=200,value=update.po_number)}}
-												</div>
-											</div>
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-12 col-md-12 col-sm-12">
-													{{macros.text_area("Description","description",value=update.description)}}
-												</div>
-											</div>
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													<input type="checkbox" id="is_complete" name="is_complete" {% if update and update.is_complete %}checked{% endif %}>
-													<label for="is_complete">Is Complete</label>
-												</div>
+											<div class="col-lg-4 col-md-12 col-sm-12">
+												{{macros.date_input("PO Date","incoming_po_date",value=update.incoming_po_date)}}
 											</div>
 										</div>
-										<div id="second_page" style="display: block;">
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.input_number("Quantity","quantity",value=update.quantity)}}
-												</div>
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.input_text("Unit","unit",value=update.unit)}}
-												</div>
-											</div>
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.input_number("Value","value",value=update.value)}}
-												</div>
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.input_number("Tax","tax",value=update.tax)}}
-												</div>
-											</div>
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.input_number("Discount","discount",value=update.discount)}}
-												</div>
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.input_number("Other Expanses","other_expanses",value=update.other_expanses)}}
-												</div>
-											</div>
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="container mt-4" style="width:80%;">
-													<button type="submit" class="btn btn-outline-success"
-													style="width:100%">Submit</button>
-												</div>
+										<div class="row mb-1 mx-lg-5 mx-sm-0">
+											<div class="col-lg-12 col-md-12 col-sm-12">
+												{{macros.select2("Vendor Name","vendor_id",all_vendors,value=update.vendor_id)}}
 											</div>
 										</div>
-										<div class="container text-center">
-											<div class="pagination_container ">
-												<nav style="transform: translateX(45%)"> 
-													<ul class="pagination">
-														<li class="page-item" ><a class="page-link" id="first">1</a></li>
-														<li class="page-item" ><a class="page-link" id="second">2</a></li>
-													</ul>
-												</nav>
+										<div class="row mb-1 mx-lg-5 mx-sm-0">
+											<div class="col-lg-12 col-md-12 col-sm-12">
+												{{macros.text_area("Description","description",value=update.description)}}
+											</div>
+										</div>
+										<div class="row mb-1 mx-lg-5 mx-sm-0">
+											<div class="col-lg-3 col-md-12 col-sm-12">
+												{{macros.input_number("Quantity","quantity",value=update.quantity)}}
+											</div>
+											<div class="col-lg-3 col-md-12 col-sm-12">
+												{{macros.input_text("Unit","unit",value=update.unit)}}
+											</div>
+											<div class="col-lg-6 col-md-12 col-sm-12">
+												{{macros.input_currency("Value","value",value=update.value)}}
+											</div>
+										</div>
+										<div class="row mb-1 mx-lg-5 mx-sm-0">
+											<div class="col-lg-3 col-md-12 col-sm-12">
+												{{macros.input_number("Tax","tax",value=update.tax)}}
+											</div>
+											<div class="col-lg-3 col-md-12 col-sm-12">
+												{{macros.input_number("Discount","discount",value=update.discount)}}
+											</div>
+											<div class="col-lg-6 col-md-12 col-sm-12">
+												{{macros.input_number("Other Expanses","other_expanses",value=update.other_expanses)}}
+											</div>
+										</div>
+										<div class="row mb-1 mx-lg-5 mx-sm-0">
+											<div class="col-lg-12 col-md-12 col-sm-12">
+												{{macros.text_area("Comment","comment",value=update.comment)}}
+											</div>
+										</div>
+										<div class="row mb-1 mx-lg-5 mx-sm-0">
+											<div class="col-lg-6 col-md-12 col-sm-12">
+												<input type="checkbox" id="is_complete" name="is_complete" {% if update and update.is_complete %}checked{% endif %}>
+												<label for="is_complete">Is Complete</label>
+											</div>
+										</div>										
+										<div class="row mb-1 mx-lg-5 mx-sm-0">
+											<div class="container mt-4" style="width:80%;">
+												<button type="submit" class="btn btn-outline-success"
+												style="width:100%">Submit</button>
 											</div>
 										</div>
 									</form>
