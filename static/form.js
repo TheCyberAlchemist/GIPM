@@ -8,12 +8,17 @@ $(document).ready(function() {
 			formatCurrency($(this), "blur");
 		},
 	});
-
 })
 
-function formatNumber(n) {
-	// format number 1000000 to 1,234,567
-	return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function formatNumber(x) {
+	x = x.replace(/\D/g, "")
+	var lastThree = x.substring(x.length-3);
+    var otherNumbers = x.substring(0,x.length-3);
+    if(otherNumbers != ''){
+        lastThree = ',' + lastThree;
+	}
+    var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+	return res
 }
 
 function formatCurrency(input, blur) {
@@ -21,6 +26,7 @@ function formatCurrency(input, blur) {
 	// and puts cursor back in right position.
 
 	// get input value
+	// console.log(input)
 	var input_val = input.val();
 
 	// don't validate empty input
@@ -60,13 +66,13 @@ function formatCurrency(input, blur) {
 		right_side = right_side.substring(0, 2);
 
 		// join number by .
-		input_val = "$" + left_side + "." + right_side;
+		input_val = "₹" + left_side + "." + right_side;
 	} else {
 		// no decimal entered
 		// add commas to number
 		// remove all non-digits
 		input_val = formatNumber(input_val);
-		input_val = "$" + input_val;
+		input_val = "₹" + input_val;
 
 		// final formatting
 		if (blur === "blur") {

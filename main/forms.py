@@ -19,3 +19,13 @@ class add_WO(ModelForm):
 	class Meta:
 		model = work_order
 		fields = '__all__'
+
+class add_vendor(ModelForm):
+	class Meta:
+		model = vendor_details
+		fields = '__all__'
+
+class add_grn(ModelForm):
+	class Meta:
+		model = grn
+		fields = '__all__'

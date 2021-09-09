@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% import "macros.jinja" as macros %}
-{% block title%} {% if update %}Update{% else %}Add{% endif %} WO 
+{% block title%}Home
 {% endblock %}
 
 {% block css%}
@@ -19,23 +19,36 @@
 	<div class="main_content">
 		<div class="row" style="padding-top: 6rem">
 			<div class="col-12 mb-4" style="width:80%;margin: 0 auto;">
-				<a href="{{url ('show_wo')}}" class="d-flex justify-content-center text-decoration-none">
+				<a href="{{url ('show_wo')}}" target="_blank" class="d-flex justify-content-center text-decoration-none">
 					<button class="btn btn-success w-75">
 						Work Order Table
 					</button>
 				</a>
 				<br>
-				<a href="/admin" class="d-flex justify-content-center text-decoration-none">
+				<a href="{{url ('show_stock')}}" target="_blank" class="d-flex justify-content-center text-decoration-none">
 					<button class="btn btn-success w-75">
-						Admin Page
+						Check Stock
 					</button>
 				</a>
 				<br>
-				<a href="/admin" class="d-flex justify-content-center text-decoration-none">
+				<a href="{{url ('show_vendor')}}" target="_blank" class="d-flex justify-content-center text-decoration-none">
+					<button class="btn btn-success w-75">
+						Vendor Details Table
+					</button>
+				</a>
+				<br>
+				<a href="/admin" target="_blank" class="d-flex justify-content-center text-decoration-none">
 					<button class="btn btn-success w-75">
 						Purchase Order Table
 					</button>
 				</a>
+				<br>
+				<a href="/admin" target="_blank" class="d-flex justify-content-center text-decoration-none">
+					<button class="btn btn-success w-75">
+						Admin Page
+					</button>
+				</a>
+
 			</div>
 		</div>
 	</div>

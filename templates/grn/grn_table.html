@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% import "macros.jinja" as macros %}
-{% block title%} WO List
+{% block title%} GRN List
 {% endblock %}
 
 {% block css%}
@@ -9,6 +9,7 @@
 {%block scripts%}
     <script type="text/javascript">
         $(document).ready(function() {
+			
 			AjaxDatatableViewUtils.initialize_table(
                 $("#example"),
                 "../datatable/",
@@ -17,7 +18,7 @@
 					"columnDefs" : [
 						{responsivePriority: 2, targets: 1},
 						{
-							targets : [2,7,8,9],
+							//targets : [2,7,8,9],
 							className : "all",
 						}
 					],
@@ -64,9 +65,9 @@
 {% block content %}
 	<div class="main_content h-100">
         <div class="container-fluid table_container" style="padding-top: 6rem">
-			<a href="{{url ('add_wo')}}" class="d-flex justify-content-center text-decoration-none">
+			<a href="{{url ('add_grn')}}" class="d-flex justify-content-center text-decoration-none">
 				<button class="btn btn-success w-75">
-					Add WO
+					Add GRN
 				</button>
 			</a>
 			<div class="container-fluid p-2 table_container">
@@ -74,7 +75,7 @@
 					<div class="card-body" style="border-radius: 1rem;">
 						<div class="row text-center">
 							<div class="col-lg-12 col-sm-12">
-								<div class="h3 text-center">Work Order List</div>
+								<div class="h3 text-center">GRN List</div>
 								<a style="display: none;" id="del" onclick="delete_entries(false)" >
 									<img class="input_icons" src="{{static ('Images/trash.png')}}" alt="Delete">
 								</a>
@@ -89,8 +90,8 @@
 							</div>
 						</div>
 					</div>
-				</div>
-			</div>
-        </div>
-    </div>
+        		</div>
+    		</div>
+		</div>
+	</div>
 {% endblock %}

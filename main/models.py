@@ -11,6 +11,7 @@ class vendor_details(models.Model):
 	acc_no = models.TextField(null=True, blank=True)
 	ifsc_code = models.TextField(null=True, blank=True)
 	branch = models.TextField(null=True, blank=True)
+	comment = models.TextField(null=True, blank=True)
 
 	def __str__(self):
 		return f"{self.vendor_name} ({self.contact_person})"
@@ -114,7 +115,6 @@ class purchase_order(models.Model):
 			super(purchase_order, self).save(*args, **kwargs)
 
 
-
 class standard_weight(models.Model):
 	material_shape = models.TextField(null=True, blank=True)
 	size = models.FloatField(null=True, blank=True)
@@ -134,7 +134,7 @@ class indent(order):
 	WO = models.ForeignKey(work_order,on_delete=models.CASCADE)
 	# vendor_id = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
 	# dropdown of vendor class 
-	
+	recived_quantity = models.IntegerField(default=0,null=True, blank=True)
 	recived = models.BooleanField(default=False)
 	comment = models.TextField(null=True, blank=True)
 	material_shape = models.TextField(null=True, blank=True)
@@ -142,7 +142,7 @@ class indent(order):
 	# Round,Plate,SQ Bar,Pipe,BF,Labour,ISMC,ISMB,ISA,Bolt,Nut ...
 
 	material_type = models.TextField(null=True, blank=True)
-	item_description = models.ForeignKey(item_description,on_delete=models.SET_NULL,null=True, blank=True)
+	item_description = models.ForeignKey(item_description,on_delete=models.CASCADE,null=True, blank=True)
 	# dropdown for all objects
 	size = models.FloatField(null=True, blank=True)
 	thickness = models.FloatField(null=True, blank=True)
@@ -169,7 +169,65 @@ class indent(order):
 			w_pmm = standard_weight.objects.filter(material_shape=shape,size=S).first().weight_pmm
 			return round_no(w_pmm * T)
 		return None
-	def __str__(self):
-		if self.material_shape:
-			return self.material_shape
 	
+	def __str__(self):
+		if self.id:
+			return f"{self.pk} [{self.item_description}]"
+
+	def get_remaining_quantity(self):
+		return self.quantity - self.recived_quantity
+
+	def save(self,*args, **kwargs):
+		if self.recived_quantity == self.quantity:
+			self.recived = True
+		super(indent, self).save(*args, **kwargs)
+
+class grn(order):
+	invoice_no = models.CharField(max_length=200,null=True, blank=True,unique=True)
+	indent_id = models.ForeignKey(indent,on_delete=models.SET_NULL,null=True, blank=True)
+	grn_date = models.DateField(null=True, blank=True)
+	def __str__(self):
+		if self.invoice_no:
+			return f"{self.invoice_no}"
+		else:
+			return str(self.pk)
+	def get_save_messages(self,quantity):
+		'returns the respective string checking the quantity recived '
+		quantity = int(quantity)
+		if quantity > self.indent_id.quantity:
+			remaining = quantity - self.indent_id.quantity
+			return f"Extra units received! {remaining} units stored in STOCK."
+		return "Saved GRN and updated indent."
+
+	def save(self,*args, **kwargs):
+		super(grn, self).save(*args, **kwargs)
+		indent_id = self.indent_id
+		if self.quantity > indent_id.get_remaining_quantity():
+			# if the quantity received is more then the indent 
+			# then create an indent and save it in the STOCK wo
+			stock_wo = work_order.objects.all().get(wo_number="STOCK")
+			from django.forms import model_to_dict
+			kwargs = model_to_dict(indent_id, exclude=['id',"order_ptr","WO","PO"])
+			kwargs["item_description_id"] = kwargs.pop("item_description")
+			stock_indent = indent.objects.filter(
+				item_description_id=kwargs["item_description_id"],
+				material_shape=kwargs["material_shape"],
+				WO = stock_wo
+			).first()
+			extra_quantity = self.quantity - indent_id.get_remaining_quantity()
+			if stock_indent:
+				# if same indent is in stock
+				print("same found",stock_indent)
+				stock_indent.quantity += extra_quantity
+				stock_indent.save()
+			else:
+				# if same indent is not in stock
+				new_indent = indent(**kwargs)
+				new_indent.WO = stock_wo
+				new_indent.quantity = extra_quantity
+				new_indent.save()
+			indent_id.recived_quantity = indent_id.get_remaining_quantity()
+			indent_id.save()
+		else:
+			indent_id.recived_quantity = self.quantity
+			indent_id.save()

@@ -29,15 +29,23 @@ urlpatterns = [
     re_path(r'^wo/(?P<wo_id>\d+)/indent/datatable/',indent_table.as_view(),name="get_indent_details"),
     re_path(r'^wo/(?P<wo_id>\d+)/indent/form/$',indent_form.as_view(),name="add_indent_form"),
     re_path(r'^wo/(?P<wo_id>\d+)/indent/form/(?P<indent_id>\d+)/$',indent_form.as_view(),name="update_indent_form"),
+    re_path(r'^wo/stock/$',show_stock,name="show_stock"),
     
+
     re_path(r'^po/table/$',PO_table.as_view(),name="show_po"),
     re_path(r'^po/datatable/$',PO_datatable.as_view(),name="show_po_datatable"),
     re_path(r'^po/form/$',PO_form.as_view(),name="add_po"),
     re_path(r'^po/form/(?P<po_id>\d+)/$',PO_form.as_view(),name="update_po"),
 
-    # re_path(r'^vendor/table/$',WO_table.as_view(),name="show_vendor"),
-    # re_path(r'^vendor/datatable/$',WO_datatable.as_view(),name="show_vendor_datatable"),
-    # re_path(r'^vendor/form/$',WO_form.as_view(),name="add_wo"),
-    # re_path(r'^vendor/form/(?P<wo_id>\d+)/$',WO_form.as_view(),name="update_vendor"),
+    re_path(r'^vendor/table/$',vendor_table.as_view(),name="show_vendor"),
+    re_path(r'^vendor/datatable/$',vendor_datatable.as_view(),name="show_vendor_datatable"),
+    re_path(r'^vendor/form/$',vendor_form.as_view(),name="add_vendor"),
+    re_path(r'^vendor/form/(?P<vendor_id>\d+)/$',vendor_form.as_view(),name="update_vendor"),
+
+    re_path(r'^grn/table/$',grn_table.as_view(),name="show_grn"),
+    re_path(r'^grn/datatable/$',grn_datatable.as_view(),name="show_grn_datatable"),
+    re_path(r'^indent/(?P<indent_id>\d+)/grn/form/$',grn_form.as_view(),name="add_indent_grn"),
+    re_path(r'^grn/form/$',grn_form.as_view(),name="add_grn"),
+    re_path(r'^grn/form/(?P<grn_id>\d+)/$',grn_form.as_view(),name="update_grn"),
 
 ]

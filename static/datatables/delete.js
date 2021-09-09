@@ -65,7 +65,7 @@ function delete_entries(reload = true) {
 		  })
 		  swalWithBootstrapButtons.fire({
 			title: `Are you sure?`,
-			html:`You won't be able to revert this!<br><ul>`+delete_message+`</ul>`,
+			html:`You won't be able to revert this!<br><ul class="text-center">`+delete_message+`</ul>`,
 			icon: 'warning',
 			showCancelButton: true,
 			confirmButtonText: 'No, cancel!',

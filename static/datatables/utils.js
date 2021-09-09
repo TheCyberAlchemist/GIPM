@@ -385,30 +385,6 @@ window.AjaxDatatableViewUtils = (function() {
                 dom: '<"toolbar">lrftip',
                 language: _options.language,
                 full_row_select: false,
-                // language: {
-                //     "decimal":        "",
-                //     "emptyTable":     "Nessun dato disponibile per la tabella",
-                //     "info":           "Visualizzate da _START_ a _END_ di _TOTAL_ entries",
-                //     "infoEmpty":      "Visualizzate da 0 a 0 di 0 entries",
-                //     "infoFiltered":   "(filtered from _MAX_ total entries)",
-                //     "infoPostFix":    "",
-                //     "thousands":      ",",
-                //     "lengthMenu":     "Visualizza _MENU_ righe per pagina",
-                //     "loadingRecords": "Caricamento in corso ...",
-                //     "processing":     "Elaborazione in corso ...",
-                //     "search":         "Cerca:",
-                //     "zeroRecords":    "Nessun record trovato",
-                //     "paginate": {
-                //         "first":      "Prima",
-                //         "last":       "Ultima",
-                //         "next":       "Prossima",
-                //         "previous":   "Precedente"
-                //     },
-                //     "aria": {
-                //         "sortAscending":  ": activate to sort column ascending",
-                //         "sortDescending": ": activate to sort column descending"
-                //     }
-                // },
                 ajax: function(data, callback, settings) {
                       var table = $(this);
                       data.date_from = table.data('date_from');
