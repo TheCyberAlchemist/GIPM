@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+﻿from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from .models import *
 from django.views import View
@@ -379,7 +379,7 @@ class PO_table(View):
 			"update":[],
 			'all_PO': purchase_order.objects.all()
 		}
-		purchase_order.objects.all()[0].get_received_quantity()
+		
 		return render(request,self.template_name,context)
 	def post(self, request):
 		pass
