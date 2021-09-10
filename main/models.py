@@ -146,7 +146,7 @@ class indent(order):
 	# Round,Plate,SQ Bar,Pipe,BF,Labour,ISMC,ISMB,ISA,Bolt,Nut ...
 
 	material_type = models.TextField(null=True, blank=True)
-	item_description = models.ForeignKey(item_description,on_delete=models.CASCADE,null=True, blank=True)
+	item_description = models.ForeignKey(item_description,on_delete=models.SET_NULL,null=True, blank=True)
 	# dropdown for all objects
 	size = models.FloatField(null=True, blank=True)
 	thickness = models.FloatField(null=True, blank=True)
