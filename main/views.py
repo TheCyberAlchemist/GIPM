@@ -118,7 +118,7 @@ class indent_table(AjaxDatatableView):
 		fields = {k: v for k, v in fields.items() if v != ""}
 		# print(student_details.Division_id.Semester_id)
 		html = '<table class="table-bordered" style="width:60%">'
-		html += '<tr><td class="">PO Number</td><td class=""><a href = "po/table/">%s</a></td></tr>' % (obj.PO)
+		html += '<tr><td class="">PO Number</td><td class=""><a href = "/po/table/">%s</a></td></tr>' % (obj.PO)
 		for key in fields:
 		    html += '<tr><td class="">%s</td><td class="">%s</td></tr>' % (key, fields[key])
 		html += '</table>'
