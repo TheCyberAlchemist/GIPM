@@ -71,13 +71,7 @@
 					{{Name}}</option>
 				{% for obj in all_obj %}
 					<option 
-						value="
-							{% if obj.id and use_pk%}
-								{{obj.id}}
-							{% else %}
-								{{obj}}
-							{% endif %}
-						"
+						value="{% if obj.id and use_pk%}{{obj.id}}{% else %}{{obj}}{% endif %}"
 						{% if value and value == obj %}
 							selected
 						{% endif %}
