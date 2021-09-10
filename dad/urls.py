@@ -25,9 +25,9 @@ urlpatterns = [
     re_path(r'^wo/form/(?P<wo_id>\d+)/$',WO_form.as_view(),name="update_wo"),
 
     path('admin/', admin.site.urls),
-    re_path(r'^wo/(?P<wo_id>\d+)/indent/table/',indent_table_page.as_view(),name="show_indent_table"),
+    re_path(r'^wo/(?P<wo_id>\d+)/indent/table/',indent_table_page.as_view(),name="show_indent"),
     re_path(r'^wo/(?P<wo_id>\d+)/indent/datatable/',indent_table.as_view(),name="get_indent_details"),
-    re_path(r'^wo/(?P<wo_id>\d+)/indent/form/$',indent_form.as_view(),name="add_indent_form"),
+    re_path(r'^wo/(?P<wo_id>\d+)/indent/form/$',indent_form.as_view(),name="add_indent"),
     re_path(r'^wo/(?P<wo_id>\d+)/indent/form/(?P<indent_id>\d+)/$',indent_form.as_view(),name="update_indent_form"),
     re_path(r'^wo/stock/$',show_stock,name="show_stock"),
     

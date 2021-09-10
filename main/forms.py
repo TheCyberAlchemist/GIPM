@@ -5,6 +5,7 @@ class add_indent(ModelForm):
 		model = indent
 		fields = '__all__'
 		exclude = ('PO','WO','item_description')
+
 class add_PO(ModelForm):
 	class Meta:
 		model = purchase_order

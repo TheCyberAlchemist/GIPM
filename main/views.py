@@ -229,11 +229,11 @@ class PO_datatable(AjaxDatatableView):
 			'placeholder':'Vendor'
 		}, # vendor
 		{
-			'name': 'quantity', 
+			'name': 'remaining_quantity', 
 			'visible': True,
 			'orderable': True,
 			'searchable': False,
-			'title': 'Quantity',
+			'title': 'Remaining Quantity',
 		}, # quantity
 		{
 			'name': 'po_date',
@@ -248,7 +248,7 @@ class PO_datatable(AjaxDatatableView):
 			'orderable': True,
 			'searchable': False,		
 			'title': 'Net Value',
-		},
+		},# net_value
 		{
 			'name': 'is_complete', 
 			'visible': True,
@@ -265,14 +265,17 @@ class PO_datatable(AjaxDatatableView):
 		}, # delete field
 	]
 	
-	def get_initial_queryset(self, request=None):
-		return queryset
-	
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
-		
-		row['net_value'] = f''' {obj.net_value()}'''
+		net_value = 0
+		total_quantity,remaining_quantity = 0,0
+		for indent in obj.indent_set.all():
+			net_value += indent.net_value()
+			remaining_quantity += indent.get_remaining_quantity()
+			total_quantity += indent.quantity
 
+		row['net_value'] = f'{net_value}'
+		row["remaining_quantity"] = f'{remaining_quantity} out of {total_quantity}'
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" target="_blank">
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
@@ -292,47 +295,76 @@ class PO_datatable(AjaxDatatableView):
 		obj = self.model.objects.get(pk=pk)
 		# fields = [f for f in self.model._meta.get_fields() if f.concrete]
 		fields = {
-			'Description':obj.description,
-			'Comment':obj.comment,
-			'PO Number':obj.incoming_po_number,
-			'PO Date':obj.incoming_po_date,
-			'Value':obj.value,
-			'Tax':obj.tax,
-			'Discount':obj.discount,
-			'Other Expanses':obj.other_expanses,
 		}
 		fields = {k: v for k, v in fields.items() if v != None}
 		fields = {k: v for k, v in fields.items() if v != ""}
+		indent_list_html = '<table class="table-bordered" style="width:100%">'
+		indent_list_html += f'<tr><th class="d-flex justify-content-center">Indent</td><td class="">Balance</td></tr>'
+		for indent in obj.indent_set.all():
+			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" target="_blank">{indent.WO}</a>&nbsp[{indent.item_description}]</td><td class="">&nbsp&nbsp{indent.get_remaining_quantity()} out of {indent.quantity}</td></tr>'
+		indent_list_html += '</table>'
+
 		# print(student_details.Division_id.Semester_id)
 		html = '<table class="table-bordered" style="width:60%">'
 		for key in fields:
 		    html += '<tr><td class="">%s</td><td class="">%s</td></tr>' % (key, fields[key])
+		
+		html += '<tr><td class="">Indent List</td><td class="m-0 p-0">%s</td></tr>' % (indent_list_html)
 		html += '</table>'
 		return html
+def update_indent_PO(indent_list,PO):
+	'adds the PO to all the indents'
+	my_indents = PO.indent_set.all()
+	new_indents = set(indent.objects.all().filter(pk__in = indent_list))
+	old_indents = set(my_indents)
+	to_be_deleted = old_indents.difference(new_indents)
+	to_be_saved = new_indents.difference(old_indents)
+	for i in to_be_deleted:
+		i.PO = None
+		i.save()
+	for i in to_be_saved:
+		i.PO = PO
+		i.save()
 
 class PO_form(View):
 	template_name = "po/PO_form.html"
-	context= {
-		"update":[],
-		'all_vendors':vendor_details.objects.all(),
-		'all_work_order':work_order.objects.all(),
-	}
 	def get(self, request,po_id=None):
-		if po_id: 
+		self.context= {
+			"update":[],
+			'all_vendors':vendor_details.objects.all(),
+			'all_indent':list(indent.objects.all().filter(PO=None).order_by("WO")),
+		}
+		if po_id:
 			instance = purchase_order.objects.get(pk=po_id)
+			my_indents = instance.indent_set.all()
 			self.context['update'] = instance
+			self.context['indent_list'] = my_indents
+			self.context['all_indent'] += list(my_indents)
 			self.context['success'] = False
+
 		return render(request,self.template_name,self.context)
 
 	def post(self, request,po_id=None):
+		self.context= {
+			"update":[],
+			'all_vendors':vendor_details.objects.all(),
+			'all_indent':list(indent.objects.all().filter(PO=None).order_by("WO")),
+		}
 		if po_id:
 			instance = purchase_order.objects.get(pk=po_id)
 			form = update_PO(request.POST,instance=instance)
 		else:
 			form = add_PO(request.POST)
 		if form.is_valid():
-			form.save()
+			a = form.save()
+			print(a)
+			indent_list = request.POST.getlist('indent_list')
+			update_indent_PO(indent_list,a)
+			my_indents = a.indent_set.all()
 			self.context['update'] = form.instance
+			self.context['indent_list'] = my_indents
+			self.context['all_indent'] += list(my_indents)
+			self.context['all_indent'] = set(self.context['all_indent'])
 			self.context['success'] = True
 		else:
 			self.context['errors'] =  form.errors.as_ul()
@@ -345,11 +377,13 @@ class PO_table(View):
 	def get(self, request):
 		context= {
 			"update":[],
-			'all_PO': purchase_order.objects.all(),
+			'all_PO': purchase_order.objects.all()
 		}
+		purchase_order.objects.all()[0].get_received_quantity()
 		return render(request,self.template_name,context)
 	def post(self, request):
 		pass
+
 #endregion
 
 #region ########### Work-Order ###########
@@ -419,7 +453,7 @@ class WO_datatable(AjaxDatatableView):
 	def get_initial_queryset(self, request=None):
 		# po_id=request.REQUEST.get('po_id')
 
-		queryset = self.model.objects.all()
+		queryset = self.model.objects.all().exclude(wo_number="STOCK")
 		# queryset = queryset.filter(PO__id=po_id)
 		# queryset = self.model.objects.all()
 		return queryset
@@ -777,12 +811,12 @@ class grn_table(View):
 	
 class grn_form(View):
 	template_name = "grn/grn_form.html"
-	context= {
-		"update":[],
-		"all_indent":indent.objects.all()
-	}
 
 	def get(self, request,indent_id=None,grn_id=None, *args, **kwargs):
+		self.context= {
+			"update":[],
+			"all_indent":indent.objects.all().filter(recived=False)
+		}
 		if grn_id:
 			instance = grn.objects.get(pk=grn_id)
 			self.context['update'] = instance
@@ -795,23 +829,28 @@ class grn_form(View):
 			return render(request,self.template_name,self.context)
 	
 	def post(self, request,grn_id=None, *args, **kwargs):
-		tempdict = self.request.POST
-		# print(tempdict['value'])
+		self.context= {
+			"update":[],
+			"all_indent":indent.objects.all().filter(recived=False)
+		}
+		tempdict = self.request.POST.copy()
+		tempdict['value'] = tempdict['value'].replace(',', '').replace("₹","")
 		if grn_id:
 			instance = grn.objects.get(pk=grn_id)
 			form = add_grn(tempdict,instance=instance)
 		else:
 			form = add_grn(tempdict)
 		if form.is_valid():
+			self.context['save_message'] = form.instance.get_save_messages(tempdict['quantity'])
 			form.save()
 			print(tempdict['quantity'])
-			self.context['save_message'] = form.instance.get_save_messages(tempdict['quantity'])
 			self.context['update'] = form.instance
 			self.context['success'] = True
 		else:
 			self.context['errors'] =  form.errors.as_ul()
 			print(form.instance.value)
 			print(form.errors)
+		# return redirect("/grn/table")
 		return render(request,self.template_name,self.context)
 
 #endregion

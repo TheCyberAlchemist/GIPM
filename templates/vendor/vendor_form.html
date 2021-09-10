@@ -31,6 +31,25 @@
 {% block content %}
 	<div class="main_content">
 		<div class="row" style="padding-top: 6rem">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="{{url ('home_page')}}">
+							<span class="h6 fw-bold">Home</span>
+						</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{url ('show_vendor')}}">
+							<span class="h6 fw-bold">Vendor Table</span> 
+						</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{url ('add_vendor')}}">
+							<span class="h6 fw-bold">Add Vendor</span>
+						</a>
+					</li>
+				</ol>
+			</nav>
 			<div class="col-12 mb-4" style="width:80%;margin: 0 auto;">
 				<div class="card shadow-sm components-section" style="border-radius: 1rem;">
 					<div class="card-body" style="border-radius: 1rem;">
@@ -116,7 +135,6 @@
 										{% endif %}
                                     </div>                                
                             </div>
-
                         </div>
                     </div>
                 </div>

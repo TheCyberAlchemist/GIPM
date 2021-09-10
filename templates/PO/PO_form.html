@@ -24,9 +24,9 @@
 					'success'
 				)
             {% endif %}
+			$("#indent_list").select2();
 			{% if not update %}
 				$("#vendor_id").select2();
-				$("#work_order_id").select2();
 			{% endif %}
         });
     </script>
@@ -36,6 +36,25 @@
 {% block content %}
 	<div class="main_content">
 		<div class="row" style="padding-top: 6rem">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+				<li class="breadcrumb-item">
+					<a href="{{url ('home_page')}}">
+						<span class="h6 fw-bold">Home</span>
+					</a>
+				</li>
+				<li class="breadcrumb-item">
+					<a href="{{url ('show_po')}}">
+						<span class="h6 fw-bold">PO Table</span> 
+					</a>
+				</li>
+				<li class="breadcrumb-item">
+					<a href="{{url ('add_po')}}">
+						<span class="h6 fw-bold">Add PO</span> 
+					</a>
+				</li>
+				</ol>
+			</nav>
 			<div class="col-12 mb-4" style="width:80%;margin: 0 auto;">
 				<div class="card shadow-sm components-section" style="border-radius: 1rem;">
 					<div class="card-body" style="border-radius: 1rem;">
@@ -49,12 +68,37 @@
 											{{csrf_input}}
 											<!-- <img class="form_hider" src="{{static ('admin/details/img/close.png')}}" alt="hide"> -->
 											<div class="row mb-3 mx-lg-5 mx-sm-0">
+												<div class="col-lg-12 col-md-12 col-sm-12">
+													<div class="form-floating mb-1">
+														<div class="select2_container double_select2">
+															<select name="indent_list" id="indent_list" 
+																	class="js-example-basic-single js-states form-control" multiple="multiple">
+																{% set last_wo = {'wo': False} %}
+																{% for obj in all_indent %}
+																	{% if obj.WO!=last_wo.wo %}
+																 		<optgroup label="{{obj.WO}}">
+																	{% endif %}
+																		<option
+																			value="{{obj.id}}"
+																			{% if update and obj in indent_list%}
+																				selected
+																			{% endif %}
+																		>
+																		{{obj}}
+																		</option>
+																	{% if obj.wo != last_wo.wo %}
+																	 	</optgroup>
+																		{% if last_wo.update({'wo': obj.WO}) %} {% endif %}
+																	{% endif %}
+																{%endfor%}
+															</select>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row mb-3 mx-lg-5 mx-sm-0">
 												<div class="col-lg-6 col-md-12 col-sm-12">
-													{% if update %}
-														{{macros.input_text("Work Order","work_order_id",max_len=200,value=update.work_order_id,disabled=True)}}
-													{% else %}
-														{{macros.select2("Work Order","work_order_id",all_work_order,update.work_order_id)}}
-													{% endif %}
+													{{macros.date_input("PO Date","po_date",update.po_date)}}
 												</div>
 												<div class="col-lg-6 col-md-12 col-sm-12">
 													{% if update %}
@@ -62,17 +106,6 @@
 													{% else %}
 														{{macros.select2("Vendor Name","vendor_id",all_vendors,update.vendor_id)}}
 													{% endif %}
-												</div>
-											</div>
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													{{macros.date_input("PO Date","po_date",update.po_date)}}
-												</div>
-											</div>
-											<div class="row mb-3 mx-lg-5 mx-sm-0">
-												<div class="col-lg-6 col-md-12 col-sm-12">
-													<input type="checkbox" id="is_complete" name="is_complete" {% if update and update.is_complete %}checked{% endif %}>
-													<label for="is_complete">Is Complete</label>
 												</div>
 											</div>
 											<div class="row mb-3 mx-lg-5 mx-sm-0">

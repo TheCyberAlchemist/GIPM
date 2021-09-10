@@ -108,6 +108,10 @@ class purchase_order(models.Model):
 		else:
 			return f"{self.po_number}"
 	
+	def get_received_quantity(self):
+		print(self.indent_set.all())
+		pass
+	
 	def save(self,*args, **kwargs):
 		super(purchase_order, self).save(*args, **kwargs)
 		if not self.po_number:
@@ -194,8 +198,8 @@ class grn(order):
 	def get_save_messages(self,quantity):
 		'returns the respective string checking the quantity recived '
 		quantity = int(quantity)
-		if quantity > self.indent_id.quantity:
-			remaining = quantity - self.indent_id.quantity
+		if quantity > self.indent_id.get_remaining_quantity():
+			remaining = quantity - self.indent_id.get_remaining_quantity()
 			return f"Extra units received! {remaining} units stored in STOCK."
 		return "Saved GRN and updated indent."
 
@@ -226,8 +230,9 @@ class grn(order):
 				new_indent.WO = stock_wo
 				new_indent.quantity = extra_quantity
 				new_indent.save()
-			indent_id.recived_quantity = indent_id.get_remaining_quantity()
+				print(f"New Stock indent saved with {extra_quantity} quantity")
+			indent_id.recived_quantity += indent_id.get_remaining_quantity()
 			indent_id.save()
 		else:
-			indent_id.recived_quantity = self.quantity
+			indent_id.recived_quantity += self.quantity
 			indent_id.save()

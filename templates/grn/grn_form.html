@@ -32,6 +32,32 @@
 {% block content %}
 	<div class="main_content">
 		<div class="row" style="padding-top: 6rem">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+				<li class="breadcrumb-item">
+					<a href="{{url ('home_page')}}">
+						<span class="h6 fw-bold">Home</span>
+					</a>
+				</li>
+				{% if update.indent_id %}
+				<li class="breadcrumb-item">
+					<a href="{{url ('show_indent',args=[update.indent_id.WO.id])}}">
+						<span class="h6 fw-bold">Indent Table</span>
+					</a>
+				</li>
+				{% endif %}
+				<li class="breadcrumb-item">
+					<a href="{{url ('show_grn')}}">
+						<span class="h6 fw-bold">GRN Table</span> 
+					</a>
+				</li>
+				<li class="breadcrumb-item">
+					<a href="{{url ('add_grn')}}">
+						<span class="h6 fw-bold">Add GRN</span> 
+					</a>
+				</li>
+				</ol>
+			</nav>
 			<div class="col-12 mb-4" style="width:80%;margin: 0 auto;">
 				<div class="card shadow-sm components-section" style="border-radius: 1rem;">
 					<div class="card-body" style="border-radius: 1rem;">
