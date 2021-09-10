@@ -1,4 +1,4 @@
-﻿from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from .models import *
 from django.views import View
@@ -82,7 +82,7 @@ class indent_table(AjaxDatatableView):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
 		row['net_value'] = f''' {obj.net_value()}'''
 		row['Add GRN'] = f'''<td class="">
-			<a href="/indent/{obj.pk}/grn/form/" target="_blank">
+			<a href="/indent/{obj.pk}/grn/form/">
 				<img src="../../../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
 			</a>
 		</td>'''
@@ -100,7 +100,6 @@ class indent_table(AjaxDatatableView):
 		# fields = [f for f in self.model._meta.get_fields() if f.concrete]
 		fields = {
 			"Recived": obj.recived_quantity,
-			'PO Number':obj.PO,
 			'Material Type':obj.material_type,
 			'Item Description':obj.item_description,
 			"Size":obj.size,
@@ -112,12 +111,14 @@ class indent_table(AjaxDatatableView):
 			'Tax':obj.tax,
 			'Discount':obj.discount,
 			'Other Expanses':obj.other_expanses,
-			"Weight":obj.get_weight()
+			"Weight":obj.get_weight(),
+			"Comment":obj.comment,
 		}
 		fields = {k: v for k, v in fields.items() if v != None}
 		fields = {k: v for k, v in fields.items() if v != ""}
 		# print(student_details.Division_id.Semester_id)
 		html = '<table class="table-bordered" style="width:60%">'
+		html += '<tr><td class="">PO Number</td><td class=""><a href = "po/table/">%s</a></td></tr>' % (fields[key])
 		for key in fields:
 		    html += '<tr><td class="">%s</td><td class="">%s</td></tr>' % (key, fields[key])
 		html += '</table>'
@@ -277,11 +278,11 @@ class PO_datatable(AjaxDatatableView):
 		row['net_value'] = f'{net_value}'
 		row["remaining_quantity"] = f'{remaining_quantity} out of {total_quantity}'
 		row['Edit'] = f'''<td class="">
-				<a href="../form/{obj.pk}" target="_blank">
+				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
 			</td>'''
 		row['Indent List'] = f'''<td class="">
-				<a href="indent/table/{obj.pk}" target="_blank">
+				<a href="indent/table/{obj.pk}" >
 					<img src="../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
 				</a>
 			</td>'''
@@ -301,7 +302,7 @@ class PO_datatable(AjaxDatatableView):
 		indent_list_html = '<table class="table-bordered" style="width:100%">'
 		indent_list_html += f'<tr><th class="d-flex justify-content-center">Indent</td><td class="">Balance</td></tr>'
 		for indent in obj.indent_set.all():
-			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" target="_blank">{indent.WO}</a>&nbsp[{indent.item_description}]</td><td class="">&nbsp&nbsp{indent.get_remaining_quantity()} out of {indent.quantity}</td></tr>'
+			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" >{indent.WO}</a>&nbsp[{indent.item_description}]</td><td class="">&nbsp&nbsp{indent.get_remaining_quantity()} out of {indent.quantity}</td></tr>'
 		indent_list_html += '</table>'
 
 		# print(student_details.Division_id.Semester_id)
@@ -379,7 +380,6 @@ class PO_table(View):
 			"update":[],
 			'all_PO': purchase_order.objects.all()
 		}
-		
 		return render(request,self.template_name,context)
 	def post(self, request):
 		pass
@@ -463,11 +463,11 @@ class WO_datatable(AjaxDatatableView):
 		row['net_value'] = f''' {obj.net_value()}'''
 
 		row['Edit'] = f'''<td class="">
-				<a href="../form/{obj.pk}" target="_blank">
+				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
 			</td>'''
 		row['Indent List'] = f'''<td class="">
-				<a href="/wo/{obj.pk}/indent/table/" target="_blank">
+				<a href="/wo/{obj.pk}/indent/table/" >
 					<img src="../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
 				</a>
 			</td>'''
@@ -621,7 +621,7 @@ class vendor_datatable(AjaxDatatableView):
 		row['email'] = replace_empty(row['email'])
 
 		row['Edit'] = f'''<td class="">
-				<a href="../form/{obj.pk}" target="_blank">
+				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
 			</td>'''
 		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
@@ -764,7 +764,7 @@ class grn_datatable(AjaxDatatableView):
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
 		row['Edit'] = f'''<td class="">
-				<a href="../form/{obj.pk}" target="_blank">
+				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
 			</td>'''
 		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
