@@ -41,14 +41,14 @@ class order(models.Model):
 	description = models.TextField(null=True, blank=True)
 	quantity = models.IntegerField(default=0,null=True, blank=True)
 	unit = models.TextField(null=True, blank=True)
-	value = models.IntegerField(default=0,null=True, blank=True)
-	tax = models.IntegerField(default=0,null=True, blank=True)
-	discount = models.IntegerField(default=0,null=True, blank=True)
-	other_expanses  = models.IntegerField(default=0,null=True, blank=True)
+	value = models.FloatField(default=0,null=True, blank=True)
+	tax = models.FloatField(default=0,null=True, blank=True)
+	discount = models.FloatField(default=0,null=True, blank=True)
+	other_expanses  = models.FloatField(default=0,null=True, blank=True)
 
 	def gross_value(self):
 		'return the gross value of the order \n ((value-discount) * quantity)'
-		temp = self.discounted_total() * self.quantity
+		temp = (self.discounted_total() * self.quantity) + self.other_expanses
 		return temp if temp else 0
 
 	def discounted_total(self):
@@ -58,7 +58,7 @@ class order(models.Model):
 
 	def tax_amount(self):
 		'return the tax amount of the order (net_value * tax)'
-		temp = (self.gross_value()+ self.other_expanses) * self.tax/100
+		temp = (self.gross_value()) * self.tax/100
 		return temp if temp else 0
 
 	def net_value(self):
