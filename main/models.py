@@ -48,7 +48,8 @@ class order(models.Model):
 
 	def gross_value(self):
 		'return the gross value of the order \n ((value-discount) * quantity)'
-		temp = (self.discounted_total() * self.get_weight()) + self.other_expanses
+		# is overwritten in indent to use weight instead of quantity
+		temp = (self.discounted_total() * self.quantity) + self.other_expanses
 		return round(temp,2) if temp else 0
 
 	def discounted_total(self):
@@ -153,6 +154,12 @@ class indent(order):
 	thickness = models.FloatField(default=0,null=True, blank=True)
 	width = models.FloatField(default=0,null=True, blank=True)
 	internal_diameter = models.FloatField(default=0,null=True, blank=True)
+
+	def gross_value(self):
+		'return the gross value of the order \n ((value-discount) * weight)'
+		# overwritting the gross_value function to use weight
+		temp = (self.discounted_total() * self.get_weight()) + self.other_expanses
+		return round(temp,2) if temp else 0
 
 	def get_weight(self):
 		''' the function returning the weights respective to material_shape'''
