@@ -274,7 +274,8 @@ class PO_datatable(AjaxDatatableView):
 			net_value += indent.net_value()
 			remaining_quantity += indent.get_remaining_quantity()
 			total_quantity += indent.quantity
-
+		
+		row['po_date'] = obj.po_date.strftime("%d-%m-%Y")
 		row['net_value'] = f'{round(net_value,2)}'
 		row["remaining_quantity"] = f'{remaining_quantity} out of {total_quantity}'
 		row['Edit'] = f'''<td class="">
@@ -302,8 +303,7 @@ class PO_datatable(AjaxDatatableView):
 		indent_list_html = '<table class="table-bordered" style="width:100%">'
 		indent_list_html += f'<tr><th class="d-flex justify-content-center">Indent</td><td class="">Balance</td></tr>'
 		for indent in obj.indent_set.all():
-			dimentions = f"{indent.size} X {indent.thickness} X {indent.width} X {indent.internal_diameter}".replace(" X None","")
-
+			dimentions = f"{indent.size} X {indent.thickness} X {indent.width} X {indent.internal_diameter}".replace(" X None","").replace("None","")
 			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" >{indent.WO}</a>&nbsp[{indent.item_description} ({dimentions})]</td><td class="">&nbsp&nbsp{indent.get_remaining_quantity()} out of {indent.quantity}</td></tr>'
 		indent_list_html += '</table>'
 
@@ -485,6 +485,7 @@ class WO_datatable(AjaxDatatableView):
 	
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
+		
 		row['net_value'] = f''' {obj.net_value()}'''
 
 		row['Edit'] = f'''<td class="">
@@ -509,7 +510,7 @@ class WO_datatable(AjaxDatatableView):
 			'Vendor':obj.vendor_id,
 			'Comment':obj.comment,
 			'PO Number':obj.incoming_po_number,
-			'PO Date':obj.incoming_po_date,
+			'PO Date':obj.incoming_po_date.strftime("%d-%m-%Y"),
 			'Value':obj.value,
 			'Tax':obj.tax,
 			'Discount':obj.discount,
@@ -788,6 +789,7 @@ class grn_datatable(AjaxDatatableView):
 	
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
+		row['grn_date'] = obj.grn_date.strftime("%d-%m-%Y")
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
