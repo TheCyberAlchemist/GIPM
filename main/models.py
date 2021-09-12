@@ -48,24 +48,25 @@ class order(models.Model):
 
 	def gross_value(self):
 		'return the gross value of the order \n ((value-discount) * quantity)'
-		temp = (self.discounted_total() * self.quantity) + self.other_expanses
-		return temp if temp else 0
+		temp = (self.discounted_total() * self.get_weight()) + self.other_expanses
+		return round(temp,2) if temp else 0
 
 	def discounted_total(self):
 		'''return the discounted total of the order (net_val - discount)'''
 		temp = self.value - self.discount
-		return temp if temp else 0
+		return round(temp,2) if temp else 0
 
 	def tax_amount(self):
-		'return the tax amount of the order (net_value * tax)'
+		'return the tax amount of the order (gross_value * tax)'
 		temp = (self.gross_value()) * self.tax/100
-		return temp if temp else 0
+		return round(temp,2) if temp else 0
 
 	def net_value(self):
 		'return the tax amount of the order (gross_value + tax)'
 		temp = self.gross_value() + self.tax_amount()
-		temp = round(temp,2)
-		return temp if temp else 0
+		# (value-discount * quantity) + (((value-discount) * quantity) * tax)
+		temp = temp
+		return round(temp,2) if temp else 0
 
 	def save(self,*args, **kwargs):
 		self.quantity = self.quantity if self.quantity else 0
@@ -148,19 +149,19 @@ class indent(order):
 	material_type = models.TextField(null=True, blank=True)
 	item_description = models.ForeignKey(item_description,on_delete=models.SET_NULL,null=True, blank=True)
 	# dropdown for all objects
-	size = models.FloatField(null=True, blank=True)
-	thickness = models.FloatField(null=True, blank=True)
-	width = models.FloatField(null=True, blank=True)
-	internal_diameter = models.FloatField(null=True, blank=True)
+	size = models.FloatField(default=0,null=True, blank=True)
+	thickness = models.FloatField(default=0,null=True, blank=True)
+	width = models.FloatField(default=0,null=True, blank=True)
+	internal_diameter = models.FloatField(default=0,null=True, blank=True)
 
 	def get_weight(self):
 		''' the function returning the weights respective to material_shape'''
 		round_no = lambda x: round(x,3)
-		T = self.thickness
-		S = self.size
-		W = self.width
-		ID = self.internal_diameter
-		Q = self.quantity
+		T = self.thickness or 0
+		S = self.size or 0
+		W = self.width or 0
+		ID = self.internal_diameter or 0
+		Q = self.quantity or 0
 		if self.material_shape == "Round":
 			return round_no((S*S*T*0.00000616)*Q)
 		elif self.material_shape == "Plate" or self.material_shape == "SQ Bar":
@@ -171,7 +172,7 @@ class indent(order):
 			return Q
 		elif self.material_shape in ["ISMC","ISMB","ISA","Bolt","Nut"]:
 			w_pmm = standard_weight.objects.filter(material_shape=shape,size=S).first().weight_pmm
-			return round_no(w_pmm * T)
+			return round_no(w_pmm * T * Q)
 		return None
 	
 	def __str__(self):

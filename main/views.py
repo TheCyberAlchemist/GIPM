@@ -275,7 +275,7 @@ class PO_datatable(AjaxDatatableView):
 			remaining_quantity += indent.get_remaining_quantity()
 			total_quantity += indent.quantity
 
-		row['net_value'] = f'{net_value}'
+		row['net_value'] = f'{round(net_value,2)}'
 		row["remaining_quantity"] = f'{remaining_quantity} out of {total_quantity}'
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
@@ -302,17 +302,20 @@ class PO_datatable(AjaxDatatableView):
 		indent_list_html = '<table class="table-bordered" style="width:100%">'
 		indent_list_html += f'<tr><th class="d-flex justify-content-center">Indent</td><td class="">Balance</td></tr>'
 		for indent in obj.indent_set.all():
-			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" >{indent.WO}</a>&nbsp[{indent.item_description}]</td><td class="">&nbsp&nbsp{indent.get_remaining_quantity()} out of {indent.quantity}</td></tr>'
+			dimentions = f"{indent.size} X {indent.thickness} X {indent.width} X {indent.internal_diameter}".replace(" X None","")
+
+			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" >{indent.WO}</a>&nbsp[{indent.item_description} ({dimentions})]</td><td class="">&nbsp&nbsp{indent.get_remaining_quantity()} out of {indent.quantity}</td></tr>'
 		indent_list_html += '</table>'
 
 		# print(student_details.Division_id.Semester_id)
-		html = '<table class="table-bordered" style="width:60%">'
+		html = '<table class="table-bordered" style="width:80%">'
 		for key in fields:
 		    html += '<tr><td class="">%s</td><td class="">%s</td></tr>' % (key, fields[key])
 		
 		html += '<tr><td class="">Indent List</td><td class="m-0 p-0">%s</td></tr>' % (indent_list_html)
 		html += '</table>'
 		return html
+
 def update_indent_PO(indent_list,PO):
 	'adds the PO to all the indents'
 	my_indents = PO.indent_set.all()
@@ -384,6 +387,28 @@ class PO_table(View):
 	def post(self, request):
 		pass
 
+def print_report(request):
+	from django.db.models import Sum
+	total_net_value = 0
+	my_indents = indent.objects.all()
+	total_gross_value,total_net_value,total_quantity,total_tax_value,total_weight = 0,0,0,0,0
+	for my_indent in my_indents:
+		total_net_value += my_indent.net_value()
+		total_quantity += my_indent.quantity
+		total_tax_value += my_indent.tax_amount()
+		total_weight += my_indent.get_weight()
+		total_gross_value += my_indent.gross_value()
+	context = {
+		"all_indents":my_indents,
+		"total_net_value":round(total_net_value,2),
+		"total_quantity":round(total_quantity,2),
+		"total_tax_value":round(total_tax_value,2),
+		"total_weight":round(total_weight,3),
+		"total_gross_value":round(total_gross_value,2),
+	}
+	print(context['total_net_value'])
+	# total_quantity = indent.objects.all()
+	return render(request,"po/report.html",context)
 #endregion
 
 #region ########### Work-Order ###########

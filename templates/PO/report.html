@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="{{static ('Bundles/css/bootstrap.min.css')}}" rel="stylesheet">
+		<style>
+			#main_table{
+				max-width: 100%;
+			}
+			.table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+				border: 1px solid black;
+			}
+			html {
+				font-size: 10px;
+			}
+			@page {
+				size: a4 portrait;
+				margin: 0cm;
+			}
+			@media screen, print{
+				/* html, body {
+					width: 297mm;
+					height: 100mm;
+				} */
+				html {
+					font-size: 10px;
+				}
+				#main_table {
+					width: 100%;
+					table-layout: fixed;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<table class="table table-bordered" id="main_table">
+			<thead>
+				<tr>
+					<th colspan="11" class="fw-bold text-center h2">GHANSHYAM INDUSTRIES</th>
+				</tr>
+				<tr>
+					<td colspan="11">
+						address address address address address address address address address address address address address address address address address  address address address 
+					</td>
+				</tr>
+				<tr>
+					<td colspan="5">
+						Email- mechghanshyam@gmail.com 
+					</td>
+					<td colspan="6">
+						GST NO - 24AAZPP4220E1ZN
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td colspan="7">M/s Krushna Steel Traders</td>
+					<td colspan="2" class="fw-bold text-center">PO Number</td>
+					<td colspan="2" class="fw-bold text-center">PO Date</td>
+				</tr>
+				<tr>
+					<td colspan="7" rowspan="5">address address address address address address address address address address address address address address address address address </td>
+					<td colspan="2" class="text-center">28</td>
+					<td colspan="2">12/12/2021</td>
+				</tr>
+				<tr>
+					<td colspan="4">Contact Person :- Mahendrakumar D Patel</td>
+				</tr>
+				<tr>
+					<td colspan="4">Phone number :- 1234567890</td>
+				</tr>
+				<tr>
+					<td colspan="4">E-mail :- krushna89steel@gmail.com</td>
+				</tr>
+				<tr>
+					<td colspan="4">GST No :- 24AAZPP4220E1ZN</td>
+				</tr>
+				<tr>
+					<td colspan="11" class="text-center">Besides, this order is based on our general terms and coditions of purchase. We require an order acknowledgement for the following items.</td>
+				</tr>
+				<tr>
+					<td>WO</td>
+					<td>Description</td>
+					<td>MT</td>
+					<td>QUT</td>
+					<td>WT</td>
+					<td>Unit Value</td>
+					<td>Tax</td>
+					<td>Other Expanses</td>
+					<td>Discount</td>
+					<td>Total Tax Value</td>
+					<td>Total Net value</td>
+				</tr>
+				{% 	set total_dict = {
+						'total_quantity':0,
+						'total_weight':0,
+						'total_net_value':0,
+						'total_tax_value':0
+					}
+				%}
+				{% for indent in all_indents %}
+					<tr>
+						<td>{{indent.pk}}</td>
+						<td class="width: 16.66%">{{indent.description}}</td>
+						<td>{{indent.material_type}}</td>
+						<td>{{indent.quantity}} {{indent.unit}}</td>
+						<td>{{indent.get_weight()}} Kg</td>
+						<td>₹ {{indent.value}}</td>
+						<td>{{indent.tax}}</td>
+						<!-- <td>{{indent.tax_amount()}}</td> -->
+						<td>₹ {{indent.other_expanses}}</td>
+						<td>₹ {{indent.discount}}</td>
+						<td>₹ {{indent.tax_amount()}}</td>
+						<td>₹ {{indent.gross_value()}}</td>
+						<!-- <td>{{indent.net_value()}}</td> -->
+						{% if total_dict.update({
+							'total_quantity':total_dict['total_quantity']+indent.quantity,
+							'total_weight':total_dict['total_weight']+indent.get_weight(),
+							'total_net_value':total_dict['total_net_value']+indent.net_value(),
+							'total_tax_value':total_dict['total_tax_value']+indent.tax_amount(),
+						}) %} {% endif %}
+					</tr>
+				{% endfor %}
+				<tr>
+					<td></td><td></td><td></td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+				</tr>
+				<tr class="fw-bold">
+					<td colspan="3">Terms & Conditions</td>
+					<td>{{total_quantity}}</td>
+					<td>{{total_weight}}</td>
+					<td colspan="5">Total Gross Value</td>
+					<td>₹ {{total_gross_value}}</td>
+				</tr>
+				<tr class="fw-bold">
+					<td colspan="5">Delivery :- </td>
+					<td colspan="5">Total Tax</td>
+					<td colspan="1">₹ {{total_tax_value}}</td>
+				</tr>
+				<tr class="fw-bold">
+					<td colspan="5">Payment Terms :- </td>
+					<td colspan="5">Total</td>
+					<td colspan="1">₹ {{total_net_value}}</td>
+				</tr>
+				<tr>
+					<td colspan="11" class="text-center">
+						Important information for our suppliers.
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>

@@ -2,13 +2,18 @@ from django.contrib import admin
 from .models import *
 # print(work_order.objects.get_or_create(wo_number="STOCK"))
 
-admin.site.register(standard_weight)
+
+@admin.register(standard_weight)
+class SW(admin.ModelAdmin):
+	list_display = ["material_shape","size",'weight_pmm']
+	search_fields=('material_shape',)
+	list_filter= ['material_shape']
+
 
 @admin.register(purchase_order)
 class PO(admin.ModelAdmin):
 	list_display = ["po_number","vendor_id",'po_date']
 	search_fields=('po_number',"po_date","vendor_id__vendor_name")
-
 
 @admin.register(vendor_details)
 class vendor(admin.ModelAdmin):
@@ -19,6 +24,7 @@ class vendor(admin.ModelAdmin):
 class indent(admin.ModelAdmin):
 	list_display = ["id","WO",'material_shape',"item_description"]
 	search_fields=("id",'WO__wo_number',"material_shape","item_description__description")
+	list_filter= ['material_shape']
 
 @admin.register(work_order)
 class WOAdmin(admin.ModelAdmin):

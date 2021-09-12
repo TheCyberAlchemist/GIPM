@@ -108,7 +108,7 @@
 													{{macros.input_number("Quantity","quantity",update.quantity)}}
 												</div>
 												<div class="col-lg-4 col-md-12 col-sm-12">
-													{{macros.input_text("Unit","unit",update.unit)}}
+													{{macros.input_text("Unit","unit",value=update.unit if update.unit else "NOS")}}
 												</div>
 												<div class="col-lg-4 col-md-12 col-sm-12">
 													{{macros.input_currency("Value","value",value=update.value)}}
