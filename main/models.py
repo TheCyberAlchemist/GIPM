@@ -143,7 +143,7 @@ class indent(order):
 	recived_quantity = models.IntegerField(default=0,null=True, blank=True)
 	recived = models.BooleanField(default=False)
 	comment = models.TextField(null=True, blank=True)
-	material_shape = models.TextField(null=True, blank=True)
+	material_shape = models.TextField()
 	# dropdown must contain 
 	# Round,Plate,SQ Bar,Pipe,BF,Labour,ISMC,ISMB,ISA,Bolt,Nut ...
 
@@ -162,7 +162,7 @@ class indent(order):
 		return round(temp,2) if temp else 0
 
 	def get_weight(self):
-		''' the function returning the weights respective to material_shape'''
+		'''the function returning the weights respective to material_shape'''
 		round_no = lambda x: round(x,3)
 		T = self.thickness or 0
 		S = self.size or 0
@@ -180,7 +180,7 @@ class indent(order):
 		elif self.material_shape in ["ISMC","ISMB","ISA","Bolt","Nut"]:
 			w_pmm = standard_weight.objects.filter(material_shape=shape,size=S).first().weight_pmm
 			return round_no(w_pmm * T * Q)
-		return None
+		return 0
 	
 	def __str__(self):
 		if self.id:
