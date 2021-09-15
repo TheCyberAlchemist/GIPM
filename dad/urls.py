@@ -36,6 +36,7 @@ urlpatterns = [
     re_path(r'^po/datatable/$',PO_datatable.as_view(),name="show_po_datatable"),
     re_path(r'^po/form/$',PO_form.as_view(),name="add_po"),
     re_path(r'^po/form/(?P<po_id>\d+)/$',PO_form.as_view(),name="update_po"),
+    re_path(r'^po/report_input/$',po_print_inputs,name="po_report_input"),
     re_path(r'^po/report/$',print_report,name="print_po_report"),
 
     re_path(r'^vendor/table/$',vendor_table.as_view(),name="show_vendor"),

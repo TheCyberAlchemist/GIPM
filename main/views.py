@@ -413,8 +413,9 @@ class PO_table(View):
 	def post(self, request):
 		pass
 
+def po_print_inputs(request):
+	return render(request,"po/po_print_input.html")
 def print_report(request):
-	from django.db.models import Sum
 	total_net_value = 0
 	my_indents = indent.objects.all()
 	total_gross_value,total_net_value,total_quantity,total_tax_value,total_weight = 0,0,0,0,0
@@ -424,6 +425,8 @@ def print_report(request):
 		total_tax_value += my_indent.tax_amount()
 		total_weight += my_indent.get_weight()
 		total_gross_value += my_indent.gross_value()
+	delivery_day = request.GET['delivery_day']
+	payment_term = request.GET['payment_term']
 	context = {
 		"all_indents":my_indents,
 		"total_net_value":round(total_net_value,2),
@@ -431,10 +434,13 @@ def print_report(request):
 		"total_tax_value":round(total_tax_value,2),
 		"total_weight":round(total_weight,3),
 		"total_gross_value":round(total_gross_value,2),
+		"delivery_day":delivery_day,
+		"payment_term":payment_term,
 	}
 	print(context['total_net_value'])
 	# total_quantity = indent.objects.all()
 	return render(request,"po/report.html",context)
+
 #endregion
 
 #region ########### Work-Order ###########
