@@ -25,49 +25,71 @@ class indent_table(AjaxDatatableView):
 			'searchable': False,
 			'orderable': True,
 			'title': 'Indent Number',
-		},
+		}, # pk
 		{
 			'name': 'material_shape', 
 			'visible': True,
 			'searchable': True,
 			'orderable': True,
 			'title': 'Shape',
-		},
+		}, # material_shape
 		{
 			'name': 'Description',
 			'foreign_field': 'item_description__description',
 			'visible': True,
 			'searchable': True,
 			'placeholder':'description'
-		},
+		}, # Description
+		{
+			'name': 'weight', 
+			'visible': True,			
+			'searchable': False,
+			'orderable': False,
+			'title': 'Weight',
+		}, # weight
+		{
+			'name': 'size', 
+			'visible': True,			
+			'searchable': False,
+			'orderable': False,
+			'title': 'Size',
+		}, # size
+		{
+			'name': 'thickness', 
+			'visible': True,			
+			'searchable': False,
+			'orderable': False,
+			'title': 'THK',
+		}, # thickness
 		{
 			'name': 'quantity', 
 			'visible': True,			
 			'searchable': False,
 			'orderable': False,
-			'title': 'Quantity',
-		},
+			'title': 'Qut',
+		}, # quantity
 		{
 			'name': 'net_value', 
 			'visible': True,
 			'orderable': True,
 			'searchable': False,		
-			'title': 'Net Value',
-		},
+			'title': 'Net Val',
+		}, # net_value
 		{
 			'name': 'recived', 
 			'visible': True,
 			'orderable': True,	
 			'searchable': False,		
 			'title': 'Recived',
-		},
+		}, # recived
 		{'name': 'Add GRN', 'visible': True,'searchable': False, 'orderable': False},
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},
 		{
 			'name':'Delete',
 			'visible': True,
 			'searchable': False,
-			'orderable': False
+			'orderable': False,
+			"title":"DEL"
 		}, # delete field
 	]
 	def get_initial_queryset(self, request=None):
@@ -80,7 +102,12 @@ class indent_table(AjaxDatatableView):
 	
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
+		get_str = lambda x: x if x else "--"
 		row['net_value'] = f''' {obj.net_value()}'''
+		row['size'] = get_str(obj.size)
+		row['thickness'] = get_str(obj.thickness)
+
+		row['weight'] = f''' {obj.get_weight()}'''
 		row['Add GRN'] = f'''<td class="">
 			<a href="/indent/{obj.pk}/grn/form/">
 				<img src="../../../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
@@ -111,7 +138,6 @@ class indent_table(AjaxDatatableView):
 			'Tax':obj.tax,
 			'Discount':obj.discount,
 			'Other Expanses':obj.other_expanses,
-			"Weight":obj.get_weight(),
 			"Comment":obj.comment,
 		}
 		fields = {k: v for k, v in fields.items() if v != None}
@@ -795,7 +821,7 @@ class grn_datatable(AjaxDatatableView):
 	
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
-		row['grn_date'] = obj.grn_date.strftime("%d-%m-%Y")
+		row['grn_date'] = obj.grn_date.strftime("%d-%m-%Y") if obj.grn_date else "--"
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>

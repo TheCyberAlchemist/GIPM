@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import *
-# print(work_order.objects.get_or_create(wo_number="STOCK"))
+print(work_order.objects.get_or_create(wo_number="STOCK"))
 
 
 @admin.register(standard_weight)
