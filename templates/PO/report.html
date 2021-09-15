@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<link href="{{static ('Bundles/css/bootstrap.min.css')}}" rel="stylesheet">
+		
 		<style>
 			#content {
 				display: table;
@@ -15,7 +16,7 @@
 				counter-increment: page;
 				content: counter(page);
 			}
-			#main_table{
+			table{
 				max-width: 100%;
 			}
 			.table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
@@ -29,15 +30,11 @@
 				margin: 10px;
 			}
 			@media screen, print{
-				/* html, body {
-					width: 297mm;
-					height: 100mm;
-				} */
 				html {
 					font-size: 70%;
 					line-height: 110%;
 				}
-				#main_table {
+				table {
 					width: 100%;
 				}
 			}
@@ -50,82 +47,64 @@
 
 		</style>
 	</head>
-	<script type="text/javascript">
-		window.onload = addPageNumbers;
-
-		function addPageNumbers() {
-		  var totalPages = Math.ceil(document.body.scrollHeight / (1123-40));  //842px A4 pageheight for 72dpi, 1123px A4 pageheight for 96dpi,
-		  console.log(totalPages)
-		  for (var i = 1; i <= totalPages; i++) {
-			var pageNumberDiv = document.createElement("div");
-			var pageNumber = document.createTextNode("Page " + i + " of " + totalPages);
-			pageNumberDiv.style.position = "absolute";
-			pageNumberDiv.style.border = "1px solid red";
-			pageNumberDiv.style.top = "calc((" + i + " * (297mm - 0.5px - 40px)) - 40px)"; //297mm A4 pageheight; 0,5px unknown needed necessary correction value; additional wanted 40px margin from bottom(own element height included)
-			pageNumberDiv.style.height = "16px";
-			pageNumberDiv.appendChild(pageNumber);
-			document.body.insertBefore(pageNumberDiv, document.getElementById("content"));
-			pageNumberDiv.style.left = "calc(100% - (" + pageNumberDiv.offsetWidth + "px + 20px))";
-		  }
-		}
-	  </script>
-	<body>
-
-		<table class="table table-bordered" id="main_table">
+	
+	<script type="text/javascript" src="{{static ('report/paged.js')}}"></script>
+	<body style='font-family:"Trebuchet MS", sans-serif'>
+		<table class="table table-bordered" id="main_table" style="margin-bottom: 0px;">
 			<thead>
 				<tr>
-					<th colspan="11" class="fw-bold text-center h2">GHANSHYAM INDUSTRIES</th>
+					<th colspan="11" class="fw-bold text-center h1"><i>GHANSHYAM INDUSTRIES</i></th>
 				</tr>
-				<tr>
+					<tr class="h5 text-center">
+						<td colspan="11">
+							address address address address address address address address address address address address address address address address address  address address address
+						</td>
+					</tr>
+					<tr class="h5 text-center">
+						<td colspan="11">Email- mechghanshyam@gmail.com </td>
+					</tr>
+					<tr class="h5 text-center">
+						<td colspan="11">GST NO - 24AAZPP4220E1ZN</td>
+					</tr>
+					
+				<tr class="h2 text-center fw-bold">
 					<td colspan="11">
-						address address address address address address address address address address address address address address address address address  address address address
-						<table style="width: 100%;margin-top: 10px;" class="fw-bold h5">
-							<tr>
-								<td>Email- mechghanshyam@gmail.com </td>
-								<td style="text-align: right;">GST NO - 24AAZPP4220E1ZN</td>
-							</tr>
-						</table>
+						Purchase Order
+					</td>
 				</tr>
-			</thead>
-			<tbody>
 				<tr>
-					<td colspan="7">M/s Krushna Steel Traders</td>
+					<td colspan="7" rowspan="2">M/s Krushna Steel Traders
+						<br><br>
+						address address address address address address address address address address address address address address address address address 
+					</td>
 					<td colspan="2" class="fw-bold text-center">PO Number</td>
 					<td colspan="2" class="fw-bold text-center">PO Date</td>
 				</tr>
-				<tr>
-					<td colspan="7" rowspan="5">address address address address address address address address address address address address address address address address address </td>
+				<tr>					
 					<td colspan="2" class="text-center">28</td>
 					<td colspan="2">12/12/2021</td>
 				</tr>
 				<tr>
-					<td colspan="4">Contact Person :- Mahendrakumar D Patel</td>
+					<td colspan="2"><span class="fw-bold">Contact Person :-</span> Mahendrakumar D Patel</td>
+					<td colspan="3"><span class="fw-bold">E-mail :-</span> krushna89steel@gmail.com</td>
+					<td colspan="3"><span class="fw-bold">Phone number :-</span> 1234567890</td>
+					<td colspan="3"><span class="fw-bold">GST No :-</span> 24AAZPP4220E1ZN</td>
 				</tr>
 				<tr>
-					<td colspan="4">Phone number :- 1234567890</td>
+					<th>Sr.No.</th>
+					<th class="description">Description</th>
+					<th>MT</th>
+					<th>QUT</th>
+					<th>WT</th>
+					<th>Unit Value</th>
+					<th>Tax</th>
+					<th>Other Charges</th>
+					<th>Discount</th>
+					<th>Total Tax Value</th>
+					<th>Total Net value</th>
 				</tr>
-				<tr>
-					<td colspan="4">E-mail :- krushna89steel@gmail.com</td>
-				</tr>
-				<tr>
-					<td colspan="4">GST No :- 24AAZPP4220E1ZN</td>
-				</tr>
-				<tr>
-					<td colspan="11" class="text-center">Besides, this order is based on our general terms and coditions of purchase. We require an order acknowledgement for the following items.</td>
-				</tr>
-				<tr>
-					<td>Sr.No.</td>
-					<td class="description">Description</td>
-					<td>MT</td>
-					<td>QUT</td>
-					<td>WT</td>
-					<td>Unit Value</td>
-					<td>Tax</td>
-					<td>Other Expanses</td>
-					<td>Discount</td>
-					<td>Total Tax Value</td>
-					<td>Total Net value</td>
-				</tr>
+			</thead>
+			<tbody>
 				{% 	set total_dict = {
 						'total_quantity':0,
 						'total_weight':0,
@@ -179,25 +158,43 @@
 				<tr class="fw-bold">
 					<td colspan="3">Terms & Conditions</td>
 					<td>{{total_quantity}}</td>
-					<td>{{total_weight}}</td>
-					<td colspan="5">Total Gross Value</td>
-					<td>₹ {{total_gross_value}}</td>
+					<td>{{total_weight}} Kg</td>
+					<td colspan="4">Total Gross Value</td>
+					<td colspan="2">₹ {{total_gross_value}}</td>
 				</tr>
 				<tr class="fw-bold">
-					<td colspan="5">Delivery :- </td>
-					<td colspan="5">Total Tax</td>
-					<td colspan="1">₹ {{total_tax_value}}</td>
+					<td colspan="5">Delivery :- {{payment_term}} Day/s</td>
+					<td colspan="4">Total Tax</td>
+					<td colspan="2">₹ {{total_tax_value}}</td>
 				</tr>
 				<tr class="fw-bold">
-					<td colspan="5">Payment Terms :- </td>
-					<td colspan="5">Total</td>
-					<td colspan="1">₹ {{total_net_value}}</td>
+					<td colspan="5">Payment Term :- {{payment_term}} Day/s</td>
+					<td colspan="4">Total</td>
+					<td colspan="2">₹ {{total_net_value}}</td>
+				</tr>
+				<tr class="fw-bold">
+					<td colspan="11">Total in Words :- </td>
 				</tr>
 				<tr>
 					<td colspan="11" class="text-center">
 						Important information for our suppliers.
 					</td>
 				</tr>
+				<tr>
+					<td colspan="11" class="">
+						<ul>
+							<li>It is imperative to specify our Order No.,Pos. No., Material No., Quantity, the Drawing No. and the Revision Index on the material.</li>
+							<li>Invoice documents have to be addressed to our Accounting, preferably as PDF by e-mail to:mechghanshyam@gmail.com</li>
+							<li>And also send original invoice, challan, inspection report ,drgs etc along with material at the time of dispatch.</li>
+							<li>If find any damage or short supply against order in delivery material would not be accepted and that should be replaced by vendor immediately.</li>
+							<li>PO validity is maximum of 90 days from the date of PO.</li>
+							<li>You are kindly requested to send us an order confirmation after getting this order.</li>
+							<li>This order is based on our general terms and coditions of purchase. We require an order acknowledgement for the following items.</li>
+						</ul>
+					</td>
+				</tr>
+				
+
 			</tbody>
 		</table>
 	</body>

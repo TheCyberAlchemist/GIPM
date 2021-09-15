@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% import "macros.jinja" as macros %}
+{% block title%} {% if update %}Update{% else %}Add{% endif %} PO 
+{% endblock %}
+
+{% block css%}
+<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
+<style>
+    td,th {
+        font-size: .9rem !important;
+    }
+</style>
+{% endblock %}
+
+{%block scripts%}
+    <script type="text/javascript">
+        $(document).ready(function() {
+			clear_form($(".myform"))
+            console.log("department")
+            {% if success %}
+				Swal.fire(
+					'PO Saved!',
+					'Your PO object has been saved.',
+					'success'
+				)
+            {% endif %}
+			$("#indent_list").select2();
+			{% if not update %}
+				$("#vendor_id").select2();
+			{% endif %}
+        });
+    </script>
+	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="main_content">
+		<div class="row" style="padding-top: 6rem">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+				<li class="breadcrumb-item">
+					<a href="{{url ('home_page')}}">
+						<span class="h6 fw-bold">Home</span>
+					</a>
+				</li>
+				<li class="breadcrumb-item">
+					<a href="{{url ('show_po')}}">
+						<span class="h6 fw-bold">PO Table</span> 
+					</a>
+				</li>
+				</ol>
+			</nav>
+			<div class="col-12 mb-4" style="width:80%;margin: 0 auto;">
+				<div class="card shadow-sm components-section" style="border-radius: 1rem;">
+					<div class="card-body" style="border-radius: 1rem;">
+						<div class="accordion accordion-flush" id="accordionFlushExample">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="flush-headingOne">
+									<h3>{% if update %}Update{% else %}Add{% endif %} PO {% if success %}✅{% endif %}</h3>
+								</h2>
+								<div class="accordion-body">
+									<form class="myform" method = "GET" action="../report">
+										<!-- <img class="form_hider" src="{{static ('admin/details/img/close.png')}}" alt="hide"> -->
+										<div class="row mb-3 mx-lg-5 mx-sm-0">
+											<div class="col-lg-6 col-md-12 col-sm-12">
+												{{macros.input_number("Delivery Day/s","delivery_day")}}
+											</div>
+											<div class="col-lg-6 col-md-12 col-sm-12">
+												{{macros.input_number("Payment Term","payment_term")}}
+											</div>
+										</div>
+										<div class="row mb-3 mx-lg-5 mx-sm-0">
+											<div class="col-lg-6 col-md-12 col-sm-12">
+												{{macros.select2("Freight Charges","freight_charges",["INCLUDED","EXCLUDED"])}}
+											</div>
+										</div>
+										<div class="row mb-3 mx-lg-5 mx-sm-0">
+											<div class="container mt-4" style="width:80%;">
+												<button type="submit" class="btn btn-outline-success"
+													style="width:100%">Submit</button>
+											</div>
+										</div>
+									</form>
+									{% if integrityErrors %}
+										<div class="errors_container">
+											<p>
+											{{integrityErrors}}
+											</p>
+										</div>
+									{% endif %}
+									{% if errors %}
+										<div class="errors_container">
+											<p>
+											{{errors}}
+											</p>
+										</div>
+										<script>
+											show_error("{{errors}}")
+										</script>
+									{% endif %}
+								</div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
