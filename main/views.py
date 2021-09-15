@@ -789,7 +789,7 @@ class grn_datatable(AjaxDatatableView):
 	
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
-		row['grn_date'] = obj.grn_date.strftime("%d-%m-%Y")
+		row['grn_date'] = obj.grn_date.strftime("%d-%m-%Y") if obj.grn_date else "--"
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>

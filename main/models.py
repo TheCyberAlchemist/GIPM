@@ -158,6 +158,7 @@ class indent(order):
 	def gross_value(self):
 		'return the gross value of the order \n ((value-discount) * weight)'
 		# overwritting the gross_value function to use weight
+		print(self.discounted_total(), self.get_weight())
 		temp = (self.discounted_total() * self.get_weight()) + self.other_expanses
 		return round(temp,2) if temp else 0
 
@@ -176,11 +177,12 @@ class indent(order):
 		elif self.material_shape == "Pipe":
 			return round_no(((S*S - ID*ID)*T*0.00000616)*Q)
 		elif self.material_shape == "Labour" or self.material_shape == "BF":
+			print("here at BF")
 			return Q
 		elif self.material_shape in ["ISMC","ISMB","ISA","Bolt","Nut"]:
 			w_pmm = standard_weight.objects.filter(material_shape=shape,size=S).first().weight_pmm
 			return round_no(w_pmm * T * Q)
-		return None
+		return 0
 	
 	def __str__(self):
 		if self.id:
