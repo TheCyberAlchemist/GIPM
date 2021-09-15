@@ -111,7 +111,6 @@ class purchase_order(models.Model):
 			return f"{self.po_number}"
 	
 	def get_received_quantity(self):
-		print(self.indent_set.all())
 		pass
 	
 	def save(self,*args, **kwargs):
@@ -158,7 +157,6 @@ class indent(order):
 	def gross_value(self):
 		'return the gross value of the order \n ((value-discount) * weight)'
 		# overwritting the gross_value function to use weight
-		print(self.discounted_total(), self.get_weight())
 		temp = (self.discounted_total() * self.get_weight()) + self.other_expanses
 		return round(temp,2) if temp else 0
 
@@ -177,7 +175,6 @@ class indent(order):
 		elif self.material_shape == "Pipe":
 			return round_no(((S*S - ID*ID)*T*0.00000616)*Q)
 		elif self.material_shape == "Labour" or self.material_shape == "BF":
-			print("here at BF")
 			return Q
 		elif self.material_shape in ["ISMC","ISMB","ISA","Bolt","Nut"]:
 			w_pmm = standard_weight.objects.filter(material_shape=shape,size=S).first().weight_pmm
@@ -189,7 +186,7 @@ class indent(order):
 			return f"{self.pk} [{self.item_description}]"
 
 	def get_remaining_quantity(self):
-		return self.quantity - self.recived_quantity
+		return int(self.quantity - self.recived_quantity)
 
 	def save(self,*args, **kwargs):
 		if self.recived_quantity == self.quantity:
@@ -197,9 +194,9 @@ class indent(order):
 		super(indent, self).save(*args, **kwargs)
 
 class grn(order):
-
+	vendor_id = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
 	invoice_no = models.CharField(max_length=200,null=True, blank=True)
-	indent_id = models.ForeignKey(indent,on_delete=models.SET_NULL,null=True, blank=True)
+	indent_id = models.ForeignKey(indent,on_delete=models.CASCADE,null=True, blank=True)
 	grn_date = models.DateField(null=True, blank=True)
 	def __str__(self):
 		if self.invoice_no:
@@ -209,14 +206,15 @@ class grn(order):
 	
 	def get_save_messages(self,quantity):
 		'returns the respective string checking the quantity recived '
-		quantity = int(quantity)
+		quantity = float(quantity)
 		if quantity > self.indent_id.get_remaining_quantity():
 			remaining = quantity - self.indent_id.get_remaining_quantity()
-			return f"Extra units received! {remaining} units stored in STOCK."
+			return f"Extra units received! {int(remaining)} units stored in STOCK."
 		return "Saved GRN and updated indent."
 
 
 	class Meta:
+		verbose_name_plural = "GRN"
 		constraints = [
 			models.UniqueConstraint(fields=['invoice_no', 'indent_id'], name='Same invoice cannot be in the same indent.'),
 		]

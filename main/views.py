@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from .models import *
 from django.views import View
+from django.db.models import Q
 # Create your views here.
 from .models import *
 from .forms import *
@@ -303,7 +304,7 @@ class PO_datatable(AjaxDatatableView):
 		
 		row['po_date'] = obj.po_date.strftime("%d-%m-%Y")
 		row['net_value'] = f'{round(net_value,2)}'
-		row["remaining_quantity"] = f'{remaining_quantity} out of {total_quantity}'
+		row["remaining_quantity"] = f'{int(remaining_quantity)} out of {int(total_quantity)}'
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
@@ -330,7 +331,7 @@ class PO_datatable(AjaxDatatableView):
 		indent_list_html += f'<tr><th class="d-flex justify-content-center">Indent</td><td class="">Balance</td></tr>'
 		for indent in obj.indent_set.all():
 			dimentions = f"{indent.size} X {indent.thickness} X {indent.width} X {indent.internal_diameter}".replace(" X None","").replace("None","")
-			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" >{indent.WO}</a>&nbsp[{indent.item_description} ({dimentions})]</td><td class="">&nbsp&nbsp{indent.get_remaining_quantity()} out of {indent.quantity}</td></tr>'
+			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" >{indent.WO}</a>&nbsp[{indent.item_description} ({dimentions})]</td><td class="">&nbsp&nbsp{indent.get_remaining_quantity()} out of {int(indent.quantity)}</td></tr>'
 		indent_list_html += '</table>'
 
 		# print(student_details.Division_id.Semester_id)
@@ -775,12 +776,19 @@ class grn_datatable(AjaxDatatableView):
 			'searchable': False,
 		},
 		{
+			'name': 'Vendor',
+			'foreign_field': 'vendor_id__vendor_name',
+			'visible': True,
+			'searchable': True,
+			'placeholder':'Vendor'
+		}, # vendor
+		{
 			'name': 'invoice_no', 
 			'visible': True,
 			'searchable': True,
 			'orderable': True,
 			'title': 'Invoice Number',
-		}, # name
+		}, # invoice
 		{
 			'name': 'Indent Number',
 			'foreign_field': 'indent_id__id',
@@ -821,7 +829,8 @@ class grn_datatable(AjaxDatatableView):
 	
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
-		row['grn_date'] = obj.grn_date.strftime("%d-%m-%Y") if obj.grn_date else "--"
+		row['grn_date'] = obj.grn_date.strftime("%d-%m-%Y") if obj.grn_date else "-----"
+		row['Vendor'] = obj.vendor_id.vendor_name if obj.vendor_id else "-------"
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
@@ -874,10 +883,11 @@ class grn_form(View):
 	def get(self, request,indent_id=None,grn_id=None, *args, **kwargs):
 		self.context= {
 			"update":[],
-			"all_indent":indent.objects.all().filter(recived=False)
+			"all_vendors":vendor_details.objects.all(),
 		}
 		if grn_id:
 			instance = grn.objects.get(pk=grn_id)
+			self.context["all_indent"]=indent.objects.all().filter(Q(recived=False)|Q(id=instance.indent_id.id))
 			self.context['update'] = instance
 			self.context['success'] = False
 			return render(request,self.template_name,self.context)
