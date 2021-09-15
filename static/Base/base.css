@@ -1,0 +1,6 @@
+.container-fluid.p-2.table_container {
+    font-size: small;
+}
+table td{
+    border: 1px solid black;
+}

@@ -39,7 +39,7 @@ class order(models.Model):
 	# po_number = models.CharField(max_length=200,null=True, blank=True)
 	# po_date = models.DateField(null=True, blank=True)
 	description = models.TextField(null=True, blank=True)
-	quantity = models.IntegerField(default=0,null=True, blank=True)
+	quantity = models.FloatField(default=0,null=True, blank=True)
 	unit = models.TextField(null=True, blank=True)
 	value = models.FloatField(default=0,null=True, blank=True)
 	tax = models.FloatField(default=0,null=True, blank=True)
@@ -140,7 +140,7 @@ class indent(order):
 	WO = models.ForeignKey(work_order,on_delete=models.CASCADE)
 	# vendor_id = models.ForeignKey(vendor_details,on_delete=models.SET_NULL,null=True, blank=True)
 	# dropdown of vendor class 
-	recived_quantity = models.IntegerField(default=0,null=True, blank=True)
+	recived_quantity = models.FloatField(default=0,null=True, blank=True)
 	recived = models.BooleanField(default=False)
 	comment = models.TextField(null=True, blank=True)
 	material_shape = models.TextField(null=True, blank=True)
@@ -197,7 +197,8 @@ class indent(order):
 		super(indent, self).save(*args, **kwargs)
 
 class grn(order):
-	invoice_no = models.CharField(max_length=200,null=True, blank=True,unique=True)
+
+	invoice_no = models.CharField(max_length=200,null=True, blank=True)
 	indent_id = models.ForeignKey(indent,on_delete=models.SET_NULL,null=True, blank=True)
 	grn_date = models.DateField(null=True, blank=True)
 	def __str__(self):
@@ -205,6 +206,7 @@ class grn(order):
 			return f"{self.invoice_no}"
 		else:
 			return str(self.pk)
+	
 	def get_save_messages(self,quantity):
 		'returns the respective string checking the quantity recived '
 		quantity = int(quantity)
@@ -212,6 +214,12 @@ class grn(order):
 			remaining = quantity - self.indent_id.get_remaining_quantity()
 			return f"Extra units received! {remaining} units stored in STOCK."
 		return "Saved GRN and updated indent."
+
+
+	class Meta:
+		constraints = [
+			models.UniqueConstraint(fields=['invoice_no', 'indent_id'], name='Same invoice cannot be in the same indent.'),
+		]
 
 	def save(self,*args, **kwargs):
 		super(grn, self).save(*args, **kwargs)
