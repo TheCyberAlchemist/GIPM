@@ -103,7 +103,10 @@ function convertNumberToWords(amount) {
 function get_total_in_words(total) {
 	let s = convertNumberToWords(total)
 	document.getElementById("total_in_words").innerHTML += s
-    currency_td = document.getElementsByClassName("currency");
+    change_currency();
+}
+function change_currency(){
+    currency_td = document.querySelectorAll("td.currency");
     for (td of currency_td){
         a = td.innerHTML
         console.log(formatCurrency(a))

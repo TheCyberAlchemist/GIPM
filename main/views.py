@@ -72,9 +72,10 @@ class indent_table(AjaxDatatableView):
 		{
 			'name': 'net_value', 
 			'visible': True,
-			'orderable': True,
+			'orderable': False,
 			'searchable': False,		
 			'title': 'Net Val',
+			'className': 'currency',
 		}, # net_value
 		{
 			'name': 'recived', 
@@ -273,9 +274,10 @@ class PO_datatable(AjaxDatatableView):
 		{
 			'name': 'net_value', 
 			'visible': True,
-			'orderable': True,
+			'orderable': False,
 			'searchable': False,		
 			'title': 'Net Value',
+			'className': 'currency',
 		},# net_value
 		{
 			'name': 'is_complete', 
@@ -482,35 +484,36 @@ class WO_datatable(AjaxDatatableView):
 			'searchable': True,
 			'orderable': True,
 			'title': 'WO Number',
-		},
+		}, # wo_number
 		{
 			'name': 'description', 
 			'visible': True,
 			'searchable': True,
 			'orderable': True,
 			'title': 'Description',
-		},
+		}, # description
 		{
 			'name': 'quantity', 
 			'visible': True,
 			'orderable': True,
 			'searchable': False,		
 			'title': 'Quantity',
-		},
+		}, # quantity
 		{
 			'name': 'net_value', 
 			'visible': True,
-			'orderable': True,
+			'orderable': False,
 			'searchable': False,		
 			'title': 'Net Value',
-		},
+			'className': 'currency',
+		}, # net_value
 		{
 			'name': 'is_complete', 
 			'visible': True,
 			'orderable': True,	
 			'searchable': False,		
 			'title': 'Completed',
-		},
+		}, # is_complete
 		{'name': 'Indent List', 'visible': True,'searchable': False, 'orderable': False},
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},
 		{
