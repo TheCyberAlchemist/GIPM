@@ -9,6 +9,11 @@ class SW(admin.ModelAdmin):
 	search_fields=('material_shape',)
 	list_filter= ['material_shape']
 
+@admin.register(grn)
+class grn(admin.ModelAdmin):
+	list_display = ["invoice_no","vendor_id",'indent_id']
+	search_fields=('invoice_no',)
+
 
 @admin.register(purchase_order)
 class PO(admin.ModelAdmin):

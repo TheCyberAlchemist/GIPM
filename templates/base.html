@@ -15,6 +15,7 @@
 	<link type="text/css" rel="stylesheet" href="{{static ('Bundles/css/select2.css')}}" />
 	<link type="text/css" rel="stylesheet" href="{{static ('Bundles/css/my_select2.css')}}" />
 	<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/dataTables.bootstrap5.min.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{static ('datatables/fixedHeader.bootstrap5.min.css')}}"/>
 	
 	<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
 	<link type="text/css" rel="preconnect" href="https://fonts.gstatic.com">
@@ -147,10 +148,10 @@
 <script type="text/javascript" src="{{ static ('datatables/utils.js') }}"></script>
 <script type="text/javascript" src="{{ static ('datatables/delete.js') }}"></script>
 <script type="text/javascript" src="{{ static ('Bundles/js/datepicker.js') }}"></script>
-<script type="text/javascript" src="{{ static ('datatables/utils.js') }}"></script>
-<script type="text/javascript" src="{{ static ('Bundles/js/datepicker.js') }}"></script>
 <script type="application/javascript" src="{{static ('datatables/ajax_setup.js')}}"></script>
 <script type="application/javascript" src="{{static ('form.js')}}"></script>
+<script type="application/javascript" src="{{static ('datatables/fixedHeader.bootstrap5.min.js')}}"></script>
+<script type="application/javascript" src="{{static ('datatables/dataTables.fixedHeader.min.js')}}"></script>
 {% block scripts %}
 {% endblock %}
 {# script block for all the scripts of the page #}

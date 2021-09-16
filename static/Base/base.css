@@ -4,3 +4,4 @@
 table td{
     border: 1px solid black;
 }
+/* thead tr:first-child{ position: sticky !important; top: 0; } */
