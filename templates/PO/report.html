@@ -121,16 +121,16 @@
 					<tr>
 						<td>{{loop.index}}</td>
 						<td class="description">({{indent.pk}}) {{indent.description}}</td>
-						<td>{{indent.material_type}}</td>
+						<td>{% if indent.material_type %}{{indent.material_type}}{% else %}---{% endif %}</td>
 						<td>{{indent.quantity}} {{indent.unit}}</td>
 						<td>{{indent.get_weight()}} Kg</td>
-						<td>₹ {{indent.value}}</td>
+						<td class="currency">₹ {{indent.value}}</td>
 						<td>{{indent.tax}} %</td>
 						<!-- <td>{{indent.tax_amount()}}</td> -->
-						<td>₹ {{indent.other_expanses}}</td>
-						<td>₹ {{indent.discount}}</td>
-						<td>₹ {{indent.tax_amount()}}</td>
-						<td>₹ {{indent.gross_value()}}</td>
+						<td class="currency">₹ {{indent.other_expanses}}</td>
+						<td class="currency">₹ {{indent.discount}}</td>
+						<td class="currency">₹ {{indent.tax_amount()}}</td>
+						<td class="currency">₹ {{indent.gross_value()}}</td>
 						<!-- <td>{{indent.net_value()}}</td> -->
 					</tr>
 				{% endfor %}
@@ -142,22 +142,22 @@
 					<td>{{total_quantity}}</td>
 					<td>{{total_weight}} Kg</td>
 					<td colspan="2">Total Gross Value</td>
-					<td colspan="4">₹ {{total_gross_value}}</td>
+					<td colspan="4" class="currency">₹ {{total_gross_value}}</td>
 				</tr>
 				<tr class="fw-bold">
 					<td colspan="5">Delivery :- {{payment_term}} Day/s</td>
 					<td colspan="2">Total Tax Value</td>
-					<td colspan="4">₹ {{total_tax_value}}</td>
+					<td colspan="4" class="currency">₹ {{total_tax_value}}</td>
 				</tr>
 				<tr class="fw-bold">
 					<td colspan="5">Payment Term :- {{payment_term}} Day/s</td>
 					<td colspan="2">Total Net Value</td>
-					<td colspan="4">₹ {{total_net_value}}</td>
+					<td colspan="4" class="currency">₹ {{total_net_value}}</td>
 				</tr>
 				<tr class="fw-bold">
 					<td colspan="5">Freight Charges :- {{freight_charges}}</td>
 					<td colspan="2">Total in Words :- </td>
-					<td colspan="4" id="total_in_words" ></td>
+					<td colspan="4" id="total_in_words" width="200"></td>
 				</tr>
 				<tr>
 					<td colspan="11" class="">
