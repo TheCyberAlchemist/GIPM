@@ -72,9 +72,10 @@ class indent_table(AjaxDatatableView):
 		{
 			'name': 'net_value', 
 			'visible': True,
-			'orderable': True,
+			'orderable': False,
 			'searchable': False,		
 			'title': 'Net Val',
+			'className': 'currency',
 		}, # net_value
 		{
 			'name': 'recived', 
@@ -273,9 +274,10 @@ class PO_datatable(AjaxDatatableView):
 		{
 			'name': 'net_value', 
 			'visible': True,
-			'orderable': True,
+			'orderable': False,
 			'searchable': False,		
 			'title': 'Net Value',
+			'className': 'currency',
 		},# net_value
 		{
 			'name': 'is_complete', 
@@ -284,6 +286,7 @@ class PO_datatable(AjaxDatatableView):
 			'searchable': False,		
 			'title': 'Completed',
 		},
+		{'name': 'Print', 'visible': True,'searchable': False, 'orderable': False},
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},
 		{
 			'name':'Delete',
@@ -302,9 +305,13 @@ class PO_datatable(AjaxDatatableView):
 			remaining_quantity += indent.get_remaining_quantity()
 			total_quantity += indent.quantity
 		
-		row['po_date'] = obj.po_date.strftime("%d-%m-%Y")
+		row['po_date'] = obj.get_date()
 		row['net_value'] = f'{round(net_value,2)}'
 		row["remaining_quantity"] = f'{int(remaining_quantity)} out of {int(total_quantity)}'
+		row['Print'] = f'''<td class="">
+				<a href="../report_input/{obj.pk}" >
+				<img src="../../../static/Images/print.png" style="width:19px;height:19px" alt="print"></a>
+			</td>'''
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
@@ -414,11 +421,15 @@ class PO_table(View):
 	def post(self, request):
 		pass
 
-def po_print_inputs(request):
-	return render(request,"po/po_print_input.html")
-def print_report(request):
+def po_print_inputs(request,po_id):
+	my_po = purchase_order.objects.get(pk=po_id)
+	context = {'my_po':my_po}
+	return render(request,"po/po_print_input.html",context)
+
+def print_report(request,po_id):
+	my_po = purchase_order.objects.get(pk=po_id)
 	total_net_value = 0
-	my_indents = indent.objects.all()
+	my_indents = indent.objects.all().filter(PO=my_po)
 	total_gross_value,total_net_value,total_quantity,total_tax_value,total_weight = 0,0,0,0,0
 	for my_indent in my_indents:
 		total_net_value += my_indent.net_value()
@@ -428,7 +439,10 @@ def print_report(request):
 		total_gross_value += my_indent.gross_value()
 	delivery_day = request.GET['delivery_day']
 	payment_term = request.GET['payment_term']
+	freight_charges = request.GET['freight_charges']
+	print(freight_charges)
 	context = {
+		"my_po":my_po,
 		"all_indents":my_indents,
 		"total_net_value":round(total_net_value,2),
 		"total_quantity":round(total_quantity,2),
@@ -437,6 +451,7 @@ def print_report(request):
 		"total_gross_value":round(total_gross_value,2),
 		"delivery_day":delivery_day,
 		"payment_term":payment_term,
+		"freight_charges":freight_charges,
 	}
 	print(context['total_net_value'])
 	# total_quantity = indent.objects.all()
@@ -469,35 +484,36 @@ class WO_datatable(AjaxDatatableView):
 			'searchable': True,
 			'orderable': True,
 			'title': 'WO Number',
-		},
+		}, # wo_number
 		{
 			'name': 'description', 
 			'visible': True,
 			'searchable': True,
 			'orderable': True,
 			'title': 'Description',
-		},
+		}, # description
 		{
 			'name': 'quantity', 
 			'visible': True,
 			'orderable': True,
 			'searchable': False,		
 			'title': 'Quantity',
-		},
+		}, # quantity
 		{
 			'name': 'net_value', 
 			'visible': True,
-			'orderable': True,
+			'orderable': False,
 			'searchable': False,		
 			'title': 'Net Value',
-		},
+			'className': 'currency',
+		}, # net_value
 		{
 			'name': 'is_complete', 
 			'visible': True,
 			'orderable': True,	
 			'searchable': False,		
 			'title': 'Completed',
-		},
+		}, # is_complete
 		{'name': 'Indent List', 'visible': True,'searchable': False, 'orderable': False},
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},
 		{
@@ -543,7 +559,7 @@ class WO_datatable(AjaxDatatableView):
 			'Vendor':obj.vendor_id,
 			'Comment':obj.comment,
 			'PO Number':obj.incoming_po_number,
-			'PO Date':obj.incoming_po_date.strftime("%d-%m-%Y"),
+			'PO Date':obj.incoming_po_date.strftime("%d-%m-%Y") if obj.incoming_po_date else "-----",
 			'Value':obj.value,
 			'Tax':obj.tax,
 			'Discount':obj.discount,
@@ -790,11 +806,11 @@ class grn_datatable(AjaxDatatableView):
 			'title': 'Invoice Number',
 		}, # invoice
 		{
-			'name': 'Indent Number',
-			'foreign_field': 'indent_id__id',
+			'name': "indent_id", 
 			'visible': True,
-			'searchable': True,
-			'placeholder':'Indent_id'
+			'orderable': True,
+			'searchable': False,
+			'title': 'Indent',
 		}, # indent
 		{
 			'name': 'quantity', 
@@ -808,7 +824,7 @@ class grn_datatable(AjaxDatatableView):
 			'visible': True,
 			'orderable': True,
 			'searchable': False,
-			'title': 'Time Created',
+			'title': 'GRN Date',
 		}, # grn_date
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},
 		{
@@ -829,6 +845,7 @@ class grn_datatable(AjaxDatatableView):
 	
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
+		row['indent_id'] = str(obj.indent_id) if obj.indent_id else "---------"
 		row['grn_date'] = obj.grn_date.strftime("%d-%m-%Y") if obj.grn_date else "-----"
 		row['Vendor'] = obj.vendor_id.vendor_name if obj.vendor_id else "-------"
 		row['Edit'] = f'''<td class="">

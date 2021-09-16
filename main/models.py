@@ -113,6 +113,9 @@ class purchase_order(models.Model):
 	def get_received_quantity(self):
 		pass
 	
+	def get_date(self):
+		return self.po_date.strftime("%d-%m-%Y") if self.po_date else "-----"
+		
 	def save(self,*args, **kwargs):
 		super(purchase_order, self).save(*args, **kwargs)
 		if not self.po_number:

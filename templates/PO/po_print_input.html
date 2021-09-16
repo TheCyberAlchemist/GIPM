@@ -15,19 +15,7 @@
 {%block scripts%}
     <script type="text/javascript">
         $(document).ready(function() {
-			clear_form($(".myform"))
-            console.log("department")
-            {% if success %}
-				Swal.fire(
-					'PO Saved!',
-					'Your PO object has been saved.',
-					'success'
-				)
-            {% endif %}
-			$("#indent_list").select2();
-			{% if not update %}
-				$("#vendor_id").select2();
-			{% endif %}
+			$("#freight_charges").select2();
         });
     </script>
 	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
@@ -56,10 +44,10 @@
 						<div class="accordion accordion-flush" id="accordionFlushExample">
 							<div class="accordion-item">
 								<h2 class="accordion-header" id="flush-headingOne">
-									<h3>{% if update %}Update{% else %}Add{% endif %} PO {% if success %}✅{% endif %}</h3>
+									<h3>PO Report for {{my_po}}</h3>
 								</h2>
 								<div class="accordion-body">
-									<form class="myform" method = "GET" action="../report">
+									<form class="myform" method = "GET" action="../../report/{{my_po.pk}}">
 										<!-- <img class="form_hider" src="{{static ('admin/details/img/close.png')}}" alt="hide"> -->
 										<div class="row mb-3 mx-lg-5 mx-sm-0">
 											<div class="col-lg-6 col-md-12 col-sm-12">
