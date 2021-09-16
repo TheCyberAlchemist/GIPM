@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<title>
+			PO Report
+		</title>
 		<link href="{{static ('Bundles/css/bootstrap.min.css')}}" rel="stylesheet">
-		
 		<style>
 			#content {
 				display: table;
@@ -39,6 +41,14 @@
 				}
 			}
 			@media print{
+				#print{
+					display:none !important;
+				}
+				td,tr,#tac
+				{ 
+					page-break-inside:avoid; 
+					page-break-after:auto 
+				}
 				html {
 					font-size: 60%;
 					line-height: 110%;
@@ -48,8 +58,14 @@
 		</style>
 	</head>
 	
-	<script type="text/javascript" src="{{static ('report/paged.js')}}"></script>
-	<body style='font-family:"Trebuchet MS", sans-serif'>
+	<script type="text/javascript" src="{{static ('report/report.js')}}"></script>
+	<body style='font-family:"Trebuchet MS", sans-serif' onload="get_total_in_words({{total_net_value}})">
+		<div class="d-flex justify-content-center m-2" id="print">
+			<button class="btn btn-success w-75" onclick="window.print()">
+				<h3>Print <kbd>ctrl+p</kbd></h3>
+			</button>
+		</div>
+		
 		<table class="table table-bordered" id="main_table" style="margin-bottom: 0px;">
 			<thead>
 				<tr>
@@ -57,14 +73,10 @@
 				</tr>
 					<tr class="h5 text-center">
 						<td colspan="11">
-							address address address address address address address address address address address address address address address address address  address address address
+							Address:-12/6/1/1,PACNCHRATNA IND EST,NR RAMOL VATVA BRIDGE,VATVA, AHMEDABAD-382445
+							<br>Email- mechghanshyam@gmail.com 
+							<br>GST NO - 24AAZPP4220E1ZN
 						</td>
-					</tr>
-					<tr class="h5 text-center">
-						<td colspan="11">Email- mechghanshyam@gmail.com </td>
-					</tr>
-					<tr class="h5 text-center">
-						<td colspan="11">GST NO - 24AAZPP4220E1ZN</td>
 					</tr>
 					
 				<tr class="h2 text-center fw-bold">
@@ -73,22 +85,22 @@
 					</td>
 				</tr>
 				<tr>
-					<td colspan="7" rowspan="2">M/s Krushna Steel Traders
+					<td colspan="7" rowspan="2">M/s <span class="fw-bold">{{my_po.vendor_id.vendor_name}}</span>
 						<br><br>
-						address address address address address address address address address address address address address address address address address 
+						Address :- {{my_po.vendor_id.address}}
 					</td>
 					<td colspan="2" class="fw-bold text-center">PO Number</td>
 					<td colspan="2" class="fw-bold text-center">PO Date</td>
 				</tr>
 				<tr>					
-					<td colspan="2" class="text-center">28</td>
-					<td colspan="2">12/12/2021</td>
+					<td colspan="2" class="text-center">{{my_po.po_number}}</td>
+					<td colspan="2">{{my_po.get_date()}}</td>
 				</tr>
 				<tr>
-					<td colspan="2"><span class="fw-bold">Contact Person :-</span> Mahendrakumar D Patel</td>
-					<td colspan="3"><span class="fw-bold">E-mail :-</span> krushna89steel@gmail.com</td>
-					<td colspan="3"><span class="fw-bold">Phone number :-</span> 1234567890</td>
-					<td colspan="3"><span class="fw-bold">GST No :-</span> 24AAZPP4220E1ZN</td>
+					<td colspan="2"><span class="fw-bold">Contact Person :-</span>{% if my_po.vendor_id.contact_person %} {{my_po.vendor_id.contact_person}} {% else %} ---------- {% endif %}</td>
+					<td colspan="3"><span class="fw-bold">E-mail :-</span>{% if my_po.vendor_id.email %} {{my_po.vendor_id.email}} {% else %} ---------- {% endif %}</td>
+					<td colspan="3"><span class="fw-bold">Phone number :-</span>{% if my_po.vendor_id.contact_number %} {{my_po.vendor_id.contact_number}} {% else %} ---------- {% endif %}</td>
+					<td colspan="3"><span class="fw-bold">GST No :-</span>{% if my_po.vendor_id.gst_no %} {{my_po.vendor_id.gst_no}} {% else %} ---------- {% endif %}</td>
 				</tr>
 				<tr>
 					<th>Sr.No.</th>
@@ -97,21 +109,14 @@
 					<th>QUT</th>
 					<th>WT</th>
 					<th>Unit Value</th>
-					<th>Tax</th>
+					<th>Tax (in %)</th>
 					<th>Other Charges</th>
 					<th>Discount</th>
-					<th>Total Tax Value</th>
-					<th>Total Net value</th>
+					<th>Tax Value</th>
+					<th>Gross value</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% 	set total_dict = {
-						'total_quantity':0,
-						'total_weight':0,
-						'total_net_value':0,
-						'total_tax_value':0
-					}
-				%}
 				{% for indent in all_indents %}
 					<tr>
 						<td>{{loop.index}}</td>
@@ -120,36 +125,13 @@
 						<td>{{indent.quantity}} {{indent.unit}}</td>
 						<td>{{indent.get_weight()}} Kg</td>
 						<td>₹ {{indent.value}}</td>
-						<td>{{indent.tax}}</td>
+						<td>{{indent.tax}} %</td>
 						<!-- <td>{{indent.tax_amount()}}</td> -->
 						<td>₹ {{indent.other_expanses}}</td>
 						<td>₹ {{indent.discount}}</td>
 						<td>₹ {{indent.tax_amount()}}</td>
 						<td>₹ {{indent.gross_value()}}</td>
 						<!-- <td>{{indent.net_value()}}</td> -->
-					</tr>
-				{% endfor %}
-				{% for indent in all_indents %}
-					<tr>
-						<td>{{loop.index}}</td>
-						<td class="width: 100px" class="description">{{indent.description}}</td>
-						<td>{{indent.material_type}}</td>
-						<td>{{indent.quantity}} {{indent.unit}}</td>
-						<td>{{indent.get_weight()}} Kg</td>
-						<td>₹ {{indent.value}}</td>
-						<td>{{indent.tax}}</td>
-						<!-- <td>{{indent.tax_amount()}}</td> -->
-						<td>₹ {{indent.other_expanses}}</td>
-						<td>₹ {{indent.discount}}</td>
-						<td>₹ {{indent.tax_amount()}}</td>
-						<td>₹ {{indent.gross_value()}}</td>
-						<!-- <td>{{indent.net_value()}}</td> -->
-						{% if total_dict.update({
-							'total_quantity':total_dict['total_quantity']+indent.quantity,
-							'total_weight':total_dict['total_weight']+indent.get_weight(),
-							'total_net_value':total_dict['total_net_value']+indent.net_value(),
-							'total_tax_value':total_dict['total_tax_value']+indent.tax_amount(),
-						}) %} {% endif %}
 					</tr>
 				{% endfor %}
 				<tr>
@@ -159,42 +141,79 @@
 					<td colspan="3">Terms & Conditions</td>
 					<td>{{total_quantity}}</td>
 					<td>{{total_weight}} Kg</td>
-					<td colspan="4">Total Gross Value</td>
-					<td colspan="2">₹ {{total_gross_value}}</td>
+					<td colspan="2">Total Gross Value</td>
+					<td colspan="4">₹ {{total_gross_value}}</td>
 				</tr>
 				<tr class="fw-bold">
 					<td colspan="5">Delivery :- {{payment_term}} Day/s</td>
-					<td colspan="4">Total Tax</td>
-					<td colspan="2">₹ {{total_tax_value}}</td>
+					<td colspan="2">Total Tax Value</td>
+					<td colspan="4">₹ {{total_tax_value}}</td>
 				</tr>
 				<tr class="fw-bold">
 					<td colspan="5">Payment Term :- {{payment_term}} Day/s</td>
-					<td colspan="4">Total</td>
-					<td colspan="2">₹ {{total_net_value}}</td>
+					<td colspan="2">Total Net Value</td>
+					<td colspan="4">₹ {{total_net_value}}</td>
 				</tr>
 				<tr class="fw-bold">
-					<td colspan="11">Total in Words :- </td>
-				</tr>
-				<tr>
-					<td colspan="11" class="text-center">
-						Important information for our suppliers.
-					</td>
+					<td colspan="5">Freight Charges :- {{freight_charges}}</td>
+					<td colspan="2">Total in Words :- </td>
+					<td colspan="4" id="total_in_words" ></td>
 				</tr>
 				<tr>
 					<td colspan="11" class="">
+						<div style="width: 100%" class="fw-bold text-center h5">Important information for our suppliers.</div>
+						<h5>Terms and conditions:</h5>
 						<ul>
-							<li>It is imperative to specify our Order No.,Pos. No., Material No., Quantity, the Drawing No. and the Revision Index on the material.</li>
-							<li>Invoice documents have to be addressed to our Accounting, preferably as PDF by e-mail to:mechghanshyam@gmail.com</li>
-							<li>And also send original invoice, challan, inspection report ,drgs etc along with material at the time of dispatch.</li>
-							<li>If find any damage or short supply against order in delivery material would not be accepted and that should be replaced by vendor immediately.</li>
-							<li>PO validity is maximum of 90 days from the date of PO.</li>
-							<li>You are kindly requested to send us an order confirmation after getting this order.</li>
-							<li>This order is based on our general terms and coditions of purchase. We require an order acknowledgement for the following items.</li>
+							<li>
+								Invoice
+								<ul>
+									<li>Original invoice has to be sent at the time of delivery of the material and the Company will not be held responsible fordelays in payments if the correct invoices are not sent on time.</li>
+								</ul>
+							</li>
+							<li>Original Certificates
+								<ul>
+									<li>Original test certificates, material certificates and guarantee certificates must be sent at the time of delivery of the material and the Company will not be held responsible for delays in payments if the correct certificates are not sent on time.</li>								</ul>
+							</li>
+							<li>Warranty
+								<ul>
+									<li>Vendor is giving warranty that the material used is defect free and is as per requirement of the Company.</li>
+									<li>Vendor is conforming to the design, material hardness and smooth finish of the material as required by the company, wherever applicable</li>
+								</ul>
+							</li>
+							<li>Rejection
+								<ul>
+									<li>The rejected material must be collected within 7 days from the receipt of rejection memo. The vendor will lose claim over the material for delays over 7 days and the company and the company has right to scrap the said material without any further communication.</li>
+								</ul>
+							</li>
+							<li>Rework
+								<ul>
+									<li>Any rework is required to be done for the spare supplied. A debit note for charges of rework done and delay in assembly damages + process delay in manufacturing all to be charged to the vendors / suppliers.</li>
+								</ul>
+							</li>
+							<li>Transportation
+								<ul>
+									<li>Free delivery at our site or to pay basis</li>
+								</ul>
+							</li>
+							<li>Packaging
+								<ul>
+									<li>Charges included in the cost and any damage to the material will be in the account of the vendor.</li>
+								</ul>
+							</li>
+							<li>Cancellation of the P.O.
+								<ul>
+									<li>The company has right to cancel the order if it is noted that the vendors are not able to execute on time and not able to meet the delivery date.</li>
+								</ul>
+							</li>
+							<li>Jurisdiction
+								<ul>
+									<li>Any dispute arising will be settled by the jurisdiction in Ahmedabad.</li>
+								</ul>
+							</li>
 						</ul>
+
 					</td>
 				</tr>
-				
-
 			</tbody>
 		</table>
 	</body>
