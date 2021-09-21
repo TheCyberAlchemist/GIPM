@@ -109,7 +109,6 @@ function change_currency(){
     currency_td = document.querySelectorAll("td.currency");
     for (td of currency_td){
         a = td.innerHTML
-        console.log(formatCurrency(a))
         td.innerHTML = formatCurrency(a)
     }
 }

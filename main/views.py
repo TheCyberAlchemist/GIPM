@@ -136,11 +136,13 @@ class indent_table(AjaxDatatableView):
 			"Width":obj.width,
 			"Internal Diameter":obj.internal_diameter,
 			'Description':obj.description,
+			'Tax':str(obj.tax)+"%",
+			"Comment":obj.comment,
+		}
+		currency={
 			'Value':obj.value,
-			'Tax':obj.tax,
 			'Discount':obj.discount,
 			'Other Expanses':obj.other_expanses,
-			"Comment":obj.comment,
 		}
 		fields = {k: v for k, v in fields.items() if v != None}
 		fields = {k: v for k, v in fields.items() if v != ""}
@@ -149,6 +151,8 @@ class indent_table(AjaxDatatableView):
 		html += '<tr><td class="">PO Number</td><td class=""><a href = "/po/table/">%s</a></td></tr>' % (obj.PO)
 		for key in fields:
 		    html += '<tr><td class="">%s</td><td class="">%s</td></tr>' % (key, fields[key])
+		for key in currency:
+			html += '<tr><td class="">%s</td><td class="currency">%s</td></tr>' % (key, currency[key])
 		html += '</table>'
 		return html
 
@@ -560,8 +564,10 @@ class WO_datatable(AjaxDatatableView):
 			'Comment':obj.comment,
 			'PO Number':obj.incoming_po_number,
 			'PO Date':obj.incoming_po_date.strftime("%d-%m-%Y") if obj.incoming_po_date else "-----",
+			'Tax':str(obj.tax)+"%",
+		}
+		currency={
 			'Value':obj.value,
-			'Tax':obj.tax,
 			'Discount':obj.discount,
 			'Other Expanses':obj.other_expanses,
 		}
@@ -571,6 +577,8 @@ class WO_datatable(AjaxDatatableView):
 		html = '<table class="table-bordered" style="width:60%">'
 		for key in fields:
 		    html += '<tr><td class="">%s</td><td class="">%s</td></tr>' % (key, fields[key])
+		for key in currency:
+		    html += '<tr><td class="">%s</td><td class="currency">%s</td></tr>' % (key, currency[key])	
 		html += '</table>'
 		return html
 
@@ -910,8 +918,11 @@ class grn_form(View):
 			return render(request,self.template_name,self.context)
 		else:
 			self.context['update'] = []
+			self.context["all_indent"]=indent.objects.all().filter(Q(recived=False))
 			if indent_id:
-				self.context['update'] = {"indent_id":indent.objects.filter(id=indent_id).first()}
+				my_indent = indent.objects.filter(id=indent_id).first()
+				self.context['update'] = {"indent_id":my_indent}
+				self.context["all_indent"]=indent.objects.all().filter(Q(recived=False)|Q(id=my_indent.id))
 			return render(request,self.template_name,self.context)
 	
 	def post(self, request,grn_id=None, *args, **kwargs):
