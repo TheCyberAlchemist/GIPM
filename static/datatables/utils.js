@@ -270,6 +270,7 @@ window.AjaxDatatableViewUtils = (function() {
                 }
             });
         }
+        
     };
 
     function _load_row_details(rowData, url) {
@@ -291,10 +292,14 @@ window.AjaxDatatableViewUtils = (function() {
                         div.attr('data-parent-row-id', parent_row_id);
                     }
                     div.html(json.html).removeClass('loading');
+                    try {
+                        change_currency();
+                    } catch (err) {
+                        console.log(err);
+                    }
                 }
             });
         }
-
         return div;
     };
 
