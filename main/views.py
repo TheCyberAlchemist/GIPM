@@ -910,8 +910,11 @@ class grn_form(View):
 			return render(request,self.template_name,self.context)
 		else:
 			self.context['update'] = []
+			self.context["all_indent"]=indent.objects.all().filter(Q(recived=False))
 			if indent_id:
-				self.context['update'] = {"indent_id":indent.objects.filter(id=indent_id).first()}
+				my_indent = indent.objects.filter(id=indent_id).first()
+				self.context['update'] = {"indent_id":my_indent}
+				self.context["all_indent"]=indent.objects.all().filter(Q(recived=False)|Q(id=my_indent.id))
 			return render(request,self.template_name,self.context)
 	
 	def post(self, request,grn_id=None, *args, **kwargs):
