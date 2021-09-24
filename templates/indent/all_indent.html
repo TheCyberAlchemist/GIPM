@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% import "macros.jinja" as macros %}
+{% block title%}
+All Indent List
+{% endblock %}
+
+{% block css%}
+
+<style>
+</style>
+{% endblock %}
+
+{%block scripts%}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            console.log("department")
+            {% if update %}
+                $('#flush-collapseOne').collapse("show");
+            {% endif %}
+            AjaxDatatableViewUtils.initialize_table(
+                $("#example"),
+                "./datatable/",
+                {
+                    // extra_options (example)
+                    //    select: true,
+                    // responsive: true,
+                    fixedHeader: true,
+                    processing: false,
+                    autoWidth: false,
+                    full_row_select: false,
+                    scrollX: false,
+                    dom: "<'row'<'col-sm-12 col-md-8'l><'col-sm-12 col-md-4 p-1 bg-light rounded rounded-pill shadow-sm mb-4 search_div'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                }
+            );
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="main_content h-100">
+        <div class="container-fluid table_container" style="padding-top: 6rem">
+            <div class="container-fluid p-2 table_container">
+                <div class="card shadow-sm mb-4 p-2 components-section" style="border-radius: 1rem;">
+                    <div class="card-body" style="border-radius: 1rem;">
+						<div class="row text-center">
+                            <div class="col-lg-12 col-sm-12">
+                                <div class="h3 text-center">All Indent List</div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table datatables table-centered fw-bold text-center table-nowrap mb-0 rounded"
+                                id="example">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

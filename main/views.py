@@ -138,6 +138,7 @@ class indent_table(AjaxDatatableView):
 			'Description':obj.description,
 			'Tax':str(obj.tax)+"%",
 			"Comment":obj.comment,
+			"Has PO": True if obj.PO else False,
 		}
 		currency={
 			'Value':obj.value,
@@ -231,6 +232,138 @@ class indent_form(View):
 		# self.context['update'] = form.instance
 		return render(request,self.template_name,self.context)
 
+class all_indents_datatable(AjaxDatatableView):
+	model = indent
+	title = 'Indent'
+	length_menu = [[25, 50, 100, -1], [25, 50, 100, 'all']]
+	initial_order = [["WO","asc"]]
+	search_values_separator = " "
+	column_defs = [
+		AjaxDatatableView.render_row_tools_column_def(),
+		{
+			'name': 'pk',
+			'visible': True,
+			'searchable': False,
+			'orderable': True,
+			'title': 'Indent No.',
+		}, # pk
+		{
+			'name': 'WO',
+			'foreign_field': 'WO__wo_number',
+			'visible': True,
+			'searchable': True,
+			'placeholder':'WO'
+		}, # WO
+		{	
+			'name': 'material_shape', 
+			'visible': True,
+			'searchable': True,
+			'orderable': True,
+			'title': 'Shape',
+		}, # material_shape
+		{
+			'name': 'Description',
+			'foreign_field': 'item_description__description',
+			'visible': True,
+			'searchable': True,
+			'placeholder':'description'
+		}, # Description
+		{
+			'name': 'weight', 
+			'visible': True,			
+			'searchable': False,
+			'orderable': False,
+			'title': 'Weight',
+		}, # weight
+		{
+			'name': 'size', 
+			'visible': True,			
+			'searchable': False,
+			'orderable': False,
+			'title': 'Size',
+		}, # size
+		{
+			'name': 'thickness', 
+			'visible': True,			
+			'searchable': False,
+			'orderable': False,
+			'title': 'THK',
+		}, # thickness
+		{
+			'name': 'quantity', 
+			'visible': True,			
+			'searchable': False,
+			'orderable': False,
+			'title': 'Qut',
+		}, # quantity
+		{
+			'name': 'net_value', 
+			'visible': True,
+			'orderable': False,
+			'searchable': False,		
+			'title': 'Net Val',
+			'className': 'currency',
+		}, # net_value
+		{
+			'name': 'recived', 
+			'visible': True,
+			'orderable': True,	
+			'searchable': False,		
+			'title': 'Recived',
+		}, # recived		
+		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},		
+	]
+	def customize_row(self, row, obj):
+		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
+		get_str = lambda x: x if x else "--"
+		row['net_value'] = f''' {obj.net_value()}'''
+		row['size'] = get_str(obj.size)
+		row['thickness'] = get_str(obj.thickness)
+		row['WO'] = f'<a href="/wo/{obj.WO.pk}/indent/table/">{obj.WO}</a>'
+		row['weight'] = f''' {obj.get_weight()}'''
+		row['Edit'] = f'''<td class="border-0">
+				<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+			</td>'''
+		return
+
+	def render_row_details(self, pk, request=None):
+		obj = self.model.objects.get(pk=pk)
+		# fields = [f for f in self.model._meta.get_fields() if f.concrete]
+		fields = {
+			"Recived": obj.recived_quantity,
+			'Material Type':obj.material_type,
+			'Item Description':obj.item_description,
+			"Size":obj.size,
+			"Thickness":obj.thickness,
+			"Width":obj.width,
+			"Internal Diameter":obj.internal_diameter,
+			'Description':obj.description,
+			'Tax':str(obj.tax)+"%",
+			"Comment":obj.comment,
+			"Has PO": True if obj.PO else False,
+		}
+		currency={
+			'Value':obj.value,
+			'Discount':obj.discount,
+			'Other Expanses':obj.other_expanses,
+		}
+		fields = {k: v for k, v in fields.items() if v != None}
+		fields = {k: v for k, v in fields.items() if v != ""}
+		# print(student_details.Division_id.Semester_id)
+		html = '<table class="table-bordered" style="width:60%">'
+		if obj.PO:
+			html += '<tr><td class="">PO Number</td><td class=""><a href = "/po/table/">%s</a></td></tr>' % (obj.PO)
+		for key in fields:
+		    html += '<tr><td class="">%s</td><td class="">%s</td></tr>' % (key, fields[key])
+		for key in currency:
+			html += '<tr><td class="">%s</td><td class="currency">%s</td></tr>' % (key, currency[key])
+		html += '</table>'
+		return html
+
+class all_indent_table(View):
+	template_name = 'indent/all_indent.html'
+	def get(self, request):
+		return render(request,self.template_name)
 #endregion
 
 #region ########### Purchase Order ###########
