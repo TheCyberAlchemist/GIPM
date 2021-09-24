@@ -189,10 +189,10 @@ class indent(order):
 			return f"{self.pk} [{self.item_description}]"
 
 	def get_remaining_quantity(self):
-		return int(self.quantity - self.recived_quantity)
+		return float(self.quantity - self.recived_quantity)
 
 	def save(self,*args, **kwargs):
-		if self.recived_quantity == self.quantity:
+		if self.recived_quantity >= self.quantity:
 			self.recived = True
 		super(indent, self).save(*args, **kwargs)
 
@@ -223,8 +223,8 @@ class grn(order):
 		]
 
 	def save(self,*args, **kwargs):
-		super(grn, self).save(*args, **kwargs)
 		indent_id = self.indent_id
+		print("here in grn :: ",indent_id.get_remaining_quantity())
 		if self.quantity > indent_id.get_remaining_quantity():
 			# if the quantity received is more then the indent 
 			# then create an indent and save it in the STOCK wo
@@ -255,3 +255,4 @@ class grn(order):
 		else:
 			indent_id.recived_quantity += self.quantity
 			indent_id.save()
+		super(grn, self).save(*args, **kwargs)
