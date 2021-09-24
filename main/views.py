@@ -313,6 +313,14 @@ class all_indents_datatable(AjaxDatatableView):
 		}, # recived		
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},		
 	]
+	
+	def get_initial_queryset(self, request=None):
+		wo_id=request.REQUEST.get('wo_id')
+
+		queryset = self.model.objects.all()
+		queryset = queryset.filter(recived=False)
+		# queryset = self.model.objects.all()
+		return queryset
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
 		get_str = lambda x: x if x else "--"
