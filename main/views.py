@@ -254,6 +254,13 @@ class all_indents_datatable(AjaxDatatableView):
 			'searchable': True,
 			'placeholder':'WO'
 		}, # WO
+		{
+			'name': 'PO',
+			'foreign_field': 'PO__po_number',
+			'visible': True,
+			'searchable': True,
+			'placeholder':'WO'
+		}, # PO
 		{	
 			'name': 'material_shape', 
 			'visible': True,
@@ -304,13 +311,6 @@ class all_indents_datatable(AjaxDatatableView):
 			'title': 'Net Val',
 			'className': 'currency',
 		}, # net_value
-		{
-			'name': 'recived', 
-			'visible': True,
-			'orderable': True,	
-			'searchable': False,		
-			'title': 'Recived',
-		}, # recived		
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},		
 	]
 	
@@ -326,6 +326,7 @@ class all_indents_datatable(AjaxDatatableView):
 		get_str = lambda x: x if x else "--"
 		row['net_value'] = f''' {obj.net_value()}'''
 		row['size'] = get_str(obj.size)
+		row['PO'] = get_str(obj.PO.po_number) if obj.PO else "----"
 		row['thickness'] = get_str(obj.thickness)
 		row['WO'] = f'<a href="/wo/{obj.WO.pk}/indent/table/">{obj.WO}</a>'
 		row['weight'] = f''' {obj.get_weight()}'''
