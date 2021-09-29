@@ -75,7 +75,7 @@ class order(models.Model):
 		self.tax = self.tax if self.tax else 0
 		self.discount = self.discount if self.discount else 0
 		self.other_expanses = self.other_expanses if self.other_expanses else 0
-		super(order, self).save(*args, **kwargs)
+		super(order, self).save()
 
 class work_order(order):
 	''' Class for incoming work orders '''
