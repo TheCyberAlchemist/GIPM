@@ -1,18 +1,3 @@
-"""dad URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path,re_path
 from main.views import *
@@ -39,6 +24,7 @@ urlpatterns = [
     re_path(r'^po/form/(?P<po_id>\d+)/$',PO_form.as_view(),name="update_po"),
     re_path(r'^po/report_input/(?P<po_id>\d+)/$',po_print_inputs,name="po_report_input"),
     re_path(r'^po/report/(?P<po_id>\d+)/$',print_report,name="print_po_report"),
+    re_path(r'^po/report/(?P<po_id>\d+)/lock$',lock_po_indent,name="lock_po_indents"),
 
     re_path(r'^vendor/table/$',vendor_table.as_view(),name="show_vendor"),
     re_path(r'^vendor/datatable/$',vendor_datatable.as_view(),name="show_vendor_datatable"),

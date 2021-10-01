@@ -15,9 +15,9 @@ Indent List [{{wo.wo_number}}]
 {% endblock %}
 
 {%block scripts%}
+    <script type="text/javascript" src="{{ static ('indent.js') }}"></script>  
     <script type="text/javascript">
         $(document).ready(function() {
-            console.log("department")
             {% if update %}
                 $('#flush-collapseOne').collapse("show");
             {% endif %}

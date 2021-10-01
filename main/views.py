@@ -115,9 +115,14 @@ class indent_table(AjaxDatatableView):
 				<img src="../../../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
 			</a>
 		</td>'''
-		row['Edit'] = f'''<td class="border-0">
-				<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+		if obj.locked:
+			row['Edit'] = f'''<td class="border-0">
+				<a data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:19px;height:19px" alt="edit"></a>
 			</td>'''
+		else:
+			row['Edit'] = f'''<td class="border-0">
+					<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+				</td>'''
 		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
 				<input class="form-check-input del_input" type="checkbox"
 				name="del" value="{obj.pk}" input_name="{obj}">
@@ -331,9 +336,14 @@ class all_indents_datatable(AjaxDatatableView):
 		row['thickness'] = get_str(obj.thickness)
 		row['WO'] = f'<a href="/wo/{obj.WO.pk}/indent/table/">{obj.WO}</a>'
 		row['weight'] = f''' {obj.get_weight()}'''
-		row['Edit'] = f'''<td class="border-0">
-				<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+		if obj.locked:
+			row['Edit'] = f'''<td class="border-0">
+				<a data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:19px;height:19px" alt="edit"></a>
 			</td>'''
+		else:
+			row['Edit'] = f'''<td class="border-0">
+					<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+				</td>'''
 		return
 
 	def render_row_details(self, pk, request=None):
@@ -604,6 +614,14 @@ def print_report(request,po_id):
 	# total_quantity = indent.objects.all()
 	return render(request,"po/report.html",context)
 
+def lock_po_indent(request,po_id):
+	my_po = purchase_order.objects.get(pk=po_id)
+	my_indents = indent.objects.all().filter(PO=my_po)
+	for my_indent in my_indents:
+		my_indent.locked = True
+		# print(my_indent.locked)
+		my_indent.save()
+	return JsonResponse({"done":True})
 #endregion
 
 #region ########### Work-Order ###########

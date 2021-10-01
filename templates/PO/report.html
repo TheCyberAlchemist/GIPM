@@ -57,9 +57,15 @@
 
 		</style>
 	</head>
-	
+	<script type="application/javascript" src="{{static ('Bundles/js/jquery.js')}}"></script>
+	<script type="application/javascript" src="{{static ('Bundles/js/sweetalert2.all.min.js')}}"></script>	
 	<script type="text/javascript" src="{{static ('report/report.js')}}"></script>
 	<body style='font-family:"Trebuchet MS", sans-serif' onload="get_total_in_words({{total_net_value}})">
+		<div class="d-flex justify-content-center m-2" id="lock_indent">
+			<button class="btn btn-success w-75">
+				<h3>Lock Indents</h3>
+			</button>
+		</div>
 		<div class="d-flex justify-content-center m-2" id="print">
 			<button class="btn btn-success w-75" onclick="window.print()">
 				<h3>Print <kbd>ctrl+p</kbd></h3>
@@ -145,12 +151,12 @@
 					<td colspan="4" class="currency">₹ {{total_gross_value}}</td>
 				</tr>
 				<tr class="fw-bold">
-					<td colspan="5">Delivery :- {{delivery_day}} Day/s</td>
+					<td colspan="5">Delivery :- {{delivery_day}}</td>
 					<td colspan="2">Total Tax Value</td>
 					<td colspan="4" class="currency">₹ {{total_tax_value}}</td>
 				</tr>
 				<tr class="fw-bold">
-					<td colspan="5">Payment Term :- {{payment_term}} Day/s</td>
+					<td colspan="5">Payment Term :- {{payment_term}}</td>
 					<td colspan="2">Total Net Value</td>
 					<td colspan="4" class="currency">₹ {{total_net_value}}</td>
 				</tr>

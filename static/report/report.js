@@ -186,3 +186,48 @@ function formatCurrency(input, blur) {
 	// send updated string to input
 	return input_val
 }
+
+$(document).ready(function() {
+    $("#lock_indent").click(function(){
+        Swal.fire({
+            icon: "question",
+            title: 'Lock the indents?',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Lock',
+            showLoaderOnConfirm: true,
+            preConfirm: (password) => {
+                if (password == "21149"){
+                    return fetch(`./lock`)
+                    .then(response => {
+                        if (!response.ok) {
+                        throw new Error(response.statusText)
+                        }
+                        return response.json()
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                        `Request failed: ${error}`
+                        )
+                    })
+                }else{
+                    swal.close()
+                }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                console.log(result)
+            if (result.value && result.value.done) {
+                Swal.fire(
+					'Indents Locked!',
+                    "",
+					'success'
+				)
+            }
+        })
+    })
+    $("#lock_indent").click();
+})
