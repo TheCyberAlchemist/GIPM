@@ -18,4 +18,7 @@ tr.shown td.details-control {
 .profit{
 	background-color:greenyellow;
 }
+.nav-item {
+    white-space: nowrap !important;
+}
 /* thead tr:first-child{ position: sticky !important; top: 0; } */
