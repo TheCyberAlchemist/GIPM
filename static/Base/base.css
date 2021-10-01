@@ -11,4 +11,14 @@ td.details-control {
 tr.shown td.details-control {
     background: url('../resources/details_close.png') no-repeat center center;
 }
+.loss {
+    background-color: orangered;
+    color: white;
+}
+.profit{
+	background-color:greenyellow;
+}
+.nav-item {
+    white-space: nowrap !important;
+}
 /* thead tr:first-child{ position: sticky !important; top: 0; } */

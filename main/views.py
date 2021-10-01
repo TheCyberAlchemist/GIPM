@@ -727,11 +727,17 @@ class WO_datatable(AjaxDatatableView):
 			'PO Date':obj.incoming_po_date.strftime("%d-%m-%Y") if obj.incoming_po_date else "-----",
 			'Tax':str(obj.tax)+"%",
 		}
+		net_cost = round(sum([indent.net_value() for indent in obj.indent_set.all()]),2)
 		currency={
 			'Value':obj.value,
 			'Discount':obj.discount,
 			'Other Expanses':obj.other_expanses,
+			"Net Costing": net_cost
 		}
+		if obj.value >= net_cost:
+			currency['Profit'] = obj.value - net_cost
+		else:
+			currency['Loss'] = net_cost - obj.value
 		fields = {k: v for k, v in fields.items() if v != None}
 		fields = {k: v for k, v in fields.items() if v != ""}
 		# print(student_details.Division_id.Semester_id)
@@ -739,7 +745,12 @@ class WO_datatable(AjaxDatatableView):
 		for key in fields:
 		    html += '<tr><td class="">%s</td><td class="">%s</td></tr>' % (key, fields[key])
 		for key in currency:
-		    html += '<tr><td class="">%s</td><td class="currency">%s</td></tr>' % (key, currency[key])	
+			if key == "Loss":
+				html += '<tr><td class="">%s</td><td class="currency loss">₹ %s</td></tr>' % (key, currency[key])
+			elif key == "Profit":
+				html += '<tr><td class="">%s</td><td class="currency profit">₹ %s</td></tr>' % (key, currency[key])
+			else:
+			    html += '<tr><td class="">%s</td><td class="currency">₹ %s</td></tr>' % (key, currency[key])	
 		html += '</table>'
 		return html
 

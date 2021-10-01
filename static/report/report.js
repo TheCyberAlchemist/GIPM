@@ -169,7 +169,7 @@ function formatCurrency(input, blur) {
             right_side+="0"
         }
 		// join number by .
-		input_val = "₹ " + left_side + "." + right_side;
+		input_val = "₹&nbsp;" + left_side + "." + right_side;
 	} else {
 		// no decimal entered
 		// add commas to number
