@@ -5,18 +5,29 @@
 
 {% block css%}
 <link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
+
 <style>
     td,th {
         font-size: .9rem !important;
     }
 </style>
+<link href = "{{static ('Multiple select/dist/dual-listbox.css')}}" rel="stylesheet"></style>
 {% endblock %}
 
 {%block scripts%}
+	<script src="{{static ('Multiple select/dist/dual-listbox.js')}}" ></script>
     <script type="text/javascript">
         $(document).ready(function() {
 			clear_form($(".myform"))
             console.log("department")
+			demo = new DualListbox('.demo',{
+				availableTitle: 'Item Descriptions',
+  				selectedTitle: 'Selected descriptions',	
+				addButtonText: '>',
+				addAllButtonText: '>>',
+				removeButtonText: '<', 
+  				removeAllButtonText: '<<',
+			});
             {% if success %}
 				Swal.fire(
 					'WO Saved!',
@@ -119,7 +130,19 @@
 												<input type="checkbox" id="is_complete" name="is_complete" {% if update and update.is_complete %}checked{% endif %}>
 												<label for="is_complete">Is Complete</label>
 											</div>
-										</div>										
+										</div>
+										<select class="demo" multiple>
+											<option value="1">One</option>
+											<option value="2">Two</option>
+											<option value="3">Three</option>
+											<option value="4">Four</option>
+											<option value="5">Five</option>
+											<option value="6">Six</option>
+											<option value="7">Seven</option>
+											<option value="8">Eight</option>
+											<option value="9">Nine</option>
+											<option value="10">Ten</option>
+										  </select>
 										<div class="row mb-1 mx-lg-5 mx-sm-0">
 											<div class="container mt-4" style="width:80%;">
 												<button type="submit" class="btn btn-outline-success"
