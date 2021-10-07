@@ -40,3 +40,9 @@ class WOAdmin(admin.ModelAdmin):
 class description(admin.ModelAdmin):
 	list_display = ['description']
 	search_fields=('description',)
+
+@admin.register(assembly)
+class assembly(admin.ModelAdmin):
+	list_display = ["name","description"]
+	search_fields=('name',)
+	# list_filter= ['material_shape']

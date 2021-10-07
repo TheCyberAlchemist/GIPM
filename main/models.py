@@ -192,7 +192,7 @@ class indent(order):
 			return f"{self.pk} [{self.item_description}]"
 
 	def get_remaining_quantity(self):
-		return float(self.quantity - self.recived_quantity)
+		return float(self.get_weight() - self.recived_quantity)
 
 	def save(self,*args, **kwargs):
 		if self.recived_quantity >= self.quantity:
@@ -259,3 +259,17 @@ class grn(order):
 			indent_id.recived_quantity += self.quantity
 			indent_id.save()
 		super(grn, self).save(*args, **kwargs)
+
+class assembly(models.Model):
+	items = models.ManyToManyField(item_description)
+	name = models.CharField(max_length=200)
+	description = models.TextField(null=True, blank=True)
+
+	def __str__(self):
+		return f'{self.name}'
+	
+	class Meta:
+		verbose_name_plural = "Assembly"
+		constraints = [
+			# models.UniqueConstraint(fields=['vendor_name', 'contact_person'], name='Vendor name and contact person cannot be same.'),
+		]

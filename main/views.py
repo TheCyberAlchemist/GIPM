@@ -1093,7 +1093,7 @@ class grn_form(View):
 			self.context["all_indent"]=indent.objects.all().filter(Q(recived=False))
 			if indent_id:
 				my_indent = indent.objects.filter(id=indent_id).first()
-				self.context['update'] = {"indent_id":my_indent}
+				self.context['update'] = {"indent_id":my_indent,"quantity":my_indent.get_weight()}
 				self.context["all_indent"]=indent.objects.all().filter(Q(recived=False)|Q(id=my_indent.id))
 			return render(request,self.template_name,self.context)
 	
