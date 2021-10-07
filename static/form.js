@@ -2,10 +2,10 @@
 $(document).ready(function() {
 	$("input[data-type='currency']").on({
 		keyup: function () {
-			formatCurrencyInput($(this));
+			formatCurrency($(this));
 		},
 		blur: function () {
-			formatCurrencyInput($(this), "blur");
+			formatCurrency($(this), "blur");
 		},
 	});
 })
@@ -21,7 +21,7 @@ function formatNumber(x) {
 	return res
 }
 
-function formatCurrencyInput(input, blur) {
+function formatCurrency(input, blur) {
 	// appends $ to value, validates decimal side
 	// and puts cursor back in right position.
 

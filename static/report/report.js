@@ -125,7 +125,11 @@ function formatNumber(x) {
 }
 
 function formatCurrency(input, blur) {
-    
+	// appends $ to value, validates decimal side
+	// and puts cursor back in right position.
+
+	// get input value
+	// console.log(input)
 	var input_val = input;
 
 	// don't validate empty input
