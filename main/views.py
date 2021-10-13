@@ -597,7 +597,8 @@ def print_report(request,po_id):
 	delivery_day = request.GET['delivery_day']
 	payment_term = request.GET['payment_term']
 	freight_charges = request.GET['freight_charges']
-	print(freight_charges)
+	com_name = request.GET['com_name']
+	# print( request.GET)
 	context = {
 		"my_po":my_po,
 		"all_indents":my_indents,
@@ -609,6 +610,7 @@ def print_report(request,po_id):
 		"delivery_day":delivery_day,
 		"payment_term":payment_term,
 		"freight_charges":freight_charges,
+		"com_name":com_name,
 	}
 	print(context['total_net_value'])
 	# total_quantity = indent.objects.all()

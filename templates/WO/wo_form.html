@@ -20,25 +20,29 @@
         $(document).ready(function() {
 			clear_form($(".myform"))
             console.log("department")
-			demo = new DualListbox('.demo',{
-				availableTitle: 'Item Descriptions',
-  				selectedTitle: 'Selected descriptions',	
-				addButtonText: '>',
-				addAllButtonText: '>>',
-				removeButtonText: '<', 
-  				removeAllButtonText: '<<',
-			});
+			// demo = new DualListbox('.demo',{
+			// 	availableTitle: 'Item Descriptions',
+  	// 			selectedTitle: 'Selected descriptions',	
+			// 	addButtonText: '>',
+			// 	addAllButtonText: '>>',
+			// 	removeButtonText: '<', 
+  	// 			removeAllButtonText: '<<',
+			// });
             {% if success %}
 				Swal.fire(
 					'WO Saved!',
 					'Your WO object has been saved.',
 					'success'
-				).then( function() {
-					open(location, '_self').close();
-				})
+				)
+				window.setTimeout(function(){
+			    	window.location.href = "{{url ('show_wo')}}";
+			    }, 3000)
 				//setTimeout(() => {  console.log("asd");window.close() }, 3000);
             {% endif %}
 			$("#vendor_id").select2();
+			$(".select2-selection").on("focus", function () {
+		        $(this).parent().parent().prev().select2("open");
+		    });
         });
     </script>
 	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
@@ -131,7 +135,7 @@
 												<label for="is_complete">Is Complete</label>
 											</div>
 										</div>
-										<select class="demo" multiple>
+										<!-- <select class="demo" multiple>
 											<option value="1">One</option>
 											<option value="2">Two</option>
 											<option value="3">Three</option>
@@ -142,7 +146,7 @@
 											<option value="8">Eight</option>
 											<option value="9">Nine</option>
 											<option value="10">Ten</option>
-										  </select>
+										</select> -->
 										<div class="row mb-1 mx-lg-5 mx-sm-0">
 											<div class="container mt-4" style="width:80%;">
 												<button type="submit" class="btn btn-outline-success"

@@ -21,7 +21,15 @@
 			table{
 				max-width: 100%;
 			}
-			.table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+			th{
+				text-align: center;
+			}
+			.table-bordered > tbody > tr > td,
+			 .table-bordered > tbody > tr > th,
+			  .table-bordered > tfoot > tr > td,
+			   .table-bordered > tfoot > tr > th,
+			    .table-bordered > thead > tr > td,
+			     .table-bordered > thead > tr > th {
 				border: 1px solid black;
 			}
 			html {
@@ -29,7 +37,7 @@
 			}
 			@page {
 				size: A4 portrait;
-				margin: 10px;
+				margin: 15px 15px 10px 50px;
 			}
 			@media screen, print{
 				html {
@@ -41,10 +49,14 @@
 				}
 			}
 			@media print{
+				html {
+					font-size: 50%;
+					line-height: 110%;
+				}
 				#print,#lock_indent{
 					display:none !important;
 				}
-				td,tr,#tac
+				th,td,tr,#tac
 				{ 
 					page-break-inside:avoid; 
 					page-break-after:auto 
@@ -75,15 +87,15 @@
 		<table class="table table-bordered" id="main_table" style="margin-bottom: 0px;">
 			<thead>
 				<tr>
-					<th colspan="11" class="fw-bold text-center h1"><i>GHANSHYAM INDUSTRIES</i></th>
+					<th colspan="11" class="fw-bold text-center h1"><i>{%if com_name == "GHANSHYAM INDUSTRIES"%}GHANSHYAM INDUSTRIES{%else%}MACPOWER ENGINEERING PVT. LTD.{%endif%}</i></th>
 				</tr>
-					<tr class="h5 text-center">
-						<td colspan="11">
-							Address:-12/6/1/1,PACNCHRATNA IND EST,NR RAMOL VATVA BRIDGE,VATVA, AHMEDABAD-382445
-							<br>Email- mechghanshyam@gmail.com 
-							<br>GST NO - 24AAZPP4220E1ZN
-						</td>
-					</tr>
+				<tr class="h5 text-center">
+					<td colspan="11">
+						<span class="fw-bold">Address:-</span> 12/6/1/1,PACNCHRATNA IND EST,NR RAMOL VATVA BRIDGE,VATVA, AHMEDABAD-382445
+						<span class="fw-bold"><br>Email - </span> mechghanshyam@gmail.com 
+						<span class="fw-bold"><br>GST NO - </span> 24AAZPP4220E1ZN
+					</td>
+				</tr>
 					
 				<tr class="h2 text-center fw-bold">
 					<td colspan="11">
@@ -108,119 +120,132 @@
 					<td colspan="3"><span class="fw-bold">Phone number :-</span>{% if my_po.vendor_id.contact_number %} {{my_po.vendor_id.contact_number}} {% else %} ---------- {% endif %}</td>
 					<td colspan="3"><span class="fw-bold">GST No :-</span>{% if my_po.vendor_id.gst_no %} {{my_po.vendor_id.gst_no}} {% else %} ---------- {% endif %}</td>
 				</tr>
-				<tr>
-					<th>Sr.No.</th>
-					<th class="description">Description</th>
-					<th>MT</th>
-					<th>QUT</th>
-					<th>WT</th>
-					<th>Unit Value</th>
-					<th>Tax (in %)</th>
-					<th>Other Charges</th>
-					<th>Discount</th>
-					<th>Tax Value</th>
-					<th>Gross value</th>
-				</tr>
 			</thead>
 			<tbody>
-				{% for indent in all_indents %}
-					<tr>
-						<td>{{loop.index}}</td>
-						<td class="description">({{indent.pk}}) {{indent.description}}</td>
-						<td>{% if indent.material_type %}{{indent.material_type}}{% else %}---{% endif %}</td>
-						<td>{{indent.quantity}} {{indent.unit}}</td>
-						<td>{{indent.get_weight()}} Kg</td>
-						<td class="currency">₹ {{indent.value}}</td>
-						<td>{{indent.tax}} %</td>
-						<!-- <td>{{indent.tax_amount()}}</td> -->
-						<td class="currency">₹ {{indent.other_expanses}}</td>
-						<td class="currency">₹ {{indent.discount}}</td>
-						<td class="currency">₹ {{indent.tax_amount()}}</td>
-						<td class="currency">₹ {{indent.gross_value()}}</td>
-						<!-- <td>{{indent.net_value()}}</td> -->
-					</tr>
-				{% endfor %}
 				<tr>
-					<td></td><td></td><td></td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
-				</tr>
-				<tr class="fw-bold">
-					<td colspan="3">Terms & Conditions</td>
-					<td>{{total_quantity}}</td>
-					<td>{{total_weight}} Kg</td>
-					<td colspan="2">Total Gross Value</td>
-					<td colspan="4" class="currency">₹ {{total_gross_value}}</td>
-				</tr>
-				<tr class="fw-bold">
-					<td colspan="5">Delivery :- {{delivery_day}}</td>
-					<td colspan="2">Total Tax Value</td>
-					<td colspan="4" class="currency">₹ {{total_tax_value}}</td>
-				</tr>
-				<tr class="fw-bold">
-					<td colspan="5">Payment Term :- {{payment_term}}</td>
-					<td colspan="2">Total Net Value</td>
-					<td colspan="4" class="currency">₹ {{total_net_value}}</td>
-				</tr>
-				<tr class="fw-bold">
-					<td colspan="5">Freight Charges :- {{freight_charges}}</td>
-					<td colspan="2">Total in Words :- </td>
-					<td colspan="4" id="total_in_words" width="200"></td>
-				</tr>
-				<tr>
-					<td colspan="11" class="">
-						<div style="width: 100%" class="fw-bold text-center h5">Important information for our suppliers.</div>
-						<h5>Terms and conditions:</h5>
-						<ul>
-							<li>
-								Invoice
-								<ul>
-									<li>Original invoice has to be sent at the time of delivery of the material and the Company will not be held responsible fordelays in payments if the correct invoices are not sent on time.</li>
-								</ul>
-							</li>
-							<li>Original Certificates
-								<ul>
-									<li>Original test certificates, material certificates and guarantee certificates must be sent at the time of delivery of the material and the Company will not be held responsible for delays in payments if the correct certificates are not sent on time.</li>								</ul>
-							</li>
-							<li>Warranty
-								<ul>
-									<li>Vendor is giving warranty that the material used is defect free and is as per requirement of the Company.</li>
-									<li>Vendor is conforming to the design, material hardness and smooth finish of the material as required by the company, wherever applicable</li>
-								</ul>
-							</li>
-							<li>Rejection
-								<ul>
-									<li>The rejected material must be collected within 7 days from the receipt of rejection memo. The vendor will lose claim over the material for delays over 7 days and the company and the company has right to scrap the said material without any further communication.</li>
-								</ul>
-							</li>
-							<li>Rework
-								<ul>
-									<li>Any rework is required to be done for the spare supplied. A debit note for charges of rework done and delay in assembly damages + process delay in manufacturing all to be charged to the vendors / suppliers.</li>
-								</ul>
-							</li>
-							<li>Transportation
-								<ul>
-									<li>Free delivery at our site or to pay basis</li>
-								</ul>
-							</li>
-							<li>Packaging
-								<ul>
-									<li>Charges included in the cost and any damage to the material will be in the account of the vendor.</li>
-								</ul>
-							</li>
-							<li>Cancellation of the P.O.
-								<ul>
-									<li>The company has right to cancel the order if it is noted that the vendors are not able to execute on time and not able to meet the delivery date.</li>
-								</ul>
-							</li>
-							<li>Jurisdiction
-								<ul>
-									<li>Any dispute arising will be settled by the jurisdiction in Ahmedabad.</li>
-								</ul>
-							</li>
-						</ul>
+					<td colspan="12" style="padding: 0px">
+						<table class="table table-bordered" id="inner_table" style=" margin: 0px;">
+							<thead>
+								<tr>
+									<th><span class="fw-bold">Sr. No.</span></th>
+									<th class="description"><span class="fw-bold">Description</span></th>
+									<th><span class="fw-bold">MT</span></th>
+									<th><span class="fw-bold">QUT</span></th>
+									<th><span class="fw-bold">WT</span></th>
+									<th><span class="fw-bold">Unit Value</span></th>
+									<th><span class="fw-bold">Tax (in %)</span></th>
+									<th><span class="fw-bold">Other Charges</span></th>
+									<th><span class="fw-bold">Discount</span></th>
+									<th><span class="fw-bold">Tax Value</span></th>
+									<th><span class="fw-bold">Gross value</span></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for indent in all_indents %}
+									<tr>
+										<td>{{loop.index}}</td>
+										<td class="description">({{indent.pk}}) {{indent.description}}</td>
+										<td>{% if indent.material_type %}{{indent.material_type}}{% else %}---{% endif %}</td>
+										<td>{{indent.quantity}} {{indent.unit}}</td>
+										<td>{{indent.get_weight()}} Kg</td>
+										<td class="currency">₹ {{indent.value}}</td>
+										<td>{{indent.tax}} %</td>
+										<!-- <td>{{indent.tax_amount()}}</td> -->
+										<td class="currency">₹ {{indent.other_expanses}}</td>
+										<td class="currency">₹ {{indent.discount}}</td>
+										<td class="currency">₹ {{indent.tax_amount()}}</td>
+										<td class="currency">₹ {{indent.gross_value()}}</td>
+										<!-- <td>{{indent.net_value()}}</td> -->
+									</tr>
+								{% endfor %}
+								<tr>
+									<td></td><td></td><td></td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+								</tr>
+								<tr class="fw-bold">
+									<td colspan="3">Terms & Conditions</td>
+									<td>{{total_quantity}}</td>
+									<td>{{total_weight}} Kg</td>
+									<td colspan="2">Total Gross Value</td>
+									<td colspan="4" class="currency">₹ {{total_gross_value}}</td>
+								</tr>
+								<tr class="fw-bold">
+									<td colspan="5">Delivery :- {{delivery_day}}</td>
+									<td colspan="2">Total Tax Value</td>
+									<td colspan="4" class="currency">₹ {{total_tax_value}}</td>
+								</tr>
+								<tr class="fw-bold">
+									<td colspan="5">Payment Term :- {{payment_term}}</td>
+									<td colspan="2">Total Net Value</td>
+									<td colspan="4" class="currency">₹ {{total_net_value}}</td>
+								</tr>
+								<tr class="fw-bold">
+									<td colspan="12">Freight Charges :- {{freight_charges}}</td>
 
+								</tr>
+								<tr class="fw-bold">
+									<td colspan="12">Amount in Words :- <span id="total_in_words"></span></td>
+								</tr>
+							</tbody>
+						</table>
+						<tr>
+							<td colspan="12" class="">
+								<div style="width: 100%" class="fw-bold text-center h5">Important information for our suppliers.</div>
+								<h5>Terms and conditions:</h5>
+								<ul>
+									<li>
+										Invoice
+										<ul>
+											<li>Original invoice has to be sent at the time of delivery of the material and the Company will not be held responsible fordelays in payments if the correct invoices are not sent on time.</li>
+										</ul>
+									</li>
+									<li>Original Certificates
+										<ul>
+											<li>Original test certificates, material certificates and guarantee certificates must be sent at the time of delivery of the material and the Company will not be held responsible for delays in payments if the correct certificates are not sent on time.</li>								</ul>
+									</li>
+									<li>Warranty
+										<ul>
+											<li>Vendor is giving warranty that the material used is defect free and is as per requirement of the Company.</li>
+											<li>Vendor is conforming to the design, material hardness and smooth finish of the material as required by the company, wherever applicable</li>
+										</ul>
+									</li>
+									<li>Rejection
+										<ul>
+											<li>The rejected material must be collected within 7 days from the receipt of rejection memo. The vendor will lose claim over the material for delays over 7 days and the company and the company has right to scrap the said material without any further communication.</li>
+										</ul>
+									</li>
+									<li>Rework
+										<ul>
+											<li>Any rework is required to be done for the spare supplied. A debit note for charges of rework done and delay in assembly damages + process delay in manufacturing all to be charged to the vendors / suppliers.</li>
+										</ul>
+									</li>
+									<li>Transportation
+										<ul>
+											<li>Free delivery at our site or to pay basis</li>
+										</ul>
+									</li>
+									<li>Packaging
+										<ul>
+											<li>Charges included in the cost and any damage to the material will be in the account of the vendor.</li>
+										</ul>
+									</li>
+									<li>Cancellation of the P.O.
+										<ul>
+											<li>The company has right to cancel the order if it is noted that the vendors are not able to execute on time and not able to meet the delivery date.</li>
+										</ul>
+									</li>
+									<li>Jurisdiction
+										<ul>
+											<li>Any dispute arising will be settled by the jurisdiction in Ahmedabad.</li>
+										</ul>
+									</li>
+								</ul>
+							</td>
+						</tr>	
 					</td>
 				</tr>
+				
 			</tbody>
+			
 		</table>
 	</body>
 	

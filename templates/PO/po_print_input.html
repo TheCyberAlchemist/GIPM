@@ -9,6 +9,9 @@
     td,th {
         font-size: .9rem !important;
     }
+    .form_input{
+    	text-transform: uppercase;
+    }
 </style>
 {% endblock %}
 
@@ -17,6 +20,15 @@
         $(document).ready(function() {
 			$("#freight_charges").select2();
 
+			$("#com_name").select2();
+			$(".select2-selection").on("focus", function () {
+		        $(this).parent().parent().prev().select2("open");
+		    });		
+		    $('.form_input').focusout(function() {
+		        // Uppercase-ize contents
+		        this.value = this.value.toLocaleUpperCase();
+		        console.log(this.value);
+		    });
         });
     </script>
 	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
@@ -52,15 +64,18 @@
 										<!-- <img class="form_hider" src="{{static ('admin/details/img/close.png')}}" alt="hide"> -->
 										<div class="row mb-3 mx-lg-5 mx-sm-0">
 											<div class="col-lg-6 col-md-12 col-sm-12">
-												{{macros.input_text("Delivery Day Field","delivery_day")}}
+												{{macros.input_text("Delivery Day Field","delivery_day",required=True)}}
 											</div>
 											<div class="col-lg-6 col-md-12 col-sm-12">
-												{{macros.input_text("Payment Term Field","payment_term")}}
+												{{macros.input_text("Payment Term Field","payment_term",required=True)}}
 											</div>
 										</div>
 										<div class="row mb-3 mx-lg-5 mx-sm-0">
 											<div class="col-lg-6 col-md-12 col-sm-12">
-												{{macros.select2("Freight Charges","freight_charges",["INCLUDED","EXCLUDED"])}}
+												{{macros.select2("Freight Charges","freight_charges",["INCLUDED","EXCLUDED"],required=True)}}
+											</div>
+											<div class="col-lg-6 col-md-12 col-sm-12">
+												{{macros.select2("Company Name","com_name",["GHANSHYAM INDUSTRIES","MACPOWER ENGINEERING"],required=True)}}
 											</div>
 										</div>
 										<div class="row mb-3 mx-lg-5 mx-sm-0">

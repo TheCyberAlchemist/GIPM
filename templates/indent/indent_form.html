@@ -22,6 +22,9 @@
 					'Your indent object has been saved.',
 					'success'
 				)
+				window.setTimeout(function(){
+			    	window.location.href = "{{url ('show_indent',args=[wo.pk])}}";
+			    }, 3000)
             {% endif %}
 			console.log("2",$("#vendor_name"));
 			$("#vendor_name").select2();
@@ -31,6 +34,9 @@
 				tags: true,
     			tokenSeparators: [',']
 			});
+			$(".select2-selection").on("focus", function () {
+		        $(this).parent().parent().prev().select2("open");
+		    });
         });
     </script>
 {% endblock %}

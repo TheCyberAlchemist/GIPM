@@ -23,7 +23,13 @@
 					'Vendor object has been saved.',
 					'success'
 				)
-            {% endif %}			
+				window.setTimeout(function(){
+			    	window.location.href = "{{url ('show_vendor')}}";
+			    }, 3000)
+            {% endif %}		
+            $(".select2-selection").on("focus", function () {
+		        $(this).parent().parent().prev().select2("open");
+		    });	
         });
     </script>
 {% endblock %}
