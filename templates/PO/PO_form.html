@@ -19,7 +19,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
 			clear_form($(".myform"))
-            console.log("department")
+            console.log($("#indent_list"))
             {% if success %}
 				Swal.fire(
 					'PO Saved!',
@@ -34,9 +34,7 @@
 			{% if not update %}
 				$("#vendor_id").select2();
 			{% endif %}
-			$(".select2-selection").on("focus", function () {
-		        $(this).parent().parent().prev().select2("open");
-		    });
+			
         });
     </script>
 	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
