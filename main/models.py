@@ -1,5 +1,46 @@
 from django.db import models
 
+#region ############ JSONField ############
+from django.db import models
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+
+class JSONField(models.TextField):
+    """
+    JSONField es un campo TextField que serializa/deserializa objetos JSON.
+    Django snippet #1478
+
+    Ejemplo:
+        class Page(models.Model):
+            data = JSONField(blank=True, null=True)
+
+        page = Page.objects.get(pk=5)
+        page.data = {'title': 'test', 'type': 3}
+        page.save()
+    """
+    def to_python(self, value):
+        if value == "":
+            return None
+
+        try:
+            if isinstance(value, str):
+                return json.loads(value)
+        except ValueError:
+            pass
+        return value
+
+    def from_db_value(self, value, *args):
+        return self.to_python(value)
+
+    def get_db_prep_save(self, value, *args, **kwargs):
+        if value == "":
+            return None
+        if isinstance(value, dict):
+            value = json.dumps(value, cls=DjangoJSONEncoder)
+        return value
+
+#endregion
+
 class vendor_details(models.Model):
 	vendor_name = models.TextField(null=True, blank=True)
 	address = models.TextField(null=True, blank=True)
@@ -25,6 +66,13 @@ class vendor_details(models.Model):
 class item_description(models.Model):
 	'class of items which shoud be addable in for the indent'
 	description = models.TextField(unique=True)
+	
+	def get_estimated_value(self):
+		''' returns the estimated value of the indent by finding the last indent 
+		having the item_description '''
+		last_indent = self.indent_set.all().last()
+		return last_indent.value
+
 	def __str__(self):
 		if self.description:
 			return str(self.description)
@@ -93,7 +141,6 @@ class work_order(order):
 	def __str__(self):
 		return "%s"%(self.wo_number)
 
-
 class purchase_order(models.Model):
 	po_number = models.CharField(max_length=200,null=True, blank=True)
 	po_date = models.DateField(null=True, blank=True)
@@ -123,7 +170,6 @@ class purchase_order(models.Model):
 			else:
 				self.po_number = "GI-"+ str(self.pk)
 			super(purchase_order, self).save(*args, **kwargs)
-
 
 class standard_weight(models.Model):
 	material_shape = models.TextField(null=True, blank=True)
@@ -225,39 +271,12 @@ class grn(order):
 			models.UniqueConstraint(fields=['invoice_no', 'indent_id'], name='Same invoice cannot be in the same indent.'),
 		]
 
+
 	def save(self,*args, **kwargs):
-		indent_id = self.indent_id
-		print("here in grn :: ",indent_id.get_remaining_quantity())
-		if self.quantity > indent_id.get_remaining_quantity():
-			# if the quantity received is more then the indent 
-			# then create an indent and save it in the STOCK wo
-			stock_wo = work_order.objects.all().get(wo_number="STOCK")
-			from django.forms import model_to_dict
-			kwargs = model_to_dict(indent_id, exclude=['id',"order_ptr","WO","PO"])
-			kwargs["item_description_id"] = kwargs.pop("item_description")
-			stock_indent = indent.objects.filter(
-				item_description_id=kwargs["item_description_id"],
-				material_shape=kwargs["material_shape"],
-				WO = stock_wo
-			).first()
-			extra_quantity = self.quantity - indent_id.get_remaining_quantity()
-			if stock_indent:
-				# if same indent is in stock
-				print("same found",stock_indent)
-				stock_indent.quantity += extra_quantity
-				stock_indent.save()
-			else:
-				# if same indent is not in stock
-				new_indent = indent(**kwargs)
-				new_indent.WO = stock_wo
-				new_indent.quantity = extra_quantity
-				new_indent.save()
-				print(f"New Stock indent saved with {extra_quantity} quantity")
-			indent_id.recived_quantity += indent_id.get_remaining_quantity()
-			indent_id.save()
-		else:
-			indent_id.recived_quantity += self.quantity
-			indent_id.save()
+		# indent_id = self.indent_id
+		# print("here in grn :: ",indent_id.get_remaining_quantity())
+			
+
 		super(grn, self).save(*args, **kwargs)
 
 class assembly(models.Model):
@@ -273,3 +292,25 @@ class assembly(models.Model):
 		constraints = [
 			# models.UniqueConstraint(fields=['vendor_name', 'contact_person'], name='Vendor name and contact person cannot be same.'),
 		]
+
+	def get_total_estimate(self):
+		total_estimate = 0
+		for item in self.items.all():
+			total_estimate += item.get_estimated_value()
+		return total_estimate
+
+class plan(models.Model):
+	name = models.CharField(max_length=200)
+	assemblies = models.ManyToManyField(assembly)
+	item_state = JSONField(null=True, blank=True)
+	estimate = models.FloatField(default=0,null=True, blank=True)
+
+	def __str__(self):
+		return f'{self.name}'
+
+	class Meta:
+		verbose_name_plural = "Plan"
+		constraints = [
+			# models.UniqueConstraint(fields=['vendor_name', 'contact_person'], name='Vendor name and contact person cannot be same.'),
+		]
+	

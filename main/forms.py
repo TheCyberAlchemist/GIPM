@@ -30,3 +30,9 @@ class add_grn(ModelForm):
 	class Meta:
 		model = grn
 		fields = '__all__'
+
+class add_assembly(ModelForm):
+	class Meta:
+		model = assembly
+		fields = '__all__'
+		

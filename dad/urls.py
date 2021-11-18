@@ -37,4 +37,8 @@ urlpatterns = [
     re_path(r'^grn/form/$',grn_form.as_view(),name="add_grn"),
     re_path(r'^grn/form/(?P<grn_id>\d+)/$',grn_form.as_view(),name="update_grn"),
 
+    re_path(r'^assembly/table/$',assembly_table.as_view(),name="show_assembly"),
+    re_path(r'^assembly/datatable/$',assembly_datatable.as_view(),name="show_assembly_datatable"),
+    re_path(r'^assembly/form/$',assembly_form.as_view(),name="add_assembly"),
+    re_path(r'^assembly/form/(?P<assembly_id>\d+)/$',assembly_form.as_view(),name="update_assembly"),
 ]

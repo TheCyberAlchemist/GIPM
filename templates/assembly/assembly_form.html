@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% import "macros.jinja" as macros %}
-{% block title%} {% if update %}Update{% else %}Add{% endif %} WO 
+{% block title%} {% if update %}Update{% else %}Add{% endif %} Assembly 
 {% endblock %}
 
 {% block css%}
@@ -19,10 +19,18 @@
     <script type="text/javascript">
         $(document).ready(function() {
 			clear_form($(".myform"))
+			demo = new DualListbox('.demo',{
+				availableTitle: 'Item Descriptions',
+  				selectedTitle: 'Selected descriptions',	
+				addButtonText: '>',
+				addAllButtonText: '>>',
+				removeButtonText: '<', 
+  				removeAllButtonText: '<<',
+			});
             {% if success %}
 				Swal.fire(
-					'WO Saved!',
-					'Your WO object has been saved.',
+					'Assembly Saved!',
+					'Your assembly object has been saved.',
 					'success'
 				).then( function() {
 					open(location, '_self').close();
@@ -46,13 +54,13 @@
 						</a>
 					</li>
 					<li class="breadcrumb-item">
-						<a href="{{url ('show_wo')}}">
-							<span class="h6 fw-bold">WO Table</span> 
+						<a href="{{url ('show_assembly')}}">
+							<span class="h6 fw-bold">Assembly Table</span> 
 						</a>
 					</li>
 					<li class="breadcrumb-item">
-						<a href="{{url ('add_wo')}}">
-							<span class="h6 fw-bold">Add WO</span>
+						<a href="{{url ('add_assembly')}}">
+							<span class="h6 fw-bold">Add Assembly</span>
 						</a>
 					</li>
 				</ol>
@@ -63,69 +71,38 @@
 						<div class="accordion accordion-flush" id="accordionFlushExample">
 							<div class="accordion-item">
 								<h2 class="accordion-header" id="flush-headingOne">
-									<h3>{% if update %}Update{% else %}Add{% endif %} Work Order {% if success %}✅{% endif %}</h3>
+									<h3>{% if update %}Update{% else %}Add{% endif %} Assembly {% if success %}✅{% endif %}</h3>
 								</h2>
 								<div class="accordion-body">
 									<form class="myform" method = "POST">
 										{{csrf_input}}
 										<div class="row mb-1 mx-lg-5 mx-sm-0">
-											<div class="col-lg-4 col-md-12 col-sm-12">
-												{{macros.input_text("WO Number","wo_number",max_len=200,value=update.wo_number)}}
-											</div>
-											<div class="col-lg-4 col-md-12 col-sm-12">
-												{{macros.input_text("PO Number","incoming_po_number",max_len=200,value=update.incoming_po_number)}}
-											</div>
-											<div class="col-lg-4 col-md-12 col-sm-12">
-												{{macros.date_input("PO Date","incoming_po_date",value=update.incoming_po_date)}}
+											<div class="col-lg-12 col-md-12 col-sm-12">
+												{{macros.input_text("Assembly Name","name",max_len=200,value=update.name)}}
 											</div>
 										</div>
 										<div class="row mb-1 mx-lg-5 mx-sm-0">
 											<div class="col-lg-12 col-md-12 col-sm-12">
-												{{macros.select2("Vendor Name","vendor_id",all_vendors,value=update.vendor_id)}}
+												{{macros.text_area("Description","description",update.description)}}
 											</div>
 										</div>
+										<hr>
 										<div class="row mb-1 mx-lg-5 mx-sm-0">
 											<div class="col-lg-12 col-md-12 col-sm-12">
-												{{macros.text_area("Description","description",value=update.description)}}
-											</div>
-										</div>
-										<div class="row mb-1 mx-lg-5 mx-sm-0">
-											<div class="col-lg-3 col-md-12 col-sm-12">
-												{{macros.input_number("Quantity","quantity",value=update.quantity)}}
-											</div>
-											<div class="col-lg-3 col-md-12 col-sm-12">
-												{{macros.input_text("Unit","unit",value=update.unit if update.unit else "NOS")}}
-											</div>
-											<div class="col-lg-6 col-md-12 col-sm-12">
-												{{macros.input_currency("Value","value",value=update.value)}}
-											</div>
-										</div>
-										<div class="row mb-1 mx-lg-5 mx-sm-0">
-											<div class="col-lg-3 col-md-12 col-sm-12">
-												{{macros.input_number("Tax (in %)","tax",value=update.tax)}}
-											</div>
-											<div class="col-lg-3 col-md-12 col-sm-12">
-												{{macros.input_number("Discount","discount",value=update.discount)}}
-											</div>
-											<div class="col-lg-6 col-md-12 col-sm-12">
-												{{macros.input_number("Other Expanses","other_expanses",value=update.other_expanses)}}
-											</div>
-										</div>
-										<div class="row mb-1 mx-lg-5 mx-sm-0">
-											<div class="col-lg-12 col-md-12 col-sm-12">
-												{{macros.text_area("Comment","comment",value=update.comment)}}
-											</div>
-										</div>
-										<div class="row mb-1 mx-lg-5 mx-sm-0">
-											<div class="col-lg-6 col-md-12 col-sm-12">
-												<input type="checkbox" id="is_complete" name="is_complete" {% if update and update.is_complete %}checked{% endif %}>
-												<label for="is_complete">Is Complete</label>
+												<select class="demo" name="items" multiple>
+													{% for item in all_items %}
+														<option value="{{item.id}}" 
+															{%if update and item in update.items.all()%}
+																selected
+															{%endif%}
+														>{{item}}</option>
+													{% endfor %}
+												</select>
 											</div>
 										</div>
 										<div class="row mb-1 mx-lg-5 mx-sm-0">
 											<div class="container mt-4" style="width:80%;">
-												<button type="submit" class="btn btn-outline-success"
-												style="width:100%">Submit</button>
+												<button type="submit" class="btn btn-outline-success" style="width:100%">Submit</button>
 											</div>
 										</div>
 									</form>

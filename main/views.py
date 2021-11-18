@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from .models import *
 from django.views import View
 from django.db.models import Q
+from django.forms import model_to_dict
 # Create your views here.
 from .models import *
 from .forms import *
@@ -15,7 +16,7 @@ def home_page(request):
 class indent_table(AjaxDatatableView):
 	model = indent
 	title = 'Indent'
-	length_menu = [[25, 50, 100, -1], [25, 50, 100, 'all']]
+	length_menu = [[-1,25, 50, 100], ['all',25, 50, 100]]
 	initial_order = [["recived","asc"]]
 	search_values_separator = " "
 	column_defs = [
@@ -111,17 +112,17 @@ class indent_table(AjaxDatatableView):
 
 		row['weight'] = f''' {obj.get_weight()}'''
 		row['Add GRN'] = f'''<td class="">
-			<a href="/indent/{obj.pk}/grn/form/">
-				<img src="../../../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
+			<a href="/indent/{obj.pk}/grn/form/" target="_blank">
+				<img src="../../../../static/Images/enter.png" style="width:17px;height:17px" alt="enter">
 			</a>
 		</td>'''
 		if obj.locked:
 			row['Edit'] = f'''<td class="border-0">
-				<a data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:19px;height:19px" alt="edit"></a>
+				<a data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:17px;height:17px" alt="edit"></a>
 			</td>'''
 		else:
 			row['Edit'] = f'''<td class="border-0">
-					<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+					<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
 				</td>'''
 		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
 				<input class="form-check-input del_input" type="checkbox"
@@ -241,7 +242,7 @@ class indent_form(View):
 class all_indents_datatable(AjaxDatatableView):
 	model = indent
 	title = 'Indent'
-	length_menu = [[25, 50, 100, -1], [25, 50, 100, 'all']]
+	length_menu = [[-1,25, 50, 100], ['all',25, 50, 100]]
 	initial_order = [["WO","asc"]]
 	search_values_separator = " "
 	column_defs = [
@@ -338,11 +339,11 @@ class all_indents_datatable(AjaxDatatableView):
 		row['weight'] = f''' {obj.get_weight()}'''
 		if obj.locked:
 			row['Edit'] = f'''<td class="border-0">
-				<a data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:19px;height:19px" alt="edit"></a>
+				<a data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:17px;height:17px" alt="edit"></a>
 			</td>'''
 		else:
 			row['Edit'] = f'''<td class="border-0">
-					<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+					<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
 				</td>'''
 		return
 
@@ -390,7 +391,7 @@ class all_indent_table(View):
 class PO_datatable(AjaxDatatableView):
 	model = purchase_order
 	title = 'Purchase Order'
-	length_menu = [[25, 50, 100, -1], [25, 50, 100, 'all']]
+	length_menu = [[-1,25, 50, 100], ['all',25, 50, 100]]
 	initial_order = [["po_number","asc"]]
 	search_values_separator = " "
 	column_defs = [
@@ -467,15 +468,15 @@ class PO_datatable(AjaxDatatableView):
 		row["remaining_quantity"] = f'{int(remaining_quantity)} out of {int(total_quantity)}'
 		row['Print'] = f'''<td class="">
 				<a href="../report_input/{obj.pk}" >
-				<img src="../../../static/Images/print.png" style="width:19px;height:19px" alt="print"></a>
+				<img src="../../../static/Images/print.png" style="width:17px;height:17px" alt="print"></a>
 			</td>'''
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
-				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+				<img src="../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
 			</td>'''
 		row['Indent List'] = f'''<td class="">
 				<a href="indent/table/{obj.pk}" >
-					<img src="../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
+					<img src="../../static/Images/enter.png" style="width:17px;height:17px" alt="enter">
 				</a>
 			</td>'''
 		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
@@ -633,7 +634,7 @@ def show_stock(request):
 class WO_datatable(AjaxDatatableView):
 	model = work_order
 	title = 'work_order'
-	length_menu = [[25, 50, 100, -1], [25, 50, 100, 'all']]
+	length_menu = [[-1,25, 50, 100], ['all',25, 50, 100]]
 	initial_order = [["wo_number","asc"]]
 	search_values_separator = " "
 	column_defs = [
@@ -704,11 +705,11 @@ class WO_datatable(AjaxDatatableView):
 
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
-				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+				<img src="../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
 			</td>'''
 		row['Indent List'] = f'''<td class="">
 				<a href="/wo/{obj.pk}/indent/table/" >
-					<img src="../../static/Images/enter.png" style="width:19px;height:19px" alt="enter">
+					<img src="../../static/Images/enter.png" style="width:17px;height:17px" alt="enter">
 				</a>
 			</td>'''
 		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
@@ -813,7 +814,7 @@ class WO_form(View):
 class vendor_datatable(AjaxDatatableView):
 	model = vendor_details
 	title = 'vendor'
-	length_menu = [[25, 50, 100, -1], [25, 50, 100, 'all']]
+	length_menu = [[-1,25, 50, 100], ['all',25, 50, 100]]
 	initial_order = [["vendor_name","asc"]]
 	search_values_separator = " "
 	column_defs = [
@@ -877,7 +878,7 @@ class vendor_datatable(AjaxDatatableView):
 
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
-				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+				<img src="../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
 			</td>'''
 		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
 				<input class="form-check-input del_input" type="checkbox"
@@ -961,7 +962,7 @@ class vendor_form(View):
 class grn_datatable(AjaxDatatableView):
 	model = grn
 	title = 'grn'
-	length_menu = [[25, 50, 100, -1], [25, 50, 100, 'all']]
+	length_menu = [[-1,25, 50, 100], ['all',25, 50, 100]]
 	initial_order = [["grn_date","asc"]]
 	search_values_separator = " "
 	column_defs = [
@@ -1030,7 +1031,7 @@ class grn_datatable(AjaxDatatableView):
 		row['Vendor'] = obj.vendor_id.vendor_name if obj.vendor_id else "-------"
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
-				<img src="../../../static/Images/editing.png" style="width:19px;height:19px" alt="edit"></a>
+				<img src="../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
 			</td>'''
 		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
 				<input class="form-check-input del_input" type="checkbox"
@@ -1110,6 +1111,91 @@ class grn_form(View):
 		else:
 			form = add_grn(tempdict)
 		if form.is_valid():
+			new_grn = form.instance			
+			indent_id = new_grn.indent_id
+			print(new_grn.indent_id)
+			# indent_id = form.indent_id
+			if grn_id:
+				old_grn = grn.objects.get(pk=grn_id)
+				stock_wo = work_order.objects.all().get(wo_number="STOCK")
+				kwargs = model_to_dict(indent_id, exclude=['id',"order_ptr","WO","PO"])
+				kwargs["item_description_id"] = kwargs.pop("item_description")
+				stock_indent = indent.objects.filter(
+					item_description_id=kwargs["item_description_id"],
+					material_shape=kwargs["material_shape"],
+					WO = stock_wo
+				).first()
+				old_val = old_grn.quantity
+				new_val = new_grn.quantity
+				if stock_indent.quantity:
+					print(stock_indent.quantity)
+					if stock_indent.quantity >= old_val:
+						stock_indent.quantity -= old_val
+						stock_indent.save()
+					else:
+						delta = old_val - stock_indent.quantity
+						stock_indent.quantity = 0
+						print(delta)
+						indent_id.recived_quantity -= delta
+						stock_indent.delete()
+					indent_id.save()
+				else:
+
+					if indent_id.recived_quantity >= old_val:
+						indent_id.recived_quantity -= old_val
+					else:
+						indent_id.recived_quantity = 0
+					indent_id.save()
+
+				# delta = new_grn.
+
+				# if indent_id.recived_quantity > instance.quantity :
+				# 	# if a less quantity was received then the indent required
+				# 	indent_id.recived_quantity -= instance.quantity
+				# else:
+				# 	# if more quantity was received then the indent required
+				# 	if stock_indent:
+				# 		print("here at stock_indent")
+				# 		print(f"stock_indent.quantity - {stock_indent.quantity}")
+				# 		print(f'indent_id.recived_quantity - {indent_id.recived_quantity}')
+				# 		print(f"instance.quantity - {instance.quantity}")
+				# 		stock_indent.quantity -= instance.quantity - indent_id.recived_quantity
+				# 		print(f"stock_indent.quantity - {stock_indent.quantity}")
+				# 		stock_indent.save()
+				# 	indent_id.recived_quantity = 0
+				# indent_id.save()
+				
+			if new_grn.quantity > indent_id.get_remaining_quantity():
+				# if the quantity received is more then the indent 
+				# then create an indent and save it in the STOCK wo
+				stock_wo = work_order.objects.all().get(wo_number="STOCK")
+				kwargs = model_to_dict(indent_id, exclude=['id',"order_ptr","WO","PO"])
+				kwargs["item_description_id"] = kwargs.pop("item_description")
+				stock_indent = indent.objects.filter(
+					item_description_id=kwargs["item_description_id"],
+					material_shape=kwargs["material_shape"],
+					WO = stock_wo
+				).first()
+				extra_quantity = new_grn.quantity - indent_id.get_remaining_quantity()
+				if stock_indent:
+					# if same indent is in stock
+					print("same found",stock_indent)
+					stock_indent.quantity += extra_quantity
+					stock_indent.save()
+				else:
+					# if same indent is not in stock
+					new_indent = indent(**kwargs)
+					new_indent.WO = stock_wo
+					new_indent.quantity = extra_quantity
+					new_indent.save()
+					print(f"New Stock indent saved with {extra_quantity} quantity")
+				indent_id.recived_quantity += indent_id.get_remaining_quantity()
+				indent_id.save()
+			else:
+				print("Here in else- ",new_grn.quantity," ",indent_id.recived_quantity)
+				indent_id.recived_quantity += new_grn.quantity
+				indent_id.save()
+			
 			self.context['save_message'] = form.instance.get_save_messages(tempdict['quantity'])
 			form.save()
 			print(tempdict['quantity'])
@@ -1120,6 +1206,133 @@ class grn_form(View):
 			print(form.instance.value)
 			print(form.errors)
 		# return redirect("/grn/table")
+		return render(request,self.template_name,self.context)
+
+#endregion
+
+#region ########### Assembly ###########
+
+class assembly_datatable(AjaxDatatableView):
+	model = assembly
+	title = 'assembly'
+	length_menu = [[-1,25, 50, 100], ['all',25, 50, 100]]
+	initial_order = [["name","asc"]]
+	search_values_separator = " "
+	column_defs = [
+		AjaxDatatableView.render_row_tools_column_def(),
+		{
+			'name': 'id',
+			'visible': False,
+			'searchable': False,
+		},
+		{
+			'name': 'name', 
+			'visible': True,
+			'searchable': True,
+			'orderable': True,
+			'title': 'Name',
+		}, # Name
+		{
+			'name': 'Estimate', 
+			'visible': True,
+			'searchable': True,
+			'orderable': True,
+			'className':"currency",
+			'title': 'Estimate',
+		}, # estimate
+		{
+			'name': 'description', 
+			'visible': True,
+			'searchable': True,
+			'orderable': True,
+			'title': 'Description',
+		}, # description
+	]
+	
+	def get_initial_queryset(self, request=None):
+		# po_id=request.REQUEST.get('po_id')
+
+		queryset = self.model.objects.all()
+		# queryset = queryset.filter(PO__id=po_id)
+		# queryset = self.model.objects.all()
+		return queryset
+	
+	def customize_row(self, row, obj):
+		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
+		row['Estimate'] = f'''{obj.get_total_estimate()}'''
+		row['Edit'] = f'''<td class="">
+				<a href="../form/{obj.pk}" >
+				<img src="../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
+			</td>'''
+		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
+				<input class="form-check-input del_input" type="checkbox"
+				name="del" value="{obj.pk}" input_name="{obj}">
+			</div>'''
+		return
+
+	def render_row_details(self, pk, request=None):
+		html = ""
+		obj = self.model.objects.get(pk=pk)
+		item_list_html = '<table class="table-bordered">'
+		item_list_html += f'<tr><th class="">Sr.no</td><td class="">Items</td><td class="">Estimated Value</td></tr>'
+		for i,item in enumerate(obj.items.all()):
+			item_list_html += f'<tr><td class="d-flex justify-content-left">{i}</td><td class="">{item}</td><td class="currency">{item.get_estimated_value()}</td></tr>'
+		item_list_html += '</table>'
+		
+		html += item_list_html
+		return html
+
+class assembly_table(View):
+	template_name = "assembly/assembly_table.html"
+	context  = {}
+	def get(self, request, *args, **kwargs):
+		return render(request,self.template_name,self.context)
+
+	def post(self, request, *args, **kwargs):
+		pks = request.POST.getlist("pks[]")
+		for i in pks:
+			obj = assembly.objects.filter(pk=i)[0]
+			# print(obj)
+			obj.delete()
+		return JsonResponse({"deleted":True})
+
+class assembly_form(View):
+	template_name = "assembly/assembly_form.html"
+	def get_context(self, request):
+		context= {
+			"update":[],
+			"all_items":item_description.objects.all().filter(indent__isnull=False),
+		}
+		return context
+	
+	context = {}
+	def get(self, request,assembly_id=None):
+		self.context = self.get_context(request)
+		if assembly_id:
+			instance = assembly.objects.get(pk=assembly_id)
+			self.context['update'] = instance
+			# print(instance)
+			self.context['success'] = False
+			return render(request,self.template_name,self.context)
+		else:
+			self.context['update'] = []
+			return render(request,self.template_name,self.context)
+
+	def post(self, request,assembly_id=None):
+		self.context = self.get_context(request)
+		if assembly_id:
+			# self.context['update'] = 
+			instance = assembly.objects.get(pk=assembly_id)
+			form = add_assembly(request.POST,instance=instance)
+		else:
+			form = add_assembly(request.POST)
+
+		if form.is_valid():
+			form.save()
+			self.context['update'] = form.instance
+			self.context['success'] = True
+		else:
+			self.context['errors'] =  form.errors.as_ul()
 		return render(request,self.template_name,self.context)
 
 #endregion
