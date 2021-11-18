@@ -84,6 +84,7 @@ class indent_table(AjaxDatatableView):
 			'orderable': True,	
 			'searchable': False,		
 			'title': 'Recived',
+			'className':"is_completed",
 		}, # recived
 		{'name': 'Add GRN', 'visible': True,'searchable': False, 'orderable': False},
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},
@@ -111,6 +112,11 @@ class indent_table(AjaxDatatableView):
 		row['thickness'] = get_str(obj.thickness)
 
 		row['weight'] = f''' {obj.get_weight()}'''
+
+		# row['recived'] = f'''<td class="is_completed" data="{obj.recived}">
+			
+		# </td>'''
+		print(row['recived'])
 		row['Add GRN'] = f'''<td class="">
 			<a href="/indent/{obj.pk}/grn/form/" target="_blank">
 				<img src="../../../../static/Images/enter.png" style="width:17px;height:17px" alt="enter">
@@ -443,6 +449,7 @@ class PO_datatable(AjaxDatatableView):
 			'orderable': True,	
 			'searchable': False,		
 			'title': 'Completed',
+			'className':"is_completed",
 		},
 		{'name': 'Print', 'visible': True,'searchable': False, 'orderable': False},
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},
@@ -598,7 +605,8 @@ def print_report(request,po_id):
 	delivery_day = request.GET['delivery_day']
 	payment_term = request.GET['payment_term']
 	freight_charges = request.GET['freight_charges']
-	print(freight_charges)
+	com_name = request.GET['com_name']
+	# print( request.GET)
 	context = {
 		"my_po":my_po,
 		"all_indents":my_indents,
@@ -610,6 +618,7 @@ def print_report(request,po_id):
 		"delivery_day":delivery_day,
 		"payment_term":payment_term,
 		"freight_charges":freight_charges,
+		"com_name":com_name,
 	}
 	print(context['total_net_value'])
 	# total_quantity = indent.objects.all()
@@ -635,7 +644,7 @@ class WO_datatable(AjaxDatatableView):
 	model = work_order
 	title = 'work_order'
 	length_menu = [[-1,25, 50, 100], ['all',25, 50, 100]]
-	initial_order = [["wo_number","asc"]]
+	initial_order = [["is_complete","asc"]]
 	search_values_separator = " "
 	column_defs = [
 		AjaxDatatableView.render_row_tools_column_def(),
@@ -679,6 +688,7 @@ class WO_datatable(AjaxDatatableView):
 			'orderable': True,	
 			'searchable': False,		
 			'title': 'Completed',
+			'className':"is_completed",
 		}, # is_complete
 		{'name': 'Indent List', 'visible': True,'searchable': False, 'orderable': False},
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},

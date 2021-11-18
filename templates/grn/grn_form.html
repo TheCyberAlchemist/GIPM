@@ -23,9 +23,15 @@
 					"{{save_message}}",
 					'success'
 				)
+				window.setTimeout(function(){
+			    	window.location.href = "{{url ('show_grn')}}";
+			    }, 3000)
             {% endif %}
 			$("#indent_id").select2();
 			$("#vendor_id").select2();
+			$(".select2-selection").on("focus", function () {
+		        $(this).parent().parent().prev().select2("open");
+		    });
 		});
     </script>
 {% endblock %}

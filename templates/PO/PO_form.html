@@ -19,18 +19,22 @@
     <script type="text/javascript">
         $(document).ready(function() {
 			clear_form($(".myform"))
-            console.log("department")
+            console.log($("#indent_list"))
             {% if success %}
 				Swal.fire(
 					'PO Saved!',
 					'Your PO object has been saved.',
 					'success'
 				)
+				window.setTimeout(function(){
+			    	window.location.href = "{{url ('show_po')}}";
+			    }, 3000)
             {% endif %}
 			$("#indent_list").select2();
 			{% if not update %}
 				$("#vendor_id").select2();
 			{% endif %}
+			
         });
     </script>
 	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>

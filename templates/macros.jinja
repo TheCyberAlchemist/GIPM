@@ -10,6 +10,7 @@
 		<input type="text" class="form_input form-control myinputs" id="{{name}}"
 			placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %} maxlength="{{max_len}}" 
 			{% if disabled %}disabled{% endif %}
+			{% if required %}required{% endif %}
 			>
 		<label for="{{name}}" class="form-label">{{Name}}</label>
 	</div>	
@@ -20,6 +21,7 @@
 		<input type="email" class="form_input form-control myinputs" id="{{name}}"
 			placeholder="-" name="{{name}}" {% if value %}value = "{{value}}" {% endif %}
 			{% if disabled %}disabled{% endif %}
+			{% if required %}required{% endif %}
 			>
 		<label for="{{name}}" class="form-label">{{Name}}</label>
 	</div>	
