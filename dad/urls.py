@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path,re_path
 from main.views import *
+from main.api.views import *
 urlpatterns = [
     # re_path('',WO_table.as_view(),name="show_wo_home"),    
     path('',home_page,name="home_page"),
@@ -17,6 +18,7 @@ urlpatterns = [
     re_path(r'^wo/stock/$',show_stock,name="show_stock"),
     path('all_indent/',all_indent_table.as_view(),name="show_all_indent"),
     re_path(r'^all_indent/datatable/',all_indents_datatable.as_view(),name="get_all_indent"),
+    re_path(r'^wo/print_indents/(?P<wo_id>\d+)/$',print_wo_indents,name="print_wo_indents"),
 
     re_path(r'^po/table/$',PO_table.as_view(),name="show_po"),
     re_path(r'^po/datatable/$',PO_datatable.as_view(),name="show_po_datatable"),
@@ -41,4 +43,8 @@ urlpatterns = [
     re_path(r'^assembly/datatable/$',assembly_datatable.as_view(),name="show_assembly_datatable"),
     re_path(r'^assembly/form/$',assembly_form.as_view(),name="add_assembly"),
     re_path(r'^assembly/form/(?P<assembly_id>\d+)/$',assembly_form.as_view(),name="update_assembly"),
+    
+    re_path(r'^api/assembly$',assemblyList.as_view(),name="api_assembly"),
+    re_path(r'^api/assembly/(?P<pk>\d+)/$',assemblyRUD.as_view(),name="api_assembly"),
+    re_path(r'^api/item-description$',ItemDescriptionList.as_view(),name="api_item_description"),
 ]

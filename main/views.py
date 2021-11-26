@@ -75,7 +75,7 @@ class indent_table(AjaxDatatableView):
 			'visible': True,
 			'orderable': False,
 			'searchable': False,		
-			'title': 'Net Val',
+			'title': 'Total Val',
 			'className': 'currency',
 		}, # net_value
 		{
@@ -593,7 +593,6 @@ def po_print_inputs(request,po_id):
 
 def print_report(request,po_id):
 	my_po = purchase_order.objects.get(pk=po_id)
-	total_net_value = 0
 	my_indents = indent.objects.all().filter(PO=my_po)
 	total_gross_value,total_net_value,total_quantity,total_tax_value,total_weight = 0,0,0,0,0
 	for my_indent in my_indents:
@@ -620,7 +619,7 @@ def print_report(request,po_id):
 		"freight_charges":freight_charges,
 		"com_name":com_name,
 	}
-	print(context['total_net_value'])
+	# print(context['total_net_value'])
 	# total_quantity = indent.objects.all()
 	return render(request,"po/report.html",context)
 
@@ -745,10 +744,10 @@ class WO_datatable(AjaxDatatableView):
 			'Other Expanses':obj.other_expanses,
 			"Net Costing": net_cost
 		}
-		if obj.value >= net_cost:
-			currency['Profit'] = obj.value - net_cost
+		if obj.net_value() >= net_cost:
+			currency['Profit'] = obj.net_value() - net_cost
 		else:
-			currency['Loss'] = net_cost - obj.value
+			currency['Loss'] = net_cost - obj.net_value()
 		fields = {k: v for k, v in fields.items() if v != None}
 		fields = {k: v for k, v in fields.items() if v != ""}
 		# print(student_details.Division_id.Semester_id)
@@ -817,6 +816,31 @@ class WO_form(View):
 			print(form.errors)
 		# self.context['update'] = form.instance
 		return render(request,self.template_name,self.context)
+
+def print_wo_indents(request,wo_id):
+	my_wo = work_order.objects.get(pk=wo_id)
+	my_indents = indent.objects.all().filter(WO=my_wo)
+	total_gross_value,total_net_value,total_quantity,total_tax_value,total_weight = 0,0,0,0,0
+	for my_indent in my_indents:
+		total_net_value += my_indent.net_value()
+		total_quantity += my_indent.quantity
+		total_tax_value += my_indent.tax_amount()
+		total_weight += my_indent.get_weight()
+		total_gross_value += my_indent.gross_value()
+	
+	context = {
+		"my_wo":my_wo,
+		"all_indents":my_indents,
+		"total_net_value":round(total_net_value,2),
+		"total_quantity":round(total_quantity,2),
+		"total_tax_value":round(total_tax_value,2),
+		"total_weight":round(total_weight,3),
+		"total_gross_value":round(total_gross_value,2),
+	}
+	# print(context['total_net_value'])
+	# total_quantity = indent.objects.all()
+	return render(request,"wo/print_indents.html",context)
+
 #endregion
 
 #region ########### Vendor ###########
@@ -1311,7 +1335,7 @@ class assembly_form(View):
 	def get_context(self, request):
 		context= {
 			"update":[],
-			"all_items":item_description.objects.all().filter(indent__isnull=False),
+			"all_items":item_description.objects.all().exclude(estimated_value=0),
 		}
 		return context
 	

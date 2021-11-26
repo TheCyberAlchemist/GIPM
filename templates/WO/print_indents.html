@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			WO Report
+		</title>
+		<link href="{{static ('Bundles/css/bootstrap.min.css')}}" rel="stylesheet">
+		<style>
+			#content {
+				display: table;
+			}
+
+			#pageFooter {
+				display: table-footer-group;
+			}
+
+			#pageFooter:after {
+				counter-increment: page;
+				content: counter(page);
+			}
+			table{
+				max-width: 100%;
+			}
+			th{
+				text-align: center;
+			}
+			.table-bordered > tbody > tr > td,
+			 .table-bordered > tbody > tr > th,
+			  .table-bordered > tfoot > tr > td,
+			   .table-bordered > tfoot > tr > th,
+			    .table-bordered > thead > tr > td,
+			     .table-bordered > thead > tr > th {
+				border: 1px solid black;
+			}
+			html {
+				font-size: 10px;
+			}
+			@page {
+				size: A4 portrait;
+				margin: 15px 15px 10px 50px;
+			}
+			@media screen, print{
+				html {
+					font-size: 70%;
+					line-height: 110%;
+				}
+				table {
+					width: 100%;
+				}
+			}
+			@media print{
+				html {
+					font-size: 50%;
+					line-height: 110%;
+				}
+				#print,#lock_indent{
+					display:none !important;
+				}
+				th,td,tr,#tac
+				{ 
+					page-break-inside:avoid; 
+					page-break-after:auto 
+				}
+				html {
+					font-size: 60%;
+					line-height: 110%;
+				}
+			}
+
+		</style>
+	</head>
+	<script type="application/javascript" src="{{static ('Bundles/js/jquery.js')}}"></script>
+	<script type="application/javascript" src="{{static ('Bundles/js/sweetalert2.all.min.js')}}"></script>	
+	<script type="text/javascript" src="{{static ('report/report.js')}}"></script>
+	<body style='font-family:"Trebuchet MS", sans-serif' onload="get_total_in_words({{total_net_value}})">
+		<div class="d-flex justify-content-center m-2" id="print">
+			<button class="btn btn-success w-75" onclick="window.print()">
+				<h3>Print <kbd>ctrl+p</kbd></h3>
+			</button>
+		</div>
+		
+		<table class="table table-bordered" id="main_table" style="margin-bottom: 0px;table-layout: fixed;">
+			<thead>
+				<tr class="h2 text-center fw-bold">
+					<th colspan="12">
+						Work Order ({{my_wo.wo_number}})
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td colspan="12" style="padding: 0px">
+						<table class="table table-bordered" id="inner_table" style=" margin: 0px;">
+							<thead>
+								<tr>
+									<th><span class="fw-bold">Sr. No.</span></th>
+									<th class="description"><span class="fw-bold">Description</span></th>
+									<th><span class="fw-bold">MT</span></th>
+									<th><span class="fw-bold">QUT</span></th>
+									<th><span class="fw-bold">WT</span></th>
+									<th><span class="fw-bold">Unit Value</span></th>
+									<th><span class="fw-bold">Tax (in %)</span></th>
+									<th><span class="fw-bold">Other Charges</span></th>
+									<th><span class="fw-bold">Discount</span></th>
+									<th><span class="fw-bold">Tax Value</span></th>
+									<th><span class="fw-bold">Gross value</span></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for indent in all_indents %}
+									<tr>
+										<td>{{loop.index}}</td>
+										<td class="description">{{indent.description}}<br><span class="fw-bold" class="h5">Indent_id :-</span> {{indent.pk}}</td>
+										<td>{% if indent.material_type %}{{indent.material_type}}{% else %}---{% endif %}</td>
+										<td>{{indent.quantity}} {{indent.unit}}</td>
+										<td>{{indent.get_weight()}} Kg</td>
+										<td class="currency">₹ {{indent.value}}</td>
+										<td>{{indent.tax}} %</td>
+										<!-- <td>{{indent.tax_amount()}}</td> -->
+										<td class="currency">₹ {{indent.other_expanses}}</td>
+										<td class="currency">₹ {{indent.discount}}</td>
+										<td class="currency">₹ {{indent.tax_amount()}}</td>
+										<td class="currency">₹ {{indent.gross_value()}}</td>
+										<!-- <td>{{indent.net_value()}}</td> -->
+									</tr>
+								{% endfor %}
+								<tr>
+									<td></td><td></td><td></td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+								</tr>
+								<tr class="fw-bold">
+									<td colspan="3">&nbsp;</td>
+									<td>{{total_quantity}}</td>
+									<td>{{total_weight}} Kg</td>
+									<td colspan="2">Total Gross Value</td>
+									<td colspan="4" class="currency">₹ {{total_gross_value}}</td>
+								</tr>
+								<tr class="fw-bold">
+									<td colspan="5">Amount in Words :- <span id="total_in_words"></span></td>
+									<td colspan="2">Total Tax Value</td>
+									<td colspan="4" class="currency">₹ {{total_tax_value}}</td>
+								</tr>
+								<tr class="fw-bold">
+									<td colspan="5">&nbsp;</td>
+									<td colspan="2">Total Net Value</td>
+									<td colspan="4" class="currency">₹ {{total_net_value}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+				
+			</tbody>
+			
+		</table>
+	</body>
+	
+</html>

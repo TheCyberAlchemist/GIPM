@@ -11,124 +11,85 @@
         font-size: .9rem !important;
     }
 </style>
-<link href = "{{static ('Multiple select/dist/dual-listbox.css')}}" rel="stylesheet"></style>
+<link href = "{{static ('DualSelectBox/dsb.css')}}" rel="stylesheet"></style>
 {% endblock %}
 
 {%block scripts%}
-	<script src="{{static ('Multiple select/dist/dual-listbox.js')}}" ></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-			clear_form($(".myform"))
-			demo = new DualListbox('.demo',{
-				availableTitle: 'Item Descriptions',
-  				selectedTitle: 'Selected descriptions',	
-				addButtonText: '>',
-				addAllButtonText: '>>',
-				removeButtonText: '<', 
-  				removeAllButtonText: '<<',
-			});
-            {% if success %}
-				Swal.fire(
-					'Assembly Saved!',
-					'Your assembly object has been saved.',
-					'success'
-				).then( function() {
-					open(location, '_self').close();
-				})
-				//setTimeout(() => {  console.log("asd");window.close() }, 3000);
-            {% endif %}
-			$("#vendor_id").select2();
-        });
-    </script>
+	<script src="{{static ('DualSelectBox/dsb.js')}}" ></script>
+	<script src="{{static ('assembly/assembly.js')}}" ></script>
 	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
 {% endblock %}
 
 {% block content %}
 	<div class="main_content">
-		<div class="row" style="padding-top: 6rem">
-			<nav aria-label="breadcrumb">
-				<ol class="breadcrumb">
-					<li class="breadcrumb-item">
-						<a href="{{url ('home_page')}}">
-							<span class="h6 fw-bold">Home</span>
+		<div id="wrap" class="container">
+			<br>
+			<br><br><br><br><br>
+			<form class="myform">
+				<div class="row mb-3">
+					<div class="col-lg-6 col-md-6 col-sm-6">
+						{{macros.input_text("Assembly Name","name",update.name)}}
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-6">
+						{{macros.text_area("Description","description",update.description)}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<a href="/admin/main/item_description/add/?_to_field=id&_popup=1" target="popup" onclick="popup = window.open('/admin/main/item_description/add/?_to_field=id&_popup=1','popup','width=600,height=600'); return false;"
+							style="text-decoration:none; color:black !important;"
+						>
+							<img src="{{static ('Images/add.png')}}" alt="Add" style="height: 30px;width: 30px;">
+							Add Item
 						</a>
-					</li>
-					<li class="breadcrumb-item">
-						<a href="{{url ('show_assembly')}}">
-							<span class="h6 fw-bold">Assembly Table</span> 
-						</a>
-					</li>
-					<li class="breadcrumb-item">
-						<a href="{{url ('add_assembly')}}">
-							<span class="h6 fw-bold">Add Assembly</span>
-						</a>
-					</li>
-				</ol>
-			</nav>
-			<div class="col-12 mb-4" style="width:80%;margin: 0 auto;">
-				<div class="card shadow-sm components-section" style="border-radius: 1rem;">
-					<div class="card-body" style="border-radius: 1rem;">
-						<div class="accordion accordion-flush" id="accordionFlushExample">
-							<div class="accordion-item">
-								<h2 class="accordion-header" id="flush-headingOne">
-									<h3>{% if update %}Update{% else %}Add{% endif %} Assembly {% if success %}✅{% endif %}</h3>
-								</h2>
-								<div class="accordion-body">
-									<form class="myform" method = "POST">
-										{{csrf_input}}
-										<div class="row mb-1 mx-lg-5 mx-sm-0">
-											<div class="col-lg-12 col-md-12 col-sm-12">
-												{{macros.input_text("Assembly Name","name",max_len=200,value=update.name)}}
-											</div>
-										</div>
-										<div class="row mb-1 mx-lg-5 mx-sm-0">
-											<div class="col-lg-12 col-md-12 col-sm-12">
-												{{macros.text_area("Description","description",update.description)}}
-											</div>
-										</div>
-										<hr>
-										<div class="row mb-1 mx-lg-5 mx-sm-0">
-											<div class="col-lg-12 col-md-12 col-sm-12">
-												<select class="demo" name="items" multiple>
-													{% for item in all_items %}
-														<option value="{{item.id}}" 
-															{%if update and item in update.items.all()%}
-																selected
-															{%endif%}
-														>{{item}}</option>
-													{% endfor %}
-												</select>
-											</div>
-										</div>
-										<div class="row mb-1 mx-lg-5 mx-sm-0">
-											<div class="container mt-4" style="width:80%;">
-												<button type="submit" class="btn btn-outline-success" style="width:100%">Submit</button>
-											</div>
-										</div>
-									</form>
-									{% if integrityErrors %}
-										<div class="errors_container">
-											<p>
-											{{integrityErrors}}
-											</p>
-										</div>
-									{% endif %}
-									{% if errors %}
-										<div class="errors_container">
-											<p>
-											{{errors}}
-											</p>
-										</div>
-										<script>
-											show_error("{{errors}}")
-										</script>
-									{% endif %}
-								</div>                                
-							</div>
+					</div>
+					<div class="col-3">
+						<button type="button" class="btn btn-primary" id="refresh_list">Refresh List</button>
+					</div>
+					<div class="col-3">
+						<div class="spinner-border" style="display: none;" role="status">
+							<span class="sr-only"></span>
 						</div>
 					</div>
 				</div>
-			</div>
+				<div class="row">
+					<div class="col-xs-5">
+						<select name="from[]" class="multiselect form-control" size="8" multiple="multiple" data-right="#multiselect_to_1" data-right-all="#right_All_1" data-right-selected="#right_Selected_1" data-left-all="#left_All_1" data-left-selected="#left_Selected_1">
+							<!--
+							<option value="1" data-ev = "601.00">Item 1</option>
+							<option value="2" data-ev = "602.00">Item 2</option>
+							<option value="3" data-ev = "603.00">Item 3</option>
+							<option value="4" data-ev = "604.00">Item 4</option>
+							<option value="5" data-ev = "605.00">Item 5</option>
+							-->
+							{% for item in all_items %}
+								<option value="{{item.pk}}" data-ev = "{{item.estimated_value}}">{{item}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-5">
+						<h1 style="background-color: gray;display:flex;float:left;border-radius:10px" class="p-1">₹<span class="badge badge-secondary" id= "total_estimate">00.0</span></h1>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-5">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th scope="col">Item</th>
+									<th scope="col">Cost</th>
+									<th scope="col">Quantity</th>
+								</tr>
+							</thead>
+							<tbody id = "mirror">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 {% endblock %}

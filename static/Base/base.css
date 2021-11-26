@@ -1,7 +1,7 @@
 .container-fluid.p-2.table_container {
     font-size: smaller;
 }
-table td{
+#example td{
     border: 1px solid black;
 }
 td.details-control {

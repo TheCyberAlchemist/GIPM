@@ -1,4 +1,5 @@
 from django.db import models
+import jsonfield
 
 #region ############ JSONField ############
 from django.db import models
@@ -66,12 +67,7 @@ class vendor_details(models.Model):
 class item_description(models.Model):
 	'class of items which shoud be addable in for the indent'
 	description = models.TextField(unique=True)
-	
-	def get_estimated_value(self):
-		''' returns the estimated value of the indent by finding the last indent 
-		having the item_description '''
-		last_indent = self.indent_set.all().last()
-		return last_indent.value
+	estimated_value = models.FloatField(default=0,null=True, blank=True)
 
 	def __str__(self):
 		if self.description:
@@ -241,6 +237,10 @@ class indent(order):
 		return float(self.get_weight() - self.recived_quantity)
 
 	def save(self,*args, **kwargs):
+		# update the estimate for the item_description 
+		self.item_description.estimated_value = self.value
+		self.item_description.save()
+		
 		if self.recived_quantity >= self.quantity:
 			self.recived = True
 		super(indent, self).save(*args, **kwargs)
@@ -275,15 +275,19 @@ class grn(order):
 	def save(self,*args, **kwargs):
 		# indent_id = self.indent_id
 		# print("here in grn :: ",indent_id.get_remaining_quantity())
-			
-
 		super(grn, self).save(*args, **kwargs)
 
 class assembly(models.Model):
+	# https://stackoverflow.com/questions/14666199/how-do-i-create-multiple-model-instances-with-django-rest-framework
 	items = models.ManyToManyField(item_description)
 	name = models.CharField(max_length=200)
 	description = models.TextField(null=True, blank=True)
-
+	item_json = JSONField()
+	# item_json = {
+		# pk:{
+			# "quantity":1
+		# },
+	# }
 	def __str__(self):
 		return f'{self.name}'
 	

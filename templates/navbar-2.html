@@ -1,0 +1,42 @@
+{%block navbar_starts%} {%endblock%} 
+<!-- content here -->
+    <div class="nav_container"> 
+      <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color:#101820FF">
+        <div class="container-fluid">
+          <a class="navbar-brand" style="font-family:'Poppins',sans-serif" href="{{url ('home_page')}}">
+            GIPM
+          </a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mb-2 mb-lg-0 me-4">
+              <li class="nav-item">
+                  <a href="{{url ('show_wo')}}" class="active nav-link s">WO</a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url ('show_po')}}" class="active nav-link s">PO</a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url ('show_grn')}}" class="active nav-link s">GRN</a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url ('show_all_indent')}}" class="active nav-link s">Unrecived Indents</a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url ('show_stock')}}" class="active nav-link s">Stock</a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url ('show_vendor')}}" class="active nav-link s">Vendor Details</a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/main/item_description/" class="active nav-link s">Item Description</a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin" class="active nav-link s">Admin</a>
+              </li>
+          </ul>
+        </div>
+        </div>
+      </nav>
+    </div>
+
+{%block navbar_ends%} {%endblock%}
