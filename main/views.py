@@ -690,6 +690,8 @@ class WO_datatable(AjaxDatatableView):
 			'className':"is_completed",
 		}, # is_complete
 		{'name': 'Indent List', 'visible': True,'searchable': False, 'orderable': False},
+		
+		{'name': 'Print', 'visible': True,'searchable': False, 'orderable': False},
 		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},
 		{
 			'name':'Delete',
@@ -711,7 +713,10 @@ class WO_datatable(AjaxDatatableView):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
 		
 		row['net_value'] = f''' {obj.net_value()}'''
-
+		row['Print'] = f'''<td class="">
+			<a href="../../wo/print_indents/{obj.pk}/" >
+			<img src="../../../static/Images/print.png" style="width:17px;height:17px" alt="print"></a>
+		</td>'''
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>

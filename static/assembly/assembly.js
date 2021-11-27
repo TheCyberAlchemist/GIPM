@@ -14,7 +14,9 @@ $(function() {
 		$(".spinner-border").show();
 		refresh_options();
 	})
-
+	$("#save_assembly").click(function(){
+		submit_form();
+	})
 });
 function refresh_options(){
 	$.ajax({
@@ -108,10 +110,11 @@ function submit_form(){
 	let form = $(".myform");
 	let item_json = {};
 	let items = [];
-	$("#mirror li").each(function(i,li){
-		li = $(li);
-		let pk = li.data("value");
-		let quantity  = li.find("input").val();
+	let estimate_value = parseFloat($("#total_estimate").html());
+	$("#mirror tr").each(function(i,tr){
+		tr = $(tr);
+		let pk = tr.data("value");
+		let quantity  = tr.find("input").val();
 		items.push(pk);
 		item_json[pk] = quantity;
 	})
@@ -120,6 +123,7 @@ function submit_form(){
 		"description": $("#description").val(),
 		"item_json":JSON.stringify(item_json),
 		"items": items,
+		"estimate_value":estimate_value,
 	}
 	let form_method = "POST";
 	let form_url = "/api/assembly";

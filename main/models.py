@@ -288,6 +288,7 @@ class assembly(models.Model):
 			# "quantity":1
 		# },
 	# }
+	estimate_value = models.FloatField(default=0,null=True, blank=True)
 	def __str__(self):
 		return f'{self.name}'
 	
