@@ -1,5 +1,5 @@
 from django.db import models
-import jsonfield
+# import jsonfield
 
 #region ############ JSONField ############
 from django.db import models
