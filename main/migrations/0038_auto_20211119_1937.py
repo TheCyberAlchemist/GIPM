@@ -17,5 +17,17 @@ class Migration(migrations.Migration):
             field=main.models.JSONField(default={}),
             preserve_default=False,
         ),
-        
+        migrations.CreateModel(
+        name='plan',
+        fields=[
+            ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+            ('name', models.CharField(max_length=200)),
+            ('item_state', main.models.JSONField(blank=True, null=True)),
+            ('estimate', models.FloatField(blank=True, default=0, null=True)),
+            ('assemblies', models.ManyToManyField(to='main.assembly')),
+        ],
+        options={
+            'verbose_name_plural': 'Plan',
+        },
+        ),
     ]
