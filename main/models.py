@@ -1,44 +1,52 @@
 from django.db import models
 # import jsonfield
-
+import re
+p = re.compile('(?<!\\\\)\'')
 #region ############ JSONField ############
-from django.db import models
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 
 class JSONField(models.TextField):
-    """
-    JSONField es un campo TextField que serializa/deserializa objetos JSON.
-    Django snippet #1478
+	"""
+	JSONField es un campo TextField que serializa/deserializa objetos JSON.
+	Django snippet #1478
 
-    Ejemplo:
-        class Page(models.Model):
-            data = JSONField(blank=True, null=True)
+	Ejemplo:
+		class Page(models.Model):
+			data = JSONField(blank=True, null=True)
 
-        page = Page.objects.get(pk=5)
-        page.data = {'title': 'test', 'type': 3}
-        page.save()
-    """
-    def to_python(self, value):
-        if value == "":
-            return None
+		page = Page.objects.get(pk=5)
+		page.data = {'title': 'test', 'type': 3}
+		page.save()
+	"""
+	def to_python(self, value):
+		if value == "":
+			return None
+		try:
+			if isinstance(value, str):
+				# print(value)
+				# import re
+				# p = re.compile('(?<!\\\\)\'')
+				# value = p.sub('\"', value)
+				# print(value)
+				# print("value is str", value)
+				return json.loads(value)
+		except Exception as e:
+			print(e)
+			pass
+		return value
 
-        try:
-            if isinstance(value, str):
-                return json.loads(value)
-        except ValueError:
-            pass
-        return value
+	def from_db_value(self, value, *args):
+		return self.to_python(value)
 
-    def from_db_value(self, value, *args):
-        return self.to_python(value)
-
-    def get_db_prep_save(self, value, *args, **kwargs):
-        if value == "":
-            return None
-        if isinstance(value, dict):
-            value = json.dumps(value, cls=DjangoJSONEncoder)
-        return value
+	def get_db_prep_save(self, value, *args, **kwargs):
+		if value == "":
+			return None
+		# print(type(value))
+		if isinstance(value, dict):
+			value = json.dumps(value, cls=DjangoJSONEncoder)
+			# print(value)
+		return value
 
 #endregion
 
@@ -67,6 +75,8 @@ class vendor_details(models.Model):
 class item_description(models.Model):
 	'class of items which shoud be addable in for the indent'
 	description = models.TextField(unique=True)
+	shape_choice = [("Round","Round"),("Plate","Plate"),("SQ Bar","SQ Bar"),("Pipe","Pipe"),("BF","BF"),("Labour","Labour"),("ISMC","ISMC"),("ISMB","ISMB"),("ISA","ISA"),("Bolt","Bolt"),("Nut","Nut")]
+	shape = models.CharField(choices=shape_choice, max_length=20)
 	estimated_value = models.FloatField(default=0,null=True, blank=True)
 
 	def __str__(self):
@@ -75,6 +85,11 @@ class item_description(models.Model):
 		else:
 			return ""
 
+	# save function to update all assembly objects related to this item_description
+	def save(self, *args, **kwargs):
+		super(item_description, self).save(*args, **kwargs)
+		for assembly in self.assembly_set.all():
+			assembly.save()
 
 class order(models.Model):
 	'''base class for other models having orders.\n
@@ -225,7 +240,7 @@ class indent(order):
 		elif self.material_shape == "Labour" or self.material_shape == "BF":
 			return Q
 		elif self.material_shape in ["ISMC","ISMB","ISA","Bolt","Nut"]:
-			w_pmm = standard_weight.objects.filter(material_shape=shape,size=S).first().weight_pmm
+			w_pmm = standard_weight.objects.filter(material_shape=self.material_shape,size=S).first().weight_pmm
 			return round_no(w_pmm * T * Q)
 		return 0
 	
@@ -240,9 +255,10 @@ class indent(order):
 		# update the estimate for the item_description 
 		self.item_description.estimated_value = self.value
 		self.item_description.save()
-		
+
 		if self.recived_quantity >= self.quantity:
 			self.recived = True
+		
 		super(indent, self).save(*args, **kwargs)
 
 class grn(order):
@@ -277,6 +293,44 @@ class grn(order):
 		# print("here in grn :: ",indent_id.get_remaining_quantity())
 		super(grn, self).save(*args, **kwargs)
 
+def get_item_estimate_val(item_dict,item_pk):
+	'''the function returning the estimate value respective to shape
+		gets item_dict = {
+			thickness:float,
+			size:float,
+			width:float,
+			internal_diameter:float,
+			quantity:float,
+		}
+		and item_pk:int
+	'''
+	item_obj = item_description.objects.filter(pk=item_pk).first()
+	# print(f'self :{self}\n shape : {shape} \n size : {size} \n thickness : {thickness} \n width : {width} \n internal_diameter : {internal_diameter} \n quantity : {quantity} \n value : {value}')
+	round_no = lambda x: round(x,3)
+	
+	shape = item_obj.shape
+	value = item_obj.estimated_value
+
+	T = float(item_dict['thickness']) or 0
+	S = float(item_dict['size']) or 0
+	W = float(item_dict['width']) or 0
+	ID = float(item_dict['internal_diameter']) or 0
+	Q = float(item_dict['quantity']) or 0
+
+	if shape == "Round":
+		
+		return round_no((S*S*T*0.00000616)*Q * value)
+	elif shape == "Plate" or shape == "SQ Bar":
+		return round_no((S*T*W*0.00000786)*Q * value)
+	elif shape == "Pipe":
+		return round_no(((S*S - ID*ID)*T*0.00000616)*Q * value)
+	elif shape == "Labour" or shape == "BF":
+		return round_no(Q * value)
+	elif shape in ["ISMC","ISMB","ISA","Bolt","Nut"]:
+		w_pmm = standard_weight.objects.filter(shape=shape,size=S).first().weight_pmm
+		return round_no(w_pmm * T * Q * value)
+	return round_no(Q * value)
+
 class assembly(models.Model):
 	# https://stackoverflow.com/questions/14666199/how-do-i-create-multiple-model-instances-with-django-rest-framework
 	items = models.ManyToManyField(item_description)
@@ -285,10 +339,36 @@ class assembly(models.Model):
 	item_json = JSONField()
 	# item_json = {
 		# pk:{
-			# "quantity":1
+			# "quantity":1,
+			# "shape":"Round",
+			# "thickness":1,
+			# "size":1,
+			# "width":1,
+			# "internal_diameter":1,
 		# },
-	# }
+	# } 
 	estimate_value = models.FloatField(default=0,null=True, blank=True)
+	
+	def get_total_estimate_value(self):
+		'''the function returning the estimate value of the assembly'''
+		total = 0
+		# print(self.item_json)
+		if isinstance(self.item_json, str):
+			print("item_json is str")
+			# print("item_json: ",self.item_json)
+			value = p.sub('\"', self.item_json)
+			data = json.loads(value)
+			# print(data)
+		else:
+			data = self.item_json
+			print("item_json is dict")
+		# print(data)
+		for item_pk in data:
+			item_dict = data[item_pk]
+			# print(item)
+			total += get_item_estimate_val(item_dict,item_pk)
+		return total
+	
 	def __str__(self):
 		return f'{self.name}'
 	
@@ -298,11 +378,13 @@ class assembly(models.Model):
 			# models.UniqueConstraint(fields=['vendor_name', 'contact_person'], name='Vendor name and contact person cannot be same.'),
 		]
 
-	def get_total_estimate(self):
-		total_estimate = 0
-		for item in self.items.all():
-			total_estimate += item.get_estimated_value()
-		return total_estimate
+	def save(self,*args, **kwargs):
+		# update the estimate for the item_description 
+
+		self.estimate_value = self.get_total_estimate_value()
+
+		super(assembly, self).save(*args, **kwargs)
+		
 
 class plan(models.Model):
 	name = models.CharField(max_length=200)

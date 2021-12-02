@@ -43,6 +43,6 @@ class description(admin.ModelAdmin):
 
 @admin.register(assembly)
 class assembly(admin.ModelAdmin):
-	list_display = ["name","description"]
+	list_display = ["name","description","estimate_value"]
 	search_fields=('name',)
 	# list_filter= ['material_shape']

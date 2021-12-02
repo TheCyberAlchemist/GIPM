@@ -49,18 +49,23 @@ function add_to_mirror(options){
 		var $option = $(option);
 		let option_str = 
 		`
-			<tr data-ev="${$option.data('ev')}" data-value="${$option.val()}">
+			<tr data-ev="${$option.data('ev')}" data-pk="${$option.val()}" id="tr_item_${$option.val()}">
 				<td>${$option.html()}</td>
 				<td>${$option.data('ev')}</td>
-				<td><input type='number' value='1' id='quantity_${$option.val()}' min='0' "></td>
+				<td><input type='number' class="thickness_input" value='1' min='0' "></td>
+				<td><input type='number' class="size_input" value='1' min='0' "></td>
+				<td><input type='number' class="width_input" value='1' min='0' "></td>
+				<td><input type='number' class="internal_diameter_input" value='1' min='0' "></td>
+				<td><input type='number' value='1' class = "quantity_input" id='quantity_${$option.val()}' min='0' "></td>
+
 			</tr>
 		`;
 		$("#mirror").append(option_str)
-		$(`#quantity_${$option.val()}`).keyup(function(){
+		$(`#tr_item_${$option.val()} input`).on('keyup',function(e){
 			console.log("here")
 			calculate_total();
 		})
-		$(`#quantity_${$option.val()}`).change(function(){
+		$(`#tr_item_${$option.val()} input`).change(function(){
 			console.log("here")
 			calculate_total();
 		})
@@ -90,34 +95,57 @@ function allOptionRemoved(obj){
 	remove_from_mirror(obj)
 	// console.log("allOptionRemoved",obj);
 }
+function get_item_and_json(){
+	let item_json = {};
+	let items = [];
+	$("#mirror tr").each(function(i,tr){
+		tr = $(tr);
+		let pk = tr.data("pk");
+		let quantity = tr.find(".quantity_input").val();
+		let size = tr.find(".size_input").val();
+		let shape = tr.find(".shape_input").val();
+		let thickness = tr.find(".thickness_input").val();
+		let width = tr.find(".width_input").val();
+		let internal_diameter = tr.find(".internal_diameter_input").val();
+		// console.log(pk,quantity,shape,thickness,width,internal_diameter);
+		items.push(pk);
+		item_json[pk] = {
+			"quantity": quantity || 0,
+			"size": size || 0,
+			"shape": shape || 0,
+			"thickness": thickness || 0,
+			"width": width || 0,
+			"internal_diameter": internal_diameter || 0
+		};
+	})
+	return [item_json,items]
+}
 
 function calculate_total(){
 	let total = 0;
-	$("#mirror input").each(function(a,quantity){
-		quantity_input = $(quantity);
-		let tr = quantity_input.parent().parent();
-		if (tr.data("ev")){
-			total += parseFloat(quantity_input.val()) * parseFloat(tr.data("ev"));
+	let [item_json,items] = get_item_and_json();
+	$.ajax({
+		url: '/api/calculate-estimate',
+		data : {"item_json": JSON.stringify(item_json)},
+		dataType: 'json',
+		success: function (response) {
+			console.log(response);
+			total = response;
+			if (!total){
+				total = 0.00;
+			}
+			$("#total_estimate").html(total);
+		},
+		error: function (response) {
+			console.log(response);
 		}
 	})
-	// console.log(total)
-	if (!total){
-		total = 0.00;
-	}
-	$("#total_estimate").html(total);
+
 }
 function submit_form(){
 	let form = $(".myform");
-	let item_json = {};
-	let items = [];
 	let estimate_value = parseFloat($("#total_estimate").html());
-	$("#mirror tr").each(function(i,tr){
-		tr = $(tr);
-		let pk = tr.data("value");
-		let quantity  = tr.find("input").val();
-		items.push(pk);
-		item_json[pk] = quantity;
-	})
+	let [item_json,items] = get_item_and_json();
 	let form_data = {
 		"name": $("#name").val(),
 		"description": $("#description").val(),

@@ -129,8 +129,8 @@ function formatCurrency(input, blur) {
 	// and puts cursor back in right position.
 
 	// get input value
-	// console.log(input)
-	var input_val = input;
+	var input_val = input.val();
+	console.log(input_val)
 
 	// don't validate empty input
 	if (input_val === "") {
@@ -169,13 +169,13 @@ function formatCurrency(input, blur) {
             right_side+="0"
         }
 		// join number by .
-		input_val = "₹&nbsp;" + left_side + "." + right_side;
+		input_val = "₹ " + left_side + "." + right_side;
 	} else {
 		// no decimal entered
 		// add commas to number
 		// remove all non-digits
 		input_val = formatNumber(input_val);
-		input_val = "₹" + input_val;
+		input_val = "₹ " + input_val;
 
 		// final formatting
 		if (blur === "blur") {
@@ -184,7 +184,7 @@ function formatCurrency(input, blur) {
 	}
 
 	// send updated string to input
-	return input_val
+    input.val(input_val)
 }
 
 $(document).ready(function() {

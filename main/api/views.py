@@ -1,9 +1,11 @@
 # import viewsets in django
 from rest_framework.parsers import JSONParser
 from rest_framework import generics,mixins
-from main.models import assembly
+from main.models import assembly,get_item_estimate_val
 from .serializer import *
-
+import json
+# impot JSONResponse
+from django.http import JsonResponse
 class assemblyList(generics.ListAPIView,mixins.CreateModelMixin):
 	"""This view provides list, detail, create, retrieve, update
 	and destroy actions for Things."""
@@ -33,3 +35,18 @@ class ItemDescriptionList(generics.ListAPIView):
 	def get_queryset(self):
 		return item_description.objects.all().exclude(estimated_value=0)
 	
+def calculate_assembly_estimate(request):
+	# print(request.GET)
+	
+	json_dict = json.loads(json.dumps(request.GET))
+	json_dict = json_dict['item_json']
+	data = json.loads(json_dict)
+	total = 0
+	for item_pk in data:
+		# item_obj = item_description.objects.get(pk=item_pk)
+		total += get_item_estimate_val(data[item_pk],item_pk)
+
+		
+	# for i in json_dict:
+	# 	print(i)
+	return JsonResponse(total,safe=False)

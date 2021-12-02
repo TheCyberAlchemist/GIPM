@@ -47,4 +47,6 @@ urlpatterns = [
     re_path(r'^api/assembly$',assemblyList.as_view(),name="api_assembly"),
     re_path(r'^api/assembly/(?P<pk>\d+)/$',assemblyRUD.as_view(),name="api_assembly"),
     re_path(r'^api/item-description$',ItemDescriptionList.as_view(),name="api_item_description"),
+    re_path(r'^api/calculate-estimate$',calculate_assembly_estimate,name="calculate_estimate"),
+    
 ]
