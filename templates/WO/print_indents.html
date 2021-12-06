@@ -71,14 +71,28 @@
 	</head>
 	<script type="application/javascript" src="{{static ('Bundles/js/jquery.js')}}"></script>
 	<script type="application/javascript" src="{{static ('Bundles/js/sweetalert2.all.min.js')}}"></script>	
+	<script type="application/javascript" src="{{static ('Bundles/js/hotkeys.js')}}"></script>
 	<script type="text/javascript" src="{{static ('report/report.js')}}"></script>
+
 	<body style='font-family:"Trebuchet MS", sans-serif' onload="get_total_in_words({{total_net_value}})">
-		<div class="d-flex justify-content-center m-2" id="print">
-			<button class="btn btn-success w-75" onclick="window.print()">
-				<h3>Print <kbd>ctrl+p</kbd></h3>
-			</button>
+		<div class="row">
+			<div class="col-6">
+				<div class="d-flex justify-content-center m-2" id="print">
+					<button class="btn btn-success w-75" onclick="window.print()">
+						<h3>Print <kbd>ctrl+p</kbd></h3>
+					</button>
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="d-flex justify-content-center m-2" id="print">
+					<a href="./excel/" style="width: 100%">
+						<button class="btn btn-success w-75" id="export_excel">
+							<h3>Export as .xlsx <kbd>ctrl+q</kbd></h3>
+						</button>
+					</a>
+				</div>
+			</div>
 		</div>
-		
 		<table class="table table-bordered" id="main_table" style="margin-bottom: 0px;table-layout: fixed;">
 			<thead>
 				<tr class="h2 text-center fw-bold">

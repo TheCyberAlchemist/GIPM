@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.urls import path,re_path
 from main.views import *
 from main.api.views import *
+from main.export_excel import *
+
 urlpatterns = [
     # re_path('',WO_table.as_view(),name="show_wo_home"),    
     path('',home_page,name="home_page"),
@@ -19,6 +21,7 @@ urlpatterns = [
     path('all_indent/',all_indent_table.as_view(),name="show_all_indent"),
     re_path(r'^all_indent/datatable/',all_indents_datatable.as_view(),name="get_all_indent"),
     re_path(r'^wo/print_indents/(?P<wo_id>\d+)/$',print_wo_indents,name="print_wo_indents"),
+    re_path(r'^wo/print_indents/(?P<wo_id>\d+)/excel',export_wo_xls,name="print_wo_excel"),
 
     re_path(r'^po/table/$',PO_table.as_view(),name="show_po"),
     re_path(r'^po/datatable/$',PO_datatable.as_view(),name="show_po_datatable"),
@@ -27,6 +30,7 @@ urlpatterns = [
     re_path(r'^po/report_input/(?P<po_id>\d+)/$',po_print_inputs,name="po_report_input"),
     re_path(r'^po/report/(?P<po_id>\d+)/$',print_report,name="print_po_report"),
     re_path(r'^po/report/(?P<po_id>\d+)/lock$',lock_po_indent,name="lock_po_indents"),
+    re_path(r'^po/report/(?P<po_id>\d+)/excel',export_po_xls,name="print_po_excel"),
 
     re_path(r'^vendor/table/$',vendor_table.as_view(),name="show_vendor"),
     re_path(r'^vendor/datatable/$',vendor_datatable.as_view(),name="show_vendor_datatable"),
@@ -48,5 +52,6 @@ urlpatterns = [
     re_path(r'^api/assembly/(?P<pk>\d+)/$',assemblyRUD.as_view(),name="api_assembly"),
     re_path(r'^api/item-description$',ItemDescriptionList.as_view(),name="api_item_description"),
     re_path(r'^api/calculate-estimate$',calculate_assembly_estimate,name="calculate_estimate"),
+
     
 ]

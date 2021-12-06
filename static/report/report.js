@@ -186,7 +186,13 @@ function formatCurrency(input, blur) {
 	// send updated string to input
     input.val(input_val)
 }
-
+hotkeys("ctrl+s", function (event, handler) {
+	switch (handler.key) {
+		case "ctrl+s":
+            $("#export_excel").click();
+			break;
+	}
+});
 $(document).ready(function() {
     $("#lock_indent").click(function(){
         Swal.fire({
@@ -230,4 +236,5 @@ $(document).ready(function() {
         })
     })
     $("#lock_indent").click();
+
 })
