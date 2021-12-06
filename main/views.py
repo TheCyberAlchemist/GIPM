@@ -1260,7 +1260,6 @@ class assembly_datatable(AjaxDatatableView):
 	initial_order = [["name","asc"]]
 	search_values_separator = " "
 	column_defs = [
-		AjaxDatatableView.render_row_tools_column_def(),
 		{
 			'name': 'id',
 			'visible': False,
@@ -1274,7 +1273,7 @@ class assembly_datatable(AjaxDatatableView):
 			'title': 'Name',
 		}, # Name
 		{
-			'name': 'Estimate', 
+			'name': 'estimate_value', 
 			'visible': True,
 			'searchable': True,
 			'orderable': True,
@@ -1288,6 +1287,14 @@ class assembly_datatable(AjaxDatatableView):
 			'orderable': True,
 			'title': 'Description',
 		}, # description
+		{'name': 'Item List', 'visible': True,'searchable': False, 'orderable': False},
+		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},
+		{
+			'name':'Delete',
+			'visible': True,
+			'searchable': False,
+			'orderable': False
+		}, # delete field
 	]
 	
 	def get_initial_queryset(self, request=None):
@@ -1300,10 +1307,14 @@ class assembly_datatable(AjaxDatatableView):
 	
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
-		row['Estimate'] = f'''{obj.get_total_estimate()}'''
 		row['Edit'] = f'''<td class="">
 				<a href="../form/{obj.pk}" >
 				<img src="../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
+			</td>'''
+		row['Item List'] = f'''<td class="">
+				<a href="/assembly/form/{obj.id}/" >
+					<img src="../../static/Images/enter.png" style="width:17px;height:17px" alt="enter">
+				</a>
 			</td>'''
 		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
 				<input class="form-check-input del_input" type="checkbox"
@@ -1311,17 +1322,17 @@ class assembly_datatable(AjaxDatatableView):
 			</div>'''
 		return
 
-	def render_row_details(self, pk, request=None):
-		html = ""
-		obj = self.model.objects.get(pk=pk)
-		item_list_html = '<table class="table-bordered">'
-		item_list_html += f'<tr><th class="">Sr.no</td><td class="">Items</td><td class="">Estimated Value</td></tr>'
-		for i,item in enumerate(obj.items.all()):
-			item_list_html += f'<tr><td class="d-flex justify-content-left">{i}</td><td class="">{item}</td><td class="currency">{item.get_estimated_value()}</td></tr>'
-		item_list_html += '</table>'
+	# def render_row_details(self, pk, request=None):
+	# 	html = ""
+	# 	obj = self.model.objects.get(pk=pk)
+	# 	item_list_html = '<table class="table-bordered">'
+	# 	item_list_html += f'<tr><th class="">Sr.no</td><td class="">Items</td><td class="">Estimated Value</td></tr>'
+	# 	for i,item in enumerate(obj.items.all()):
+	# 		item_list_html += f'<tr><td class="d-flex justify-content-left">{i}</td><td class="">{item}</td><td class="currency">{item.get_estimated_value()}</td></tr>'
+	# 	item_list_html += '</table>'
 		
-		html += item_list_html
-		return html
+	# 	html += item_list_html
+	# 	# return html
 
 class assembly_table(View):
 	template_name = "assembly/assembly_table.html"
@@ -1352,7 +1363,20 @@ class assembly_form(View):
 		if assembly_id:
 			instance = assembly.objects.get(pk=assembly_id)
 			self.context['update'] = instance
-			# print(instance)
+			self.context['estimate_value'] = instance.estimate_value
+			self.context['items_tr'] = []
+			for i in instance.items.all():
+				j = instance.item_json[f'{i.pk}']
+				self.context['items_tr'].append({
+					'pk':i.id,
+					'item_name':i.description,
+					'estimated_value':i.estimated_value,
+					'quantity':float(j['quantity']),
+					'size':float(j['size']),
+					'thickness':float(j['thickness']),
+					'width':float(j['width']),
+					'internal_diameter':float(j['internal_diameter']),
+				})
 			self.context['success'] = False
 			return render(request,self.template_name,self.context)
 		else:
@@ -1369,9 +1393,14 @@ class assembly_form(View):
 			form = add_assembly(request.POST)
 
 		if form.is_valid():
-			form.save()
-			self.context['update'] = form.instance
-			self.context['success'] = True
+			if assembly_id:
+				instance = form.save(commit=False)
+				instance.save()
+			else:
+				form.save()
+
+			# self.context['update'] = form.instance
+			# self.context['success'] = True
 		else:
 			self.context['errors'] =  form.errors.as_ul()
 		return render(request,self.template_name,self.context)
