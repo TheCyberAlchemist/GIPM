@@ -26,8 +26,8 @@ class JSONField(models.TextField):
 			if isinstance(value, str):
 				# print(value)
 				# import re
-				# p = re.compile('(?<!\\\\)\'')
-				# value = p.sub('\"', value)
+				p = re.compile('(?<!\\\\)\'')
+				value = p.sub('\"', value)
 				# print(value)
 				# print("value is str", value)
 				return json.loads(value)
@@ -315,7 +315,7 @@ def get_item_estimate_val(item_dict,item_pk):
 	S = float(item_dict['size']) or 0
 	W = float(item_dict['width']) or 0
 	ID = float(item_dict['internal_diameter']) or 0
-	Q = float(item_dict['quantity']) or 0
+	Q = int(float(item_dict['quantity'])) or 0
 
 	if shape == "Round":
 		
@@ -352,21 +352,18 @@ class assembly(models.Model):
 	def get_total_estimate_value(self):
 		'''the function returning the estimate value of the assembly'''
 		total = 0
-		# print(self.item_json)
+
 		if isinstance(self.item_json, str):
-			print("item_json is str")
-			# print("item_json: ",self.item_json)
 			value = p.sub('\"', self.item_json)
 			data = json.loads(value)
-			# print(data)
 		else:
 			data = self.item_json
-			print("item_json is dict")
-		# print(data)
+
 		for item_pk in data:
 			item_dict = data[item_pk]
-			# print(item)
 			total += get_item_estimate_val(item_dict,item_pk)
+
+		total = round(total,2)
 		return total
 	
 	def __str__(self):
@@ -388,9 +385,32 @@ class assembly(models.Model):
 
 class plan(models.Model):
 	name = models.CharField(max_length=200)
-	assemblies = models.ManyToManyField(assembly)
-	item_state = JSONField(null=True, blank=True)
-	estimate = models.FloatField(default=0,null=True, blank=True)
+	description = models.TextField(null=True, blank=True)
+	assemblies = models.ManyToManyField(assembly,null=True, blank=True)
+	assembly_json = JSONField(null=True, blank=True)
+	# assembly_json = {
+		# assembly_pk:{
+			# "quantity":1,
+		# }
+	# }
+
+	@property
+	def estimate_value(self):
+		'''the function returning the total estimate value of the plan'''
+		total = 0
+		if isinstance(self.assembly_json, str):
+			value = p.sub('\"', self.assembly_json)
+			data = json.loads(value)
+		else:
+			data = self.assembly_json
+		print(data,type(data))
+		for assem in self.assemblies.all():
+
+			assembly_obj = data[str(assem.pk)]
+			# print(assem.estimate_value)
+			total += assem.estimate_value * int(float(assembly_obj['quantity']))
+
+		return total
 
 	def __str__(self):
 		return f'{self.name}'

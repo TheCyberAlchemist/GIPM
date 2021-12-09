@@ -15,11 +15,11 @@ $(function() {
 		refresh_options();
 	})
 
-	$("#save_assembly").on("click",function(){
-		save_assembly();
+	$("#save_plan").on("click",function(){
+		save_plan();
 	})
-	$("#update_assembly").on("click",function(){
-		update_assembly();
+	$("#update_plan").on("click",function(){
+		update_plan();
 	})
 	
 
@@ -46,34 +46,33 @@ function delete_options(options){
 
 function refresh_options(){
 	$.ajax({
-		url: '/api/item-description',
+		url: '/api/assembly',
 		type: "get",
-		success: function (all_items) {
+		success: function (all_assemblies) {
 			delete_options(demo2.bootstrapDualListbox('getDeselected'));
 			demo2.bootstrapDualListbox('refresh');
 			let selected_options = demo2.bootstrapDualListbox('getSelected');
-			for(item of all_items){
+			for(assembly of all_assemblies){
 				let option_selected = false;
 				selected_options.each(function (index, option) {
-					if (option.value == item.id){
+					if (option.value == assembly.id){
 						option_selected = true;
 					}
 				})
 				if (!option_selected){
-					let option = `<option value="${item.id}" data-ev = "${item.estimated_value}">${item.description}</option>`;
+					let option = `<option value="${assembly.id}" data-ev = "${assembly.estimate_value}">${assembly.name}</option>`;
 					demo2.append(option);
 					demo2.bootstrapDualListbox('refresh');
 				}
 			}
 			$(".spinner-border").hide();
-			console.log(all_items);
 		},
 		error: function (response) {
 			$(".spinner-border").hide();
 		}
 	})
 }
-
+// #region add and remove from mirror
 function add_to_mirror(options){
 	options.each(function(index, option) {
 		var $option = $(option);
@@ -82,12 +81,7 @@ function add_to_mirror(options){
 			<tr data-ev="${$option.data('ev')}" data-pk="${$option.val()}" id="tr_item_${$option.val()}">
 				<td>${$option.html()}</td>
 				<td>${$option.data('ev')}</td>
-				<td><input type='number' class="thickness_input" value='1' min='0'></td>
-				<td><input type='number' class="size_input" value='1' min='0'></td>
-				<td><input type='number' class="width_input" value='1' min='0'></td>
-				<td><input type='number' class="internal_diameter_input" value='1' min='0'></td>
 				<td><input type='number' value='1' class = "quantity_input" id='quantity_${$option.val()}' min='0'></td>
-
 			</tr>
 		`;
 		$("#mirror").append(option_str)
@@ -108,7 +102,9 @@ function remove_from_mirror(options){
 	})
 	calculate_total();
 }
+// #endregion
 
+// #region move-remove functions
 function optionMoved(obj){
 	add_to_mirror(obj);
 	// console.log("optionMoved",obj);
@@ -128,37 +124,29 @@ function allOptionRemoved(obj){
 	remove_from_mirror(obj)
 	// console.log("allOptionRemoved",obj);
 }
+// #endregion
 
-function get_item_and_json(){
-	let item_json = {};
-	let items = [];
+function get_assembly_and_json(){
+	let assembly_json = {};
+	let assemblies = [];
 	$("#mirror tr").each(function(i,tr){
 		tr = $(tr);
 		let pk = tr.data("pk");
 		let quantity = tr.find(".quantity_input").val();
-		let size = tr.find(".size_input").val();
-		let thickness = tr.find(".thickness_input").val();
-		let width = tr.find(".width_input").val();
-		let internal_diameter = tr.find(".internal_diameter_input").val();
-		// console.log(pk,quantity,shape,thickness,width,internal_diameter);
-		items.push(pk);
-		item_json[pk] = {
+		assemblies.push(pk);
+		assembly_json[pk] = {
 			"quantity": quantity || 0,
-			"size": size || 0,
-			"thickness": thickness || 0,
-			"width": width || 0,
-			"internal_diameter": internal_diameter || 0
 		};
 	})
-	return [item_json,items]
+	return [assembly_json,assemblies]
 }
 
 function calculate_total(){
 	let total = 0;
-	let [item_json,items] = get_item_and_json();
+	let [assembly_json,assemblies] = get_assembly_and_json();
 	$.ajax({
-		url: '/api/assembly/calculate-estimate',
-		data : {"item_json": JSON.stringify(item_json)},
+		url: '/api/plan/calculate-estimate',
+		data : {"assembly_json": JSON.stringify(assembly_json)},
 		dataType: 'json',
 		success: function (response) {
 			console.log(response);
@@ -175,19 +163,19 @@ function calculate_total(){
 
 }
 
-function update_assembly(){
+function update_plan(){
 	let form = $(".myform");
 	let estimate_value = parseFloat($("#total_estimate").html());
-	let [item_json,items] = get_item_and_json();
+	let [assembly_json,assemblies] = get_assembly_and_json();
 	let form_data = {
 		"name": $("#name").val(),
 		"description": $("#description").val(),
-		"item_json":JSON.stringify(item_json),
-		"items": items,
+		"assembly_json":JSON.stringify(assembly_json),
+		"assemblies": assemblies,
 		"estimate_value":estimate_value,
 	}
 	let form_method = "PUT";
-	let form_url = `/api/assembly/${assembly_id}/`;
+	let form_url = `/api/plan/${plan_id}/`;
 	// console.log(form_data)
 	$.ajax({
 		url: form_url,
@@ -207,19 +195,17 @@ function update_assembly(){
 	})
 }
 
-function save_assembly(){
+function save_plan(){
 	let form = $(".myform");
-	let estimate_value = parseFloat($("#total_estimate").html());
-	let [item_json,items] = get_item_and_json();
+	let [assembly_json,assemblies] = get_assembly_and_json();
 	let form_data = {
 		"name": $("#name").val(),
 		"description": $("#description").val(),
-		"item_json":JSON.stringify(item_json),
-		"items": items,
-		"estimate_value":estimate_value,
+		"assembly_json":JSON.stringify(assembly_json),
+		"assemblies": assemblies,
 	}
 	let form_method = "POST";
-	let form_url = "/api/assembly";
+	let form_url = "/api/plan";
 	console.log(form_data)
 	$.ajax({
 		url: form_url,
@@ -228,10 +214,7 @@ function save_assembly(){
 		contentType: "application/json; charset=utf-8",
 		success: function (response) {
 			console.log(response);
-			if (response.success){
-				$("#mirror").html("");
-				clear_form(form)
-			}
+			alert("Plan saved successfully");
 		},
 		error: function (response) {
 			console.log(response);

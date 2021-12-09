@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% import "macros.jinja" as macros %}
+{% block title%} {% if update %}Update{% else %}Add{% endif %} Plan 
+{% endblock %}
+
+{% block css%}
+<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
+
+<style>
+    td,th {
+        font-size: .9rem !important;
+    }
+</style>
+<link href = "{{static ('DualSelectBox/dsb.css')}}" rel="stylesheet"></style>
+{% endblock %}
+
+{%block scripts%}
+	<script src="{{static ('DualSelectBox/dsb.js')}}" ></script>
+	<script src="{{static ('plan/plan.js')}}" ></script>
+	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="main_content">
+		<div id="wrap" class="container">
+			<br>
+			<br><br><br><br><br>
+			<form class="myform">
+				<div class="row mb-3">
+					<div class="col-lg-6 col-md-6 col-sm-6">
+						{{macros.input_text("Plan Name","name",update.name)}}
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-6">
+						{{macros.text_area("Description","description",update.description)}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<a href="{{url('add_assembly')}}" target="_blank" style="text-decoration:none; color:black !important;">
+							<img src="{{static ('Images/add.png')}}" alt="Add" style="height: 30px;width: 30px;">
+							Add Assembly
+						</a>
+					</div>
+					<div class="col-3">
+						<button type="button" class="btn btn-primary" id="refresh_list">Refresh List</button>
+					</div>
+					<div class="col-3">
+						<div class="spinner-border" style="display: none;" role="status">
+							<span class="sr-only"></span>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-5">
+						<select name="from[]" class="multiselect form-control" size="8" multiple="multiple" data-right="#multiselect_to_1" data-right-all="#right_All_1" data-right-selected="#right_Selected_1" data-left-all="#left_All_1" data-left-selected="#left_Selected_1">
+							<!--
+							<option value="1" data-ev = "601.00">Item 1</option>
+							-->
+							{% for assembly in all_assemblies %}
+								<option value="{{assembly.pk}}" data-ev = "{{assembly.estimate_value}}"
+									{% if update and assembly in update.assemblies.all() %}
+										selected
+									{% endif %}
+								>
+									{{assembly}}
+								</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-5">
+						<h1 style="background-color: gray;display:flex;float:left;border-radius:10px" class="p-1">₹<span class="badge badge-secondary" id= "total_estimate">{% if update  %}{{update.estimate_value}}{% else %}00.0{% endif %}</span></h1>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-5">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th scope="col">Assembly</th>
+									<th scope="col">Estimate Value</th>
+									<th scope="col">Quantity</th>
+								</tr>
+							</thead>
+							<tbody id = "mirror">
+								{% for item in items_tr %}
+									<tr data-ev="{{item.estimated_value}}" data-pk="{{item.pk}}" id="tr_item_{{item.pk}}">
+										<td>{{item.item_name}}</td>
+										<td>{{item.estimated_value}}</td>
+										<td><input type='number' value='{{item.quantity}}' class = "quantity_input" id='quantity_${$option.val()}' min='0'></td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						{% if update %}
+							<script>
+								var plan_id = {{update.pk}};
+							</script>
+							<button type="button" class="btn btn-primary" id="update_plan">Update Plan</button>
+						{% else %}
+							<button type="button" class="btn btn-primary" id="save_plan">Save Plan</button>
+						{% endif %}
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}
