@@ -186,9 +186,9 @@ function formatCurrency(input, blur) {
 	// send updated string to input
     input.val(input_val)
 }
-hotkeys("ctrl+s", function (event, handler) {
+hotkeys("ctrl+q", function (event, handler) {
 	switch (handler.key) {
-		case "ctrl+s":
+		case "ctrl+q":
             $("#export_excel").click();
 			break;
 	}
