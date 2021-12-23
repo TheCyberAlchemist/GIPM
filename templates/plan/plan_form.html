@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% import "macros.jinja" as macros %}
-{% block title%} {% if update %}Update{% else %}Add{% endif %} Assembly 
+{% block title%} {% if update %}Update{% else %}Add{% endif %} Plan 
 {% endblock %}
 
 {% block css%}
@@ -16,7 +16,7 @@
 
 {%block scripts%}
 	<script src="{{static ('DualSelectBox/dsb.js')}}" ></script>
-	<script src="{{static ('assembly/assembly.js')}}" ></script>
+	<script src="{{static ('plan/plan.js')}}" ></script>
 	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
 {% endblock %}
 
@@ -28,7 +28,7 @@
 			<form class="myform">
 				<div class="row mb-3">
 					<div class="col-lg-6 col-md-6 col-sm-6">
-						{{macros.input_text("Assembly Name","name",update.name)}}
+						{{macros.input_text("Plan Name","name",update.name)}}
 					</div>
 					<div class="col-lg-6 col-md-6 col-sm-6">
 						{{macros.text_area("Description","description",update.description)}}
@@ -36,11 +36,9 @@
 				</div>
 				<div class="row">
 					<div class="col-2">
-						<a href="/admin/main/item_description/add/?_to_field=id&_popup=1" target="popup" onclick="popup = window.open('/admin/main/item_description/add/?_to_field=id&_popup=1','popup','width=600,height=600'); return false;"
-							style="text-decoration:none; color:black !important;"
-						>
+						<a href="{{url('add_assembly')}}" target="_blank" style="text-decoration:none; color:black !important;">
 							<img src="{{static ('Images/add.png')}}" alt="Add" style="height: 30px;width: 30px;">
-							Add Item
+							Add Assembly
 						</a>
 					</div>
 					<div class="col-3">
@@ -58,13 +56,13 @@
 							<!--
 							<option value="1" data-ev = "601.00">Item 1</option>
 							-->
-							{% for item in all_items %}
-								<option value="{{item.pk}}" data-ev = "{{item.estimated_value}}"
-									{% if update and item in update.items.all() %}
+							{% for assembly in all_assemblies %}
+								<option value="{{assembly.pk}}" data-ev = "{{assembly.estimate_value}}"
+									{% if update and assembly in update.assemblies.all() %}
 										selected
 									{% endif %}
 								>
-									{{item}}
+									{{assembly}}
 								</option>
 							{% endfor %}
 						</select>
@@ -81,12 +79,8 @@
 						<table class="table table-bordered">
 							<thead>
 								<tr>
-									<th scope="col">Item</th>
-									<th scope="col">Cost</th>
-									<th scope="col">Thickness</th>
-									<th scope="col">Size</th>
-									<th scope="col">Width</th>
-									<th scope="col">Internal Diameter</th>
+									<th scope="col">Assembly</th>
+									<th scope="col">Estimate Value</th>
 									<th scope="col">Quantity</th>
 								</tr>
 							</thead>
@@ -95,10 +89,6 @@
 									<tr data-ev="{{item.estimated_value}}" data-pk="{{item.pk}}" id="tr_item_{{item.pk}}">
 										<td>{{item.item_name}}</td>
 										<td>{{item.estimated_value}}</td>
-										<td><input type='number' class="thickness_input" value='{{item.thickness}}' min='0'></td>
-										<td><input type='number' class="size_input" value='{{item.size}}' min='0'></td>
-										<td><input type='number' class="width_input" value='{{item.width}}' min='0'></td>
-										<td><input type='number' class="internal_diameter_input" value='{{item.internal_diameter}}' min='0'></td>
 										<td><input type='number' value='{{item.quantity}}' class = "quantity_input" id='quantity_${$option.val()}' min='0'></td>
 									</tr>
 								{% endfor %}
@@ -110,11 +100,11 @@
 					<div class="col-12">
 						{% if update %}
 							<script>
-								var assembly_id = {{update.pk}};
+								var plan_id = {{update.pk}};
 							</script>
-							<button type="button" class="btn btn-primary" id="update_assembly">Update Assembly</button>
+							<button type="button" class="btn btn-primary" id="update_plan">Update Plan</button>
 						{% else %}
-							<button type="button" class="btn btn-primary" id="save_assembly">Save Assembly</button>
+							<button type="button" class="btn btn-primary" id="save_plan">Save Plan</button>
 						{% endif %}
 					</div>
 				</div>

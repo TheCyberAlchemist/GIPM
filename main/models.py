@@ -26,8 +26,8 @@ class JSONField(models.TextField):
 			if isinstance(value, str):
 				# print(value)
 				# import re
-				# p = re.compile('(?<!\\\\)\'')
-				# value = p.sub('\"', value)
+				p = re.compile('(?<!\\\\)\'')
+				value = p.sub('\"', value)
 				# print(value)
 				# print("value is str", value)
 				return json.loads(value)
@@ -75,7 +75,7 @@ class vendor_details(models.Model):
 class item_description(models.Model):
 	'class of items which shoud be addable in for the indent'
 	description = models.TextField(unique=True)
-	shape_choice = [("Round","Round"),("Plate","Plate"),("SQ Bar","SQ Bar"),("Pipe","Pipe"),("BF","BF"),("Labour","Labour"),("ISMC","ISMC"),("ISMB","ISMB"),("ISA","ISA"),("Bolt","Bolt"),("Nut","Nut")]
+	shape_choice = [("Round","Round"),("Plate","Plate"),("SQ Bar","SQ Bar"),("Pipe","Pipe"),("BF","BF"),("Labour","Labour"),("ISMC","ISMC"),("ISMB","ISMB"),("ISA","ISA"),("Bolt","Bolt"),("Nut","Nut"),("RecPipe","RecPipe")]
 	shape = models.CharField(choices=shape_choice, max_length=20)
 	estimated_value = models.FloatField(default=0,null=True, blank=True)
 
@@ -207,7 +207,7 @@ class indent(order):
 	comment = models.TextField(null=True, blank=True)
 	material_shape = models.TextField()
 	# dropdown must contain 
-	# Round,Plate,SQ Bar,Pipe,BF,Labour,ISMC,ISMB,ISA,Bolt,Nut ...
+	# Round,Plate,SQ Bar,Pipe,BF,Labour,ISMC,ISMB,ISA,Bolt,Nut,RecPipe ...
 
 	material_type = models.TextField(null=True, blank=True)
 	item_description = models.ForeignKey(item_description,on_delete=models.SET_NULL,null=True, blank=True)
@@ -239,7 +239,7 @@ class indent(order):
 			return round_no(((S*S - ID*ID)*T*0.00000616)*Q)
 		elif self.material_shape == "Labour" or self.material_shape == "BF":
 			return Q
-		elif self.material_shape in ["ISMC","ISMB","ISA","Bolt","Nut"]:
+		elif self.material_shape in ["ISMC","ISMB","ISA","Bolt","Nut","RecPipe"]:
 			w_pmm = standard_weight.objects.filter(material_shape=self.material_shape,size=S).first().weight_pmm
 			return round_no(w_pmm * T * Q)
 		return 0
@@ -315,10 +315,9 @@ def get_item_estimate_val(item_dict,item_pk):
 	S = float(item_dict['size']) or 0
 	W = float(item_dict['width']) or 0
 	ID = float(item_dict['internal_diameter']) or 0
-	Q = float(item_dict['quantity']) or 0
+	Q = int(float(item_dict['quantity'])) or 0
 
 	if shape == "Round":
-		
 		return round_no((S*S*T*0.00000616)*Q * value)
 	elif shape == "Plate" or shape == "SQ Bar":
 		return round_no((S*T*W*0.00000786)*Q * value)
@@ -326,7 +325,7 @@ def get_item_estimate_val(item_dict,item_pk):
 		return round_no(((S*S - ID*ID)*T*0.00000616)*Q * value)
 	elif shape == "Labour" or shape == "BF":
 		return round_no(Q * value)
-	elif shape in ["ISMC","ISMB","ISA","Bolt","Nut"]:
+	elif shape in ["ISMC","ISMB","ISA","Bolt","Nut","RecPipe"]:
 		w_pmm = standard_weight.objects.filter(shape=shape,size=S).first().weight_pmm
 		return round_no(w_pmm * T * Q * value)
 	return round_no(Q * value)
@@ -352,21 +351,18 @@ class assembly(models.Model):
 	def get_total_estimate_value(self):
 		'''the function returning the estimate value of the assembly'''
 		total = 0
-		# print(self.item_json)
+
 		if isinstance(self.item_json, str):
-			print("item_json is str")
-			# print("item_json: ",self.item_json)
 			value = p.sub('\"', self.item_json)
 			data = json.loads(value)
-			# print(data)
 		else:
 			data = self.item_json
-			print("item_json is dict")
-		# print(data)
+
 		for item_pk in data:
 			item_dict = data[item_pk]
-			# print(item)
 			total += get_item_estimate_val(item_dict,item_pk)
+
+		total = round(total,2)
 		return total
 	
 	def __str__(self):
@@ -388,9 +384,32 @@ class assembly(models.Model):
 
 class plan(models.Model):
 	name = models.CharField(max_length=200)
-	assemblies = models.ManyToManyField(assembly)
-	item_state = JSONField(null=True, blank=True)
-	estimate = models.FloatField(default=0,null=True, blank=True)
+	description = models.TextField(null=True, blank=True)
+	assemblies = models.ManyToManyField(assembly,null=True, blank=True)
+	assembly_json = JSONField(null=True, blank=True)
+	# assembly_json = {
+		# assembly_pk:{
+			# "quantity":1,
+		# }
+	# }
+
+	@property
+	def estimate_value(self):
+		'''the function returning the total estimate value of the plan'''
+		total = 0
+		if isinstance(self.assembly_json, str):
+			value = p.sub('\"', self.assembly_json)
+			data = json.loads(value)
+		else:
+			data = self.assembly_json
+		print(data,type(data))
+		for assem in self.assemblies.all():
+
+			assembly_obj = data[str(assem.pk)]
+			# print(assem.estimate_value)
+			total += assem.estimate_value * int(float(assembly_obj['quantity']))
+
+		return total
 
 	def __str__(self):
 		return f'{self.name}'
