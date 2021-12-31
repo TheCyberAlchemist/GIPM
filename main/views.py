@@ -27,7 +27,7 @@ class indent_table(AjaxDatatableView):
 			'visible': True,
 			'searchable': False,
 			'orderable': True,
-			'title': 'Indent Number',
+			'title': 'Indt.',
 		}, # pk
 		{
 			'name': 'material_shape', 
@@ -41,8 +41,16 @@ class indent_table(AjaxDatatableView):
 			'foreign_field': 'item_description__description',
 			'visible': True,
 			'searchable': True,
-			'placeholder':'description'
-		}, # Description
+			'placeholder':'description',
+			'title':'Item Description',
+		}, # Item Description
+		{
+			'name': 'description', 
+			'visible': True,
+			'orderable': False,
+			'searchable': False,		
+			'title': 'Description',
+		}, # value
 		{
 			'name': 'weight', 
 			'visible': True,			
@@ -72,11 +80,19 @@ class indent_table(AjaxDatatableView):
 			'title': 'Qut',
 		}, # quantity
 		{
+			'name': 'value', 
+			'visible': True,
+			'orderable': False,
+			'searchable': False,		
+			'title': 'Value',
+			'className': 'currency',
+		}, # value
+		{
 			'name': 'net_value', 
 			'visible': True,
 			'orderable': False,
 			'searchable': False,		
-			'title': 'Total Val',
+			'title': 'Total Value',
 			'className': 'currency',
 		}, # net_value
 		{
@@ -117,7 +133,7 @@ class indent_table(AjaxDatatableView):
 		# row['recived'] = f'''<td class="is_completed" data="{obj.recived}">
 			
 		# </td>'''
-		print(row['recived'])
+		# print(row['recived'])
 		row['Add GRN'] = f'''<td class="">
 			<a href="/indent/{obj.pk}/grn/form/" target="_blank">
 				<img src="../../../../static/Images/enter.png" style="width:17px;height:17px" alt="enter">
@@ -143,18 +159,15 @@ class indent_table(AjaxDatatableView):
 		fields = {
 			"Recived": obj.recived_quantity,
 			'Material Type':obj.material_type,
-			'Item Description':obj.item_description,
 			"Size":obj.size,
 			"Thickness":obj.thickness,
 			"Width":obj.width,
 			"Internal Diameter":obj.internal_diameter,
-			'Description':obj.description,
 			'Tax':str(obj.tax)+"%",
 			"Comment":obj.comment,
 			"Has PO": True if obj.PO else False,
 		}
 		currency={
-			'Value':obj.value,
 			'Discount':obj.discount,
 			'Other Expanses':obj.other_expanses,
 		}
@@ -1135,7 +1148,7 @@ class grn_form(View):
 			self.context["all_indent"]=indent.objects.all().filter(Q(recived=False))
 			if indent_id:
 				my_indent = indent.objects.filter(id=indent_id).first()
-				self.context['update'] = {"indent_id":my_indent,"quantity":my_indent.get_weight()}
+				self.context['update'] = {"indent_id":my_indent,"quantity":my_indent.get_weight(),"tax":my_indent.tax}
 				self.context["all_indent"]=indent.objects.all().filter(Q(recived=False)|Q(id=my_indent.id))
 			return render(request,self.template_name,self.context)
 	
