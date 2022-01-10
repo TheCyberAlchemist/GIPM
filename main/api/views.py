@@ -87,8 +87,8 @@ def calculate_assembly_estimate(request):
 	return JsonResponse(total,safe=False)
 
 def get_last_indent_by_item(request):
-	item_description = request.GET['item_description_id']
-	item_description_obj = item_description.objects.filter(description=item_description).first()
+	item_description_str = request.GET['item_description_id']
+	item_description_obj = item_description.objects.filter(description=item_description_str).first()
 	indent_json = {}
 	if item_description_obj:
 		indent_obj = indent.objects.filter(item_description=item_description_obj).last()
