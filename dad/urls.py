@@ -70,5 +70,6 @@ urlpatterns = [
 	re_path(r'^api/plan$',planList.as_view(),name="api_plan"),
 	re_path(r'^api/plan/(?P<pk>\d+)/$',planRUD.as_view(),name="api_plan"),
 	re_path(r'^api/plan/calculate-estimate$',calculate_plan_estimate,name="calculate_plan_estimate"),
+	re_path(r'^api/get_last_indent/$',get_last_indent_by_item,name="get_indent_json_by_item_description"),
 	# endregion
 ]

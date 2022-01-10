@@ -381,11 +381,10 @@ class assembly(models.Model):
 
 		super(assembly, self).save(*args, **kwargs)
 		
-
 class plan(models.Model):
 	name = models.CharField(max_length=200)
 	description = models.TextField(null=True, blank=True)
-	assemblies = models.ManyToManyField(assembly,null=True, blank=True)
+	assemblies = models.ManyToManyField(assembly)
 	assembly_json = JSONField(null=True, blank=True)
 	# assembly_json = {
 		# assembly_pk:{

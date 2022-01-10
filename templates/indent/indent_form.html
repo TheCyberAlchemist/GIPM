@@ -3,6 +3,7 @@
 {% block title%}{% if update %}Update{% else %}Add{% endif %} Indent
 {% endblock %}
 
+
 {% block css%}
 <link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
 <style>
@@ -26,7 +27,6 @@
 			    	window.location.href = "{{url ('show_indent',args=[wo.pk])}}";
 			    }, 3000)
             {% endif %}
-			console.log("2",$("#vendor_name"));
 			$("#vendor_name").select2();
 			$("#work_order_id").select2();
 			$("#material_shape").select2();
@@ -37,8 +37,12 @@
 			$(".select2-selection").on("focus", function () {
 		        $(this).parent().parent().prev().select2("open");
 		    });
+			$('#item_description').on('select2:select', function (e,f) {
+				call_indent_api($("#item_description").val());
+			});
         });
     </script>
+	<script type="text/javascript" src="{{static ('indent.js')}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -127,7 +131,7 @@
 												{{macros.input_number("Discount","discount",update.discount)}}
 											</div>
 											<div class="col-lg-4 col-md-12 col-sm-12">
-												{{macros.input_number("Other Expanses","other_expanses",update.other_expanses)}}
+												{{macros.input_number("Other Expenses","other_expenses",update.other_expenses)}}
 											</div>
 										</div>
 										<div class="row mb-1 mx-lg-5 mx-sm-0">
