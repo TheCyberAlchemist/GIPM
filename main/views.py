@@ -18,7 +18,7 @@ class indent_table(AjaxDatatableView):
 	model = indent
 	title = 'Indent'
 	length_menu = [[-1,25, 50, 100], ['all',25, 50, 100]]
-	initial_order = [["recived","asc"]]
+	initial_order = [["recived","asc"],["PO__pk","asc"]]
 	search_values_separator = " "
 	column_defs = [
 		AjaxDatatableView.render_row_tools_column_def(),
@@ -96,6 +96,14 @@ class indent_table(AjaxDatatableView):
 			'className': 'currency',
 		}, # net_value
 		{
+			'name': 'PO__pk', 
+			'visible': False,
+			'orderable': True,	
+			'searchable': False,		
+			'title': 'PO',
+			# 'className':"is_completed",
+		}, # recived
+		{
 			'name': 'recived', 
 			'visible': True,
 			'orderable': True,	
@@ -104,7 +112,7 @@ class indent_table(AjaxDatatableView):
 			'className':"is_completed",
 		}, # recived
 		{'name': 'Add GRN', 'visible': True,'searchable': False, 'orderable': False},
-		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False},
+		{'name': 'Edit', 'visible': True,'searchable': False, 'orderable': False,'className':"Edit"},
 		{
 			'name':'Delete',
 			'visible': True,
@@ -141,7 +149,7 @@ class indent_table(AjaxDatatableView):
 		</td>'''
 		if obj.locked:
 			row['Edit'] = f'''<td class="border-0">
-				<a data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:17px;height:17px" alt="edit"></a>
+				<a data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:17px;height:17px" alt="lock"></a>
 			</td>'''
 		else:
 			row['Edit'] = f'''<td class="border-0">
@@ -412,7 +420,7 @@ class PO_datatable(AjaxDatatableView):
 	model = purchase_order
 	title = 'Purchase Order'
 	length_menu = [[-1,25, 50, 100], ['all',25, 50, 100]]
-	initial_order = [["po_number","asc"]]
+	initial_order = [["is_complete",'asc'],["po_number","asc"]]
 	search_values_separator = " "
 	column_defs = [
 		AjaxDatatableView.render_row_tools_column_def(),
@@ -487,6 +495,8 @@ class PO_datatable(AjaxDatatableView):
 		row['po_date'] = obj.get_date()
 		row['net_value'] = f'{round(net_value,2)}'
 		row["remaining_quantity"] = f'{int(remaining_quantity)} out of {int(total_quantity)}'
+		# if int(remaining_quantity) == int(total_quantity):
+		# 	row["is_complete"] = 'Yes'
 		row['Print'] = f'''<td class="">
 				<a href="../report_input/{obj.pk}" >
 				<img src="../../../static/Images/print.png" style="width:17px;height:17px" alt="print"></a>
@@ -1181,7 +1191,7 @@ class grn_form(View):
 				).first()
 				old_val = old_grn.quantity
 				new_val = new_grn.quantity
-				if stock_indent.quantity:
+				if stock_indent and stock_indent.quantity:
 					print(stock_indent.quantity)
 					if stock_indent.quantity >= old_val:
 						stock_indent.quantity -= old_val
@@ -1194,7 +1204,6 @@ class grn_form(View):
 						stock_indent.delete()
 					indent_id.save()
 				else:
-
 					if indent_id.recived_quantity >= old_val:
 						indent_id.recived_quantity -= old_val
 					else:

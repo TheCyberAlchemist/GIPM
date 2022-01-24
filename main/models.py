@@ -174,6 +174,12 @@ class purchase_order(models.Model):
 		return self.po_date.strftime("%d-%m-%Y") if self.po_date else "-----"
 		
 	def save(self,*args, **kwargs):
+		total_quantity,remaining_quantity = 0,0
+		for indent in self.indent_set.all():
+			remaining_quantity += indent.get_remaining_quantity()
+			total_quantity += indent.quantity
+		if int(total_quantity) == int(remaining_quantity):
+			self.is_complete = True
 		super(purchase_order, self).save(*args, **kwargs)
 		if not self.po_number:
 			if self.pk < 100:
@@ -251,6 +257,8 @@ class indent(order):
 	def get_remaining_quantity(self):
 		return float(self.get_weight() - self.recived_quantity)
 
+	def get_wo_number(self):
+		return self.WO.wo_number
 	def save(self,*args, **kwargs):
 		# update the estimate for the item_description 
 		self.item_description.estimated_value = self.value

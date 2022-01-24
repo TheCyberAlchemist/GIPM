@@ -81,6 +81,7 @@ def export_po_xls(request,po_id):
 	# Define the titles for columns
 	col_dict = {
 		'Indent ID':'id',
+		"WO Number ID":'get_wo_number',
 		'Description':'description',
 		'Material Type':'material_type',
 		'Quantity':'quantity',

@@ -159,16 +159,21 @@
 <script>
     function change_completed_color(){
         $(".is_completed").each(function() {
+            a = $(this).parents('tr').children(".Edit")
             if ($(this).html() == "Yes"){
                 $(this).parents('tr').css('background-color','lightgreen')
             }
-            // console.log($(this).html()==" ")
+            //console.log($(this).parents('tr').children(".Edit").html())
+            else if (a.length && a.html().includes("lock")){
+                //if 
+                $(this).parents('tr').css('background-color','lightblue')
+            }
         })
     }
     $(document).ready(function() {
         let faculty_last_searched = false;
         $("#example").on("draw.dt", function () {
-            change_completed_color()
+            change_completed_color();
             change_currency();
             let initial_value = $(".search_div input").val();
             $(".search_div").html(`
