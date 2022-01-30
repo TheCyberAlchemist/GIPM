@@ -178,8 +178,10 @@ class purchase_order(models.Model):
 		for indent in self.indent_set.all():
 			remaining_quantity += indent.get_remaining_quantity()
 			total_quantity += indent.quantity
-		if int(total_quantity) == int(remaining_quantity):
+		if int(total_quantity) == int(remaining_quantity) and int(remaining_quantity) > 0:
 			self.is_complete = True
+		else:
+			self.is_complete = False
 		super(purchase_order, self).save(*args, **kwargs)
 		if not self.po_number:
 			if self.pk < 100:
