@@ -21,6 +21,7 @@ def export_wo_xls(request,wo_id):
 		'Indent ID':'id',
 		'Description':'description',
 		'Material Type':'material_type',
+		'Material Shape':'material_shape',
 		'Quantity':'quantity',
 		'Weight':'get_weight',
 		'Unit value':'value',
@@ -29,6 +30,7 @@ def export_wo_xls(request,wo_id):
 		'Other Expanses':'other_expanses',
 		'Discount':'discounted_total',
 		'Gross Value':'gross_value',
+
 	}
 	
 	row_num = 1
@@ -92,6 +94,7 @@ def export_po_xls(request,po_id):
 		'Other Expanses':'other_expanses',
 		'Discount':'discounted_total',
 		'Gross Value':'gross_value',
+		'Note':'comment',
 	}
 	
 	row_num = 1

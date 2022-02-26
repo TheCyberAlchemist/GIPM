@@ -110,6 +110,7 @@
 									<th><span class="fw-bold">Sr. No.</span></th>
 									<th class="description"><span class="fw-bold">Description</span></th>
 									<th><span class="fw-bold">MT</span></th>
+									<th><span class="fw-bold">MS</span></th>
 									<th><span class="fw-bold">QUT</span></th>
 									<th><span class="fw-bold">WT</span></th>
 									<th><span class="fw-bold">Unit Value</span></th>
@@ -124,8 +125,12 @@
 								{% for indent in all_indents %}
 									<tr>
 										<td>{{loop.index}}</td>
-										<td class="description">{{indent.description}}<br><span class="fw-bold" class="h5">Indent_id :-</span> {{indent.pk}}</td>
+										<td class="description">{{indent.description}}
+											<br>
+											<span class="fw-bold" class="h5">Indent_id :-</span> {{indent.pk}}
+										</td>
 										<td>{% if indent.material_type %}{{indent.material_type}}{% else %}---{% endif %}</td>
+										<td>{% if indent.material_shape %}{{indent.material_shape}}{% else %}---{% endif %}</td>
 										<td>{{indent.quantity}} {{indent.unit}}</td>
 										<td>{{indent.get_weight()}} Kg</td>
 										<td class="currency">₹ {{indent.value}}</td>
@@ -139,22 +144,22 @@
 									</tr>
 								{% endfor %}
 								<tr>
-									<td></td><td></td><td></td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+									<td></td><td></td><td></td><td></td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
 								</tr>
 								<tr class="fw-bold">
-									<td colspan="3">&nbsp;</td>
+									<td colspan="4">&nbsp;</td>
 									<td>{{total_quantity}}</td>
 									<td>{{total_weight}} Kg</td>
 									<td colspan="2">Total Gross Value</td>
 									<td colspan="4" class="currency">₹ {{total_gross_value}}</td>
 								</tr>
 								<tr class="fw-bold">
-									<td colspan="5">Amount in Words :- <span id="total_in_words"></span></td>
+									<td colspan="6" class="fw-bold">Amount in Words :- <span id="total_in_words"></span></td>
 									<td colspan="2">Total Tax Value</td>
 									<td colspan="4" class="currency">₹ {{total_tax_value}}</td>
 								</tr>
 								<tr class="fw-bold">
-									<td colspan="5">&nbsp;</td>
+									<td colspan="6">&nbsp;</td>
 									<td colspan="2">Total Net Value</td>
 									<td colspan="4" class="currency">₹ {{total_net_value}}</td>
 								</tr>

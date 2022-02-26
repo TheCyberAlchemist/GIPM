@@ -527,7 +527,7 @@ class PO_datatable(AjaxDatatableView):
 		indent_list_html += f'<tr><th class="d-flex justify-content-center">Indent</td><td class="">Balance</td></tr>'
 		for indent in obj.indent_set.all():
 			dimentions = f"{indent.size} X {indent.thickness} X {indent.width} X {indent.internal_diameter}".replace(" X None","").replace("None","")
-			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" >{indent.WO}</a>&nbsp[{indent.item_description} ({dimentions})]</td><td class="">&nbsp&nbsp{indent.get_remaining_quantity()} out of {int(indent.quantity)}</td></tr>'
+			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" >{indent.WO}</a>&nbsp[{indent.item_description} ({dimentions})]</td><td class="">&nbsp&nbsp{indent.recived_quantity} out of {int(indent.get_weight())}</td></tr>'
 		indent_list_html += '</table>'
 
 		# print(student_details.Division_id.Semester_id)

@@ -159,7 +159,14 @@
 								{% for indent in all_indents %}
 									<tr>
 										<td>{{loop.index}}</td>
-										<td class="description">{{indent.description}}<br><span class="fw-bold" class="h5">W.O. :-</span> {{indent.WO}} ({{indent.pk}})</td>
+										<td class="description">{{indent.description}}
+											<br>
+											<span class="fw-bold" class="h5">W.O. :-</span> {{indent.WO}} ({{indent.pk}})
+											{% if indent.comment %}
+											<br>
+											<span class="fw-bold" class="h5">Note :-</span> {{indent.comment}}
+											{% endif %}
+										</td>
 										<td>{% if indent.material_type %}{{indent.material_type}}{% else %}---{% endif %}</td>
 										<td>{{indent.quantity}} {{indent.unit}}</td>
 										<td>{{indent.get_weight()}} Kg</td>
