@@ -163,8 +163,7 @@
             if ($(this).html() == "Yes"){
                 $(this).parents('tr').css('background-color','lightgreen')
             }
-            //console.log($(this).parents('tr').children(".Edit").html())
-            else if (a.length && a.html().includes("lock")){
+            else if (a.children('.PO')[0] && a.children('.PO')[0].classList.contains("has_po")){
                 //if 
                 $(this).parents('tr').css('background-color','lightblue')
             }

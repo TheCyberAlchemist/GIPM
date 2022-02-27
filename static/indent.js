@@ -94,5 +94,5 @@ function call_indent_api(item_description_id){
 }
 
 $(document).ready(function() {
-	// console.log("in");
+	console.log("in");
 })

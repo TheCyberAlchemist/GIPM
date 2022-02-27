@@ -178,7 +178,7 @@ class purchase_order(models.Model):
 		for indent in self.indent_set.all():
 			remaining_quantity += indent.get_remaining_quantity()
 			total_quantity += indent.quantity
-		if int(total_quantity) == int(remaining_quantity) and int(remaining_quantity) > 0:
+		if int(remaining_quantity) <= 0 and total_quantity > 0:
 			self.is_complete = True
 		else:
 			self.is_complete = False
@@ -261,6 +261,7 @@ class indent(order):
 
 	def get_wo_number(self):
 		return self.WO.wo_number
+	
 	def save(self,*args, **kwargs):
 		# update the estimate for the item_description 
 		self.item_description.estimated_value = self.value
@@ -302,6 +303,8 @@ class grn(order):
 		# indent_id = self.indent_id
 		# print("here in grn :: ",indent_id.get_remaining_quantity())
 		super(grn, self).save(*args, **kwargs)
+		if self.indent_id and self.indent_id.PO:
+			self.indent_id.PO.save()
 
 def get_item_estimate_val(item_dict,item_pk):
 	'''the function returning the estimate value respective to shape

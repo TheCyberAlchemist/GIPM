@@ -147,13 +147,14 @@ class indent_table(AjaxDatatableView):
 				<img src="../../../../static/Images/enter.png" style="width:17px;height:17px" alt="enter">
 			</a>
 		</td>'''
+		has_po = "has_po" if obj.PO else "asd"
 		if obj.locked:
 			row['Edit'] = f'''<td class="border-0">
-				<a data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:17px;height:17px" alt="lock"></a>
+				<a data-id="{obj.pk}" class="{has_po} PO" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:17px;height:17px" alt="lock"></a>
 			</td>'''
 		else:
 			row['Edit'] = f'''<td class="border-0">
-					<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
+					<a class="{has_po} PO" href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
 				</td>'''
 		row['Delete'] =f'''<div class="form-check" onclick="checkSelected()">
 				<input class="form-check-input del_input" type="checkbox"
@@ -351,7 +352,6 @@ class all_indents_datatable(AjaxDatatableView):
 	
 	def get_initial_queryset(self, request=None):
 		wo_id=request.REQUEST.get('wo_id')
-
 		queryset = self.model.objects.all()
 		queryset = queryset.filter(recived=False)
 		# queryset = self.model.objects.all()
@@ -365,13 +365,16 @@ class all_indents_datatable(AjaxDatatableView):
 		row['thickness'] = get_str(obj.thickness)
 		row['WO'] = f'<a href="/wo/{obj.WO.pk}/indent/table/">{obj.WO}</a>'
 		row['weight'] = f''' {obj.get_weight()}'''
+		has_po = "has_po" if obj.PO else "asd"
 		if obj.locked:
 			row['Edit'] = f'''<td class="border-0">
-				<a data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')"><img src="../../../../../static/Images/lock.png" style="width:17px;height:17px" alt="edit"></a>
+				<a class="{has_po}" data-id="{obj.pk}" onclick="edit_locked('/wo/{obj.WO.pk}/indent/form/{obj.pk}')">
+					<img src="../../../../../static/Images/lock.png" style="width:17px;height:17px" alt="edit">
+				</a>
 			</td>'''
 		else:
 			row['Edit'] = f'''<td class="border-0">
-					<a href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
+					<a class="{has_po}" href="/wo/{obj.WO.pk}/indent/form/{obj.pk}"><img src="../../../../../static/Images/editing.png" style="width:17px;height:17px" alt="edit"></a>
 				</td>'''
 		return
 
@@ -490,7 +493,7 @@ class PO_datatable(AjaxDatatableView):
 		for indent in obj.indent_set.all():
 			net_value += indent.net_value()
 			remaining_quantity += indent.get_remaining_quantity()
-			total_quantity += indent.quantity
+			total_quantity += indent.get_weight()
 		
 		row['po_date'] = obj.get_date()
 		row['net_value'] = f'{round(net_value,2)}'
@@ -527,7 +530,7 @@ class PO_datatable(AjaxDatatableView):
 		indent_list_html += f'<tr><th class="d-flex justify-content-center">Indent</td><td class="">Balance</td></tr>'
 		for indent in obj.indent_set.all():
 			dimentions = f"{indent.size} X {indent.thickness} X {indent.width} X {indent.internal_diameter}".replace(" X None","").replace("None","")
-			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" >{indent.WO}</a>&nbsp[{indent.item_description} ({dimentions})]</td><td class="">&nbsp&nbsp{indent.get_remaining_quantity()} out of {int(indent.quantity)}</td></tr>'
+			indent_list_html += f'<tr><td class="d-flex justify-content-left">{indent.pk} --&nbsp<a href="/wo/{indent.WO.pk}/indent/table" >{indent.WO}</a>&nbsp[{indent.item_description} ({dimentions})]</td><td class="">&nbsp&nbsp{int(indent.get_remaining_quantity())} out of {int(indent.get_weight())}</td></tr>'
 		indent_list_html += '</table>'
 
 		# print(student_details.Division_id.Semester_id)
@@ -1051,12 +1054,19 @@ class grn_datatable(AjaxDatatableView):
 			'title': 'Invoice Number',
 		}, # invoice
 		{
-			'name': "indent_id", 
+			'name': 'Indent_id',
+			'foreign_field': 'indent_id__id',
 			'visible': True,
-			'orderable': True,
+			'searchable': True,
+			'placeholder':'indent_id'
+		}, # indent_id
+		{
+			'name': 'Indent Description',
+			'foreign_field': 'indent_id__item_description',
+			'visible': True,
 			'searchable': False,
-			'title': 'Indent',
-		}, # indent
+			'placeholder':'Desc.'
+		}, # indent_id
 		{
 			'name': 'quantity', 
 			'visible': True,
@@ -1090,7 +1100,7 @@ class grn_datatable(AjaxDatatableView):
 	
 	def customize_row(self, row, obj):
 		# 'row' is a dictionary representing the current row, and 'obj' is the current object.
-		row['indent_id'] = str(obj.indent_id) if obj.indent_id else "---------"
+		# row['indent_id'] = str(obj.indent_id) if obj.indent_id else "---------"
 		row['grn_date'] = obj.grn_date.strftime("%d-%m-%Y") if obj.grn_date else "-----"
 		row['Vendor'] = obj.vendor_id.vendor_name if obj.vendor_id else "-------"
 		row['Edit'] = f'''<td class="">
