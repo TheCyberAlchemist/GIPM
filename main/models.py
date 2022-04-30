@@ -201,7 +201,7 @@ class standard_weight(models.Model):
 		]
 	def __str__(self):
 		return f"{self.material_shape} ({self.size})"
-
+import copy
 class indent(order):
 	''' class for outgoing work orders '''
 	locked = models.BooleanField(default=False)
@@ -252,6 +252,25 @@ class indent(order):
 			return round_no(w_pmm * T * Q)
 		return 0
 	
+	def clone(self):
+		cloned = copy.copy(self) # don't alter original instance
+		cloned.pk = None
+		try:
+			delattr(cloned, '_prefetched_objects_cache')
+		except AttributeError:
+			pass
+		return cloned
+
+		# """Returns a clone of this instance."""
+
+		# clone = self.__class__()
+		# for f in self.__class__._meta.fields:
+		# 	if f.name == 'id' or f.name == 'pk':
+		# 		continue
+		# 	setattr(clone, f.attname, getattr(self, f.attname))
+
+		# return clone
+
 	def __str__(self):
 		if self.id:
 			return f"{self.pk} [{self.item_description}]"
