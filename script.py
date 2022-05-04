@@ -19,7 +19,7 @@ def copy_indent_to_new_WO(old_WO, new_WO):
 		new_instance.WO = new_wo
 		new_instance.PO = None
 		new_instance.recived_quantity = 0
-		new_instance.recieved = False
+		new_instance.recived = False
 		new_instance.locked = False
 
 		new_instance.save()
