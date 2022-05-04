@@ -30,7 +30,8 @@
 			    }, 3000)
 				//setTimeout(() => {  console.log("asd");window.close() }, 3000);
             {% endif %}
-			$("#vendor_id").select2();
+			$("#old_wo").select2();
+			$("#new_wo").select2();
 			$(".select2-selection").on("focus", function () {
 		        $(this).parent().parent().prev().select2("open");
 		    });
