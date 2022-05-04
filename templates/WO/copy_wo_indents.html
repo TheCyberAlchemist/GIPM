@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% import "macros.jinja" as macros %}
+{% block title%} {% if update %}Update{% else %}Add{% endif %} WO 
+{% endblock %}
+
+{% block css%}
+<link rel="stylesheet" type="text/css" href="{{static ('Bundles/css/datepicker.min.css')}}"/>
+
+<style>
+    td,th {
+        font-size: .9rem !important;
+    }
+</style>
+<link href = "{{static ('Multiple select/dist/dual-listbox.css')}}" rel="stylesheet"></style>
+{% endblock %}
+
+{%block scripts%}
+	<script src="{{static ('Multiple select/dist/dual-listbox.js')}}" ></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+			clear_form($(".myform"))
+            {% if success %}
+				Swal.fire(
+					'Indents copied from previous WO',
+					'Indents from {{old_wo}} copied to {{new_wo}}',
+					'success'
+				)
+				window.setTimeout(function(){
+			    	window.location.href = "{{url ('show_wo')}}";
+			    }, 3000)
+				//setTimeout(() => {  console.log("asd");window.close() }, 3000);
+            {% endif %}
+			$("#vendor_id").select2();
+			$(".select2-selection").on("focus", function () {
+		        $(this).parent().parent().prev().select2("open");
+		    });
+        });
+    </script>
+	<script type="application/javascript" src="{{static ('Bundles/js/pagination.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="main_content">
+		<div class="row" style="padding-top: 6rem">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="{{url ('home_page')}}">
+							<span class="h6 fw-bold">Home</span>
+						</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{url ('copy_wo_indents')}}">
+							<span class="h6 fw-bold">Copy indent</span> 
+						</a>
+					</li>
+				</ol>
+			</nav>
+			<div class="col-12 mb-4" style="width:80%;margin: 0 auto;">
+				<div class="card shadow-sm components-section" style="border-radius: 1rem;">
+					<div class="card-body" style="border-radius: 1rem;">
+						<div class="accordion accordion-flush" id="accordionFlushExample">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="flush-headingOne">
+									<h3>Copy Indents</h3>
+								</h2>
+								<div class="accordion-body">
+									<form class="myform" method = "POST">
+										{{csrf_input}}										
+										<div class="row mb-1 mx-lg-5 mx-sm-0">
+											<div class="col-lg-6 col-md-12 col-sm-12">
+												{{macros.select2("Select the Work Order to copy from (OLD)","old_wo",all_wo)}}
+											</div>
+											<div class="col-lg-6 col-md-12 col-sm-12">
+												{{macros.select2("Select the Work Order to copy to (NEW)","new_wo",all_wo)}}
+											</div>
+										</div>
+										<div class="row mb-1 mx-lg-5 mx-sm-0">
+											<div class="container mt-4" style="width:80%;">
+												<button type="submit" class="btn btn-outline-success"
+												style="width:100%">Submit</button>
+											</div>
+										</div>
+									</form>
+									{% if integrityErrors %}
+										<div class="errors_container">
+											<p>
+											{{integrityErrors}}
+											</p>
+										</div>
+									{% endif %}
+									{% if errors %}
+										<div class="errors_container">
+											<p>
+											{{errors}}
+											</p>
+										</div>
+										<script>
+											show_error("{{errors}}")
+										</script>
+									{% endif %}
+								</div>                                
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

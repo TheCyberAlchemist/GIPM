@@ -72,4 +72,10 @@ urlpatterns = [
 	re_path(r'^api/plan/calculate-estimate$',calculate_plan_estimate,name="calculate_plan_estimate"),
 	re_path(r'^api/get_last_indent/$',get_last_indent_by_item,name="get_indent_json_by_item_description"),
 	# endregion
+	#region ########### Copy_wo_indents ######################
+	re_path(r'^copy_wo_indents/$',copy_wo_indents,name="copy_wo_indents"),
+	# endregion
+
+
+
 ]
