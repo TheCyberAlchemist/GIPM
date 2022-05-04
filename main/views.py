@@ -144,7 +144,10 @@ class indent_table(AjaxDatatableView):
 		# print(row['recived'])
 		row['Add GRN'] = f'''<td class="">
 			<a href="/indent/{obj.pk}/grn/form/" target="_blank">
+				<!--
 				<img src="../../../../static/Images/enter.png" style="width:17px;height:17px" alt="enter">
+				-->
+				GRN
 			</a>
 		</td>'''
 		has_po = "has_po" if obj.PO else "asd"
@@ -1551,4 +1554,32 @@ class plan_form(View):
 		return render(request,self.template_name,self.context)
 
 
+#endregion
+
+#region ########### Copy_wo_indents ###########
+from script import copy_indent_to_new_WO
+
+def copy_wo_indents(request):
+	context = {}
+	all_wo = work_order.objects.all()
+	context['all_wo'] = all_wo
+	if request.method == 'POST':
+		old_wo_id = request.POST.get('old_wo')
+		new_wo_id = request.POST.get('new_wo')
+		try:
+			# print(old_wo_id,new_wo_id)
+			# return JsonResponse({"success":True})
+			copy_indent_to_new_WO(old_wo_id,new_wo_id)
+			context['old_wo'] = work_order.objects.all().filter(id=old_wo_id)[0]
+			context['new_wo'] = work_order.objects.all().filter(id=new_wo_id)[0]
+			context['success'] = True
+		except Exception as e:
+			print(e)
+			context['error'] = str(e)
+			# return JsonResponse({"error":str(e)})
+		# wo_id = request.POST.get('wo_id')
+		# wo = work_order.objects.get(pk=wo_id)
+		# wo.copy_wo_indents()
+
+	return render(request,'WO/copy_wo_indents.html',context)
 #endregion
